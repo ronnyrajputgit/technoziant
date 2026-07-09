@@ -27,70 +27,80 @@ export function Navigation() {
   return (
     <>
       <motion.nav initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
-        className={scrolled ? 'liquid-glass-strong texture-noise' : ''}
         style={{
-          position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
-          padding: '0 clamp(20px, 4vw, 60px)',
-          height: '72px',
+          position: 'fixed', top: '16px', left: 'clamp(16px, 3vw, 60px)', right: 'clamp(16px, 3vw, 60px)', zIndex: 100,
+          padding: '0 8px 0 20px',
+          height: '64px',
           display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-          borderRadius: 0, borderLeft: 'none', borderRight: 'none', borderTop: 'none',
-          transition: 'all 0.4s',
-          ...(scrolled ? { borderBottom: '1px solid var(--glass-border)' } : {})
+          borderRadius: '100px',
+          background: scrolled ? 'rgba(15, 15, 15, 0.85)' : 'rgba(15, 15, 15, 0.5)',
+          backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
+          border: '1px solid rgba(255,255,255,0.08)',
+          boxShadow: scrolled ? '0 8px 32px rgba(0,0,0,0.3)' : '0 4px 16px rgba(0,0,0,0.1)',
+          transition: 'all 0.4s ease'
         }}>
         <Link to="/" onMouseEnter={() => setCursorType('hover')} onMouseLeave={() => setCursorType('default')}
           style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none' }}>
           <div style={{
-            width: '36px', height: '36px', borderRadius: '10px',
+            width: '36px', height: '36px', borderRadius: '12px',
             background: 'linear-gradient(135deg, #22c55e, #16a34a)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: '18px', fontWeight: '800', color: '#fff', fontFamily: 'var(--font-h)'
+            fontSize: '17px', fontWeight: '800', color: '#fff', fontFamily: 'var(--font-h)'
           }}>T</div>
           <span style={{
-            fontSize: '20px', fontWeight: '700', fontFamily: 'var(--font-h)',
-            letterSpacing: '-0.02em', color: 'var(--text)'
+            fontSize: '18px', fontWeight: '700', fontFamily: 'var(--font-h)',
+            letterSpacing: '-0.02em', color: '#fff'
           }}>
-            Techno<span style={{ color: 'var(--accent-3)' }}>ziant</span>
+            Techno<span style={{ color: '#22c55e' }}>ziant</span>
           </span>
         </Link>
 
         <div className="desktop-nav" style={{ display: 'flex', gap: '2px', alignItems: 'center' }}>
           {links.map(ln => (
             <Link key={ln.p} to={ln.p} onMouseEnter={() => setCursorType('hover')} onMouseLeave={() => setCursorType('default')}
-              className={location.pathname === ln.p ? 'liquid-glass' : ''}
               style={{
-                fontSize: '13px', padding: '8px 16px', borderRadius: '100px', fontWeight: '500',
-                color: location.pathname === ln.p ? 'var(--text)' : 'var(--text-muted)',
+                fontSize: '13px', padding: '8px 14px', borderRadius: '100px', fontWeight: '500',
+                color: location.pathname === ln.p ? '#fff' : 'rgba(255,255,255,0.5)',
+                background: location.pathname === ln.p ? 'rgba(255,255,255,0.1)' : 'transparent',
                 transition: 'all 0.3s', letterSpacing: '0.01em', textDecoration: 'none',
-                border: location.pathname === ln.p ? '1px solid var(--glass-border)' : '1px solid transparent'
+                border: 'none'
               }}>
               {ln.l}
             </Link>
           ))}
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <motion.button onClick={toggleTheme} whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
             onMouseEnter={() => setCursorType('hover')} onMouseLeave={() => setCursorType('default')}
-            className="liquid-glass"
-            style={{ width: '36px', height: '36px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px' }}>
+            style={{
+              width: '36px', height: '36px', borderRadius: '50%',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: '14px', background: 'rgba(255,255,255,0.1)', border: 'none',
+              cursor: 'pointer', color: '#fff'
+            }}>
             {theme === 'dark' ? '☀️' : '🌙'}
           </motion.button>
           <Link to="/contact" className="desktop-nav"
             onMouseEnter={() => setCursorType('hover')} onMouseLeave={() => setCursorType('default')}
             style={{
-              fontSize: '13px', padding: '10px 22px', borderRadius: '100px', fontWeight: '600',
+              fontSize: '13px', padding: '10px 20px', borderRadius: '100px', fontWeight: '600',
               letterSpacing: '0.02em', textDecoration: 'none',
               background: 'linear-gradient(135deg, #22c55e, #16a34a)',
-              color: '#fff', transition: 'all 0.3s'
+              color: '#fff', transition: 'all 0.3s', boxShadow: '0 4px 15px rgba(34,197,94,0.3)'
             }}>
             Get in Touch
           </Link>
           <button onClick={() => setIsOpen(!isOpen)} onMouseEnter={() => setCursorType('hover')} onMouseLeave={() => setCursorType('default')}
-            className="liquid-glass"
-            style={{ width: '40px', height: '40px', borderRadius: '50%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '5px' }}>
-            <motion.div animate={{ rotate: isOpen ? 45 : 0, y: isOpen ? 6 : 0 }} style={{ width: '18px', height: '1.5px', background: 'var(--text)' }} />
-            <motion.div animate={{ opacity: isOpen ? 0 : 1, scaleX: isOpen ? 0 : 1 }} style={{ width: '18px', height: '1.5px', background: 'var(--text)' }} />
-            <motion.div animate={{ rotate: isOpen ? -45 : 0, y: isOpen ? -6 : 0 }} style={{ width: '12px', height: '1.5px', background: 'var(--text)' }} />
+            style={{
+              width: '40px', height: '40px', borderRadius: '50%',
+              display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+              gap: '5px', background: 'rgba(255,255,255,0.1)', border: 'none',
+              cursor: 'pointer'
+            }}>
+            <motion.div animate={{ rotate: isOpen ? 45 : 0, y: isOpen ? 6 : 0 }} style={{ width: '18px', height: '1.5px', background: '#fff' }} />
+            <motion.div animate={{ opacity: isOpen ? 0 : 1, scaleX: isOpen ? 0 : 1 }} style={{ width: '18px', height: '1.5px', background: '#fff' }} />
+            <motion.div animate={{ rotate: isOpen ? -45 : 0, y: isOpen ? -6 : 0 }} style={{ width: '12px', height: '1.5px', background: '#fff' }} />
           </button>
         </div>
       </motion.nav>
@@ -99,30 +109,42 @@ export function Navigation() {
         {isOpen && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
-            style={{ position: 'fixed', inset: 0, zIndex: 99, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)' }}
+            style={{ position: 'fixed', inset: 0, zIndex: 99, background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)' }}
             onClick={() => setIsOpen(false)}>
             <motion.div initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -20, opacity: 0 }}
               transition={{ duration: 0.4, ease: [0.76, 0, 0.24, 1] }}
               onClick={e => e.stopPropagation()}
-              className="liquid-glass-strong texture-noise"
               style={{
-                position: 'absolute', top: '84px', left: 'clamp(20px, 4vw, 60px)', right: 'clamp(20px, 4vw, 60px)',
-                borderRadius: '24px', padding: '24px', maxHeight: 'calc(100vh - 110px)', overflowY: 'auto'
+                position: 'absolute', top: '90px', left: 'clamp(16px, 3vw, 60px)', right: 'clamp(16px, 3vw, 60px)',
+                borderRadius: '24px', padding: '24px', maxHeight: 'calc(100vh - 120px)', overflowY: 'auto',
+                background: 'rgba(15, 15, 15, 0.95)', backdropFilter: 'blur(20px)',
+                border: '1px solid rgba(255,255,255,0.1)',
+                boxShadow: '0 25px 50px rgba(0,0,0,0.5)'
               }}>
               {/* Header */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                <span style={{ fontSize: '11px', fontWeight: '600', color: 'var(--text-muted)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Navigation</span>
+                <span style={{ fontSize: '11px', fontWeight: '600', color: 'rgba(255,255,255,0.4)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Navigation</span>
                 <div style={{ display: 'flex', gap: '8px' }}>
                   <motion.button onClick={toggleTheme} whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
-                    className="liquid-glass" style={{ width: '34px', height: '34px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px' }}>
+                    style={{
+                      width: '34px', height: '34px', borderRadius: '50%',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      fontSize: '14px', background: 'rgba(255,255,255,0.1)', border: 'none',
+                      cursor: 'pointer', color: '#fff'
+                    }}>
                     {theme === 'dark' ? '☀️' : '🌙'}
                   </motion.button>
-                  <button onClick={() => setIsOpen(false)} className="liquid-glass" style={{ width: '34px', height: '34px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', color: 'var(--text)' }}>✕</button>
+                  <button onClick={() => setIsOpen(false)} style={{
+                    width: '34px', height: '34px', borderRadius: '50%',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: '14px', background: 'rgba(255,255,255,0.1)', border: 'none',
+                    cursor: 'pointer', color: '#fff'
+                  }}>✕</button>
                 </div>
               </div>
 
-              {/* Navigation links - vertical list */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginBottom: '20px' }}>
+              {/* Navigation links */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '20px' }}>
                 {links.map((ln, i) => (
                   <motion.div key={ln.p}
                     initial={{ opacity: 0, x: -20 }}
@@ -130,12 +152,12 @@ export function Navigation() {
                     transition={{ delay: i * 0.05, duration: 0.3 }}>
                     <Link to={ln.p} onClick={() => setIsOpen(false)}
                       onMouseEnter={() => setCursorType('hover')} onMouseLeave={() => setCursorType('default')}
-                      className={location.pathname === ln.p ? 'liquid-glass-strong' : 'liquid-glass'}
                       style={{
                         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                         padding: '14px 18px', borderRadius: '14px', textDecoration: 'none',
-                        color: location.pathname === ln.p ? 'var(--text)' : 'var(--text-muted)',
-                        fontSize: '15px', fontWeight: '500', transition: 'all 0.2s'
+                        color: location.pathname === ln.p ? '#fff' : 'rgba(255,255,255,0.5)',
+                        fontSize: '15px', fontWeight: '500', transition: 'all 0.2s',
+                        background: location.pathname === ln.p ? 'rgba(255,255,255,0.08)' : 'transparent'
                       }}>
                       <span>{ln.l}</span>
                       <span style={{ opacity: 0.4, fontSize: '14px' }}>→</span>
@@ -145,7 +167,7 @@ export function Navigation() {
               </div>
 
               {/* CTA */}
-              <div style={{ borderTop: '1px solid var(--glass-border)', paddingTop: '16px' }}>
+              <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '16px' }}>
                 <Link to="/contact" onClick={() => setIsOpen(false)} onMouseEnter={() => setCursorType('hover')} onMouseLeave={() => setCursorType('default')}
                   style={{
                     display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
@@ -158,7 +180,7 @@ export function Navigation() {
               </div>
 
               {/* Footer */}
-              <div style={{ borderTop: '1px solid var(--glass-border)', paddingTop: '14px', marginTop: '16px', display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: 'var(--text-muted)' }}>
+              <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '14px', marginTop: '16px', display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: 'rgba(255,255,255,0.3)' }}>
                 <span>hello@technoziant.com</span>
                 <span>© 2024 Technoziant</span>
               </div>
