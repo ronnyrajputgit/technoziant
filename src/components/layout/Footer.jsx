@@ -185,7 +185,7 @@ export function Footer() {
             <div style={{ display: 'flex', gap: '40px', flexWrap: 'wrap' }}>
               {[
                 { title: 'Company', links: [{ l: 'Home', p: '/' }, { l: 'Work', p: '/work' }, { l: 'Services', p: '/services' }, { l: 'Contact', p: '/contact' }] },
-                { title: 'About', links: [{ l: 'About Us', p: '/about' }, { l: 'Team', p: '/leaders' }, { l: 'Careers', p: '/careers' }, { l: 'FAQ', p: '/faq' }] },
+                { title: 'About', links: [{ l: 'About Us', p: '/about' }, { l: 'Careers', p: '/careers' }, { l: 'FAQ', p: '/faq' }] },
                 { title: 'Social', links: [{ l: 'LinkedIn', p: '#' }, { l: 'Twitter', p: '#' }, { l: 'Instagram', p: '#' }, { l: 'GitHub', p: '#' }] }
               ].map((col, i) => (
                 <div key={i}>

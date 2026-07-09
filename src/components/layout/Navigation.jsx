@@ -19,7 +19,6 @@ export function Navigation() {
     { p: '/', l: 'Home' },
     { p: '/work', l: 'Work' },
     { p: '/services', l: 'Services' },
-    { p: '/leaders', l: 'Team' },
     { p: '/about', l: 'About' },
     { p: '/contact', l: 'Contact' }
   ]
