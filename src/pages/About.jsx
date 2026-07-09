@@ -5,6 +5,7 @@ import { GlowCard } from '../components/ui/Cards'
 import { awards } from '../data/projects'
 import { useApp } from '../context/AppContext'
 import { Footer } from '../components/layout/Footer'
+import { LeaderModal } from '../components/ui/LeaderModal'
 import sumanImg from '../assets/images/Suman.jpeg'
 import sahilImg from '../assets/images/Shahil.jpeg'
 
@@ -54,16 +55,22 @@ const stats = [
   { value: '10+', label: 'Awards Won', icon: '🏆' }
 ]
 
-function TeamCard({ member, index }) {
+function TeamCard({ member, index, onClick }) {
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, margin: '-20px' })
+  const { setCursorType } = useApp()
 
   return (
     <motion.div ref={ref}
       initial={{ opacity: 0, y: 40, scale: 0.95 }}
       animate={isInView ? { opacity: 1, y: 0, scale: 1 } : {}}
       transition={{ duration: 0.6, delay: index * 0.1, ease: [0.16, 1, 0.3, 1] }}>
-      <GlowCard glowColor={member.color} style={{ padding: 0, overflow: 'hidden', height: '100%' }}>
+      <GlowCard glowColor={member.color} style={{ padding: 0, overflow: 'hidden', height: '100%', cursor: 'pointer' }}
+        onClick={() => onClick(member)}
+        onMouseEnter={() => setCursorType('hover')}
+        onMouseLeave={() => setCursorType('default')}>
+
+        {/* Image */}
         <div style={{ position: 'relative', width: '100%', aspectRatio: '4/3', overflow: 'hidden', background: 'rgba(255,255,255,0.03)' }}>
           <img src={member.image} alt={member.name}
             style={{
@@ -84,8 +91,20 @@ function TeamCard({ member, index }) {
           }}>
             {String(index + 1).padStart(2, '0')}
           </div>
+          {/* View badge */}
+          <div className="view-indicator" style={{
+            position: 'absolute', bottom: '10px', right: '10px', opacity: 0, transition: 'opacity 0.3s'
+          }}>
+            <span className="liquid-glass-strong" style={{
+              padding: '5px 12px', borderRadius: '100px',
+              fontSize: '9px', fontWeight: '600', color: 'var(--text)'
+            }}>
+              View ↗
+            </span>
+          </div>
         </div>
 
+        {/* Content */}
         <div style={{ padding: '18px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', marginBottom: '8px' }}>
             <h3 style={{ fontSize: '16px', fontWeight: '700', fontFamily: 'var(--font-h)', margin: 0 }}>
@@ -129,6 +148,18 @@ function TeamCard({ member, index }) {
 
 export function About() {
   const { setCursorType } = useApp()
+  const [selectedMember, setSelectedMember] = useState(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+
+  const openMember = (member) => {
+    setSelectedMember(member)
+    setIsModalOpen(true)
+  }
+
+  const closeMember = () => {
+    setIsModalOpen(false)
+    setSelectedMember(null)
+  }
 
   return (
     <main style={{ paddingTop: '110px', minHeight: '100vh' }}>
@@ -183,7 +214,7 @@ export function About() {
             </p></TextReveal>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px' }}>
-            {team.map((member, i) => <TeamCard key={i} member={member} index={i} />)}
+            {team.map((member, i) => <TeamCard key={i} member={member} index={i} onClick={openMember} />)}
           </div>
         </div>
       </section>
@@ -226,7 +257,11 @@ export function About() {
         </div>
       </section>
 
+      <LeaderModal leader={selectedMember} isOpen={isModalOpen} onClose={closeMember} />
+
       <Footer />
+
+      <style>{`.view-indicator { opacity: 0 !important; } div:hover > .view-indicator { opacity: 1 !important; }`}</style>
     </main>
   )
 }
