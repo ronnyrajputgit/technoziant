@@ -91,15 +91,11 @@ function LeaderCard({ leader, index, onClick }) {
   const clipPath = brokenGlassStyles[cardStyle].clipPath
   const randomRadius = useRef(generateRandomRadius()).current
 
-  const zigOffset = index % 2 === 0 ? 0 : 30
-  const rotateOffset = index % 2 === 0 ? -1 : 1
-
   return (
     <motion.div ref={ref}
-      initial={{ opacity: 0, y: 60 + zigOffset, rotate: rotateOffset * 3, scale: 0.9 }}
-      animate={isInView ? { opacity: 1, y: zigOffset, rotate: rotateOffset * 0.5, scale: 1 } : {}}
-      transition={{ duration: 0.8, delay: index * 0.12, ease: [0.16, 1, 0.3, 1] }}
-      style={{ marginTop: index % 2 === 1 ? '40px' : '0' }}>
+      initial={{ opacity: 0, y: 40, scale: 0.95 }}
+      animate={isInView ? { opacity: 1, y: 0, scale: 1 } : {}}
+      transition={{ duration: 0.6, delay: index * 0.1, ease: [0.16, 1, 0.3, 1] }}>
       <div className="liquid-glass texture-noise" onClick={() => onClick(leader)}
         style={{
           borderRadius: randomRadius,
@@ -110,7 +106,7 @@ function LeaderCard({ leader, index, onClick }) {
           transition: 'transform 0.3s, box-shadow 0.3s'
         }}
         onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-8px) scale(1.02)'; e.currentTarget.style.boxShadow = `0 20px 60px ${leader.color}20` }}
-        onMouseLeave={e => { e.currentTarget.style.transform = `translateY(${zigOffset}px) rotate(${rotateOffset * 0.5}deg)`; e.currentTarget.style.boxShadow = 'none' }}>
+        onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none' }}>
 
         {/* Glass effects - subtle */}
         <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 3, overflow: 'hidden' }}>
@@ -136,9 +132,12 @@ function LeaderCard({ leader, index, onClick }) {
         </div>
 
         {/* Image */}
-        <div style={{ position: 'relative', height: '200px', overflow: 'hidden', background: 'rgba(255,255,255,0.03)' }}>
+        <div style={{ position: 'relative', width: '100%', aspectRatio: '4/3', overflow: 'hidden', background: 'rgba(255,255,255,0.03)' }}>
           <img src={leader.image} alt={leader.name}
             style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
               width: '100%',
               height: '100%',
               objectFit: 'cover',
@@ -306,7 +305,7 @@ export function Leaders() {
 
       <section className="section" style={{ borderTop: '1px solid var(--glass-border)' }}>
         <div className="container">
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px', alignItems: 'start' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '24px', alignItems: 'stretch' }}>
             {leadership.map((leader, i) => <LeaderCard key={i} leader={leader} index={i} onClick={openLeader} />)}
           </div>
         </div>
