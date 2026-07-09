@@ -26,14 +26,6 @@ export function Hero() {
         backgroundSize: '80px 80px' }} />
 
       <motion.div style={{ y, opacity, scale }} className="container">
-        {/* Badge positioned above heading with proper margin */}
-        <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
-          className="liquid-glass" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '7px 16px', marginBottom: '28px', borderRadius: '100px', position: 'relative', zIndex: 10 }}>
-          <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--accent-3)', animation: 'pulse 2s infinite' }} />
-          <span style={{ fontSize: '11px', color: 'var(--accent)', letterSpacing: '0.1em', fontWeight: '500' }}>Available for new projects</span>
-          <style>{`@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}`}</style>
-        </motion.div>
-
         {/* Heading with clear separation */}
         <div style={{ marginBottom: '24px' }}>
           {['We craft', 'digital', 'experiences'].map((line, i) => (

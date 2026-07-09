@@ -32,8 +32,8 @@ export function Footer() {
               color: 'var(--text)',
               margin: 0
             }}>
-              <span style={{ display: 'block', opacity: 0.08 }}>MIMO</span>
-              <span style={{ display: 'block', opacity: 0.05, marginLeft: '10%' }}>STUDIO</span>
+              <span style={{ display: 'block', opacity: 0.08 }}>Techno</span>
+              <span style={{ display: 'block', opacity: 0.05, marginLeft: '10%' }}>ziant</span>
             </h2>
           </motion.div>
 
@@ -80,8 +80,8 @@ export function Footer() {
                     width: '48px',
                     height: '48px',
                     borderRadius: '50%',
-                    background: 'var(--text)',
-                    color: 'var(--bg)',
+                    background: 'linear-gradient(135deg, #22c55e, #16a34a)',
+                    color: '#fff',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -103,9 +103,9 @@ export function Footer() {
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                 {[
-                  { label: 'Email', value: 'hello@mimostudio.dev', icon: '✉' },
-                  { label: 'Phone', value: '+1 (555) 123-4567', icon: '☎' },
-                  { label: 'Location', value: 'San Francisco, CA', icon: '◎' }
+                  { label: 'Email', value: 'hello@technoziant.com', icon: '✉' },
+                  { label: 'Phone', value: '+91 98765 43210', icon: '☎' },
+                  { label: 'Location', value: 'India', icon: '◎' }
                 ].map((item, i) => (
                   <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
                     <span style={{ fontSize: '14px', color: 'var(--text-muted)', marginTop: '2px' }}>{item.icon}</span>
@@ -124,7 +124,7 @@ export function Footer() {
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.8, delay: 0.4 }}>
               <div style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '16px' }}>
-                Newsletter
+                Stay Updated
               </div>
               <p style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: 1.6, marginBottom: '16px' }}>
                 Subscribe for updates, insights, and exclusive content.
@@ -139,14 +139,14 @@ export function Footer() {
                     padding: '14px 16px',
                     background: 'transparent',
                     border: '1px solid var(--glass-border)',
-                    borderRadius: '10px',
+                    borderRadius: '12px',
                     color: 'var(--text)',
                     fontSize: '14px',
                     outline: 'none',
                     fontFamily: 'var(--font-b)',
                     transition: 'border-color 0.3s'
                   }}
-                  onFocus={e => e.target.style.borderColor = 'var(--accent)'}
+                  onFocus={e => e.target.style.borderColor = '#22c55e'}
                   onBlur={e => e.target.style.borderColor = 'var(--glass-border)'}
                 />
                 <motion.button
@@ -155,10 +155,10 @@ export function Footer() {
                   type="submit"
                   style={{
                     padding: '14px',
-                    background: 'var(--text)',
-                    color: 'var(--bg)',
+                    background: 'linear-gradient(135deg, #22c55e, #16a34a)',
+                    color: '#fff',
                     border: 'none',
-                    borderRadius: '10px',
+                    borderRadius: '12px',
                     fontSize: '13px',
                     fontWeight: '600',
                     cursor: 'pointer',
@@ -184,9 +184,9 @@ export function Footer() {
             {/* Nav links */}
             <div style={{ display: 'flex', gap: '40px', flexWrap: 'wrap' }}>
               {[
-                { title: 'Navigate', links: [{ l: 'Home', p: '/' }, { l: 'Work', p: '/work' }, { l: 'Services', p: '/services' }, { l: 'Contact', p: '/contact' }] },
-                { title: 'Company', links: [{ l: 'About', p: '/about' }, { l: 'Leaders', p: '/leaders' }, { l: 'Careers', p: '/careers' }, { l: 'FAQ', p: '/faq' }] },
-                { title: 'Social', links: [{ l: 'Twitter', p: '#' }, { l: 'LinkedIn', p: '#' }, { l: 'Instagram', p: '#' }, { l: 'GitHub', p: '#' }] }
+                { title: 'Company', links: [{ l: 'Home', p: '/' }, { l: 'Work', p: '/work' }, { l: 'Services', p: '/services' }, { l: 'Contact', p: '/contact' }] },
+                { title: 'About', links: [{ l: 'About Us', p: '/about' }, { l: 'Team', p: '/leaders' }, { l: 'Careers', p: '/careers' }, { l: 'FAQ', p: '/faq' }] },
+                { title: 'Social', links: [{ l: 'LinkedIn', p: '#' }, { l: 'Twitter', p: '#' }, { l: 'Instagram', p: '#' }, { l: 'GitHub', p: '#' }] }
               ].map((col, i) => (
                 <div key={i}>
                   <div style={{ fontSize: '10px', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '12px', fontWeight: '600' }}>
@@ -208,10 +208,16 @@ export function Footer() {
 
             {/* Logo */}
             <div style={{ textAlign: 'right' }}>
-              <div style={{ fontSize: '24px', fontWeight: '700', fontFamily: 'var(--font-h)', letterSpacing: '-0.02em' }}>
-                <span className="text-gradient">MIMO</span>
-                <span style={{ opacity: 0.25 }}>/</span>
-                <span>STUDIO</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', justifyContent: 'flex-end' }}>
+                <div style={{
+                  width: '32px', height: '32px', borderRadius: '8px',
+                  background: 'linear-gradient(135deg, #22c55e, #16a34a)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: '16px', fontWeight: '800', color: '#fff', fontFamily: 'var(--font-h)'
+                }}>T</div>
+                <span style={{ fontSize: '20px', fontWeight: '700', fontFamily: 'var(--font-h)', letterSpacing: '-0.02em' }}>
+                  Techno<span style={{ color: '#22c55e' }}>ziant</span>
+                </span>
               </div>
               <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '4px' }}>
                 © 2024 All rights reserved
@@ -233,7 +239,7 @@ export function Footer() {
               opacity: 0.3,
               fontFamily: 'var(--font-h)'
             }}>
-              Designed with passion in San Francisco
+              Crafted with passion in India
             </div>
 
             {/* Decorative dots */}

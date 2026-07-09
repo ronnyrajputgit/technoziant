@@ -5,6 +5,8 @@ import { TextReveal } from '../components/ui/TextReveal'
 import { useApp } from '../context/AppContext'
 import { LeaderModal } from '../components/ui/LeaderModal'
 import { Footer } from '../components/layout/Footer'
+import sumanImg from '../assets/images/Suman.jpeg'
+import sahilImg from '../assets/images/Shahil.jpeg'
 
 // Random border radius generator - professional values
 const generateRandomRadius = () => {
@@ -25,76 +27,40 @@ const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min
 
 const leadership = [
   {
-    name: 'Rahul Sharma',
-    role: 'Founder & CEO',
-    image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=80',
+    name: 'Suman',
+    role: 'Founder',
+    image: sumanImg,
     color: '#4f8eff',
     gradient: 'linear-gradient(135deg, #4f8eff, #06d6a0)',
-    bio: 'Visionary leader with 15+ years building digital products. Previously led engineering at top tech companies. Passionate about blending technology with human experience.',
-    achievements: ['Built 200+ products', 'Forbes 30 Under 30', '10+ Patents']
+    bio: 'Visionary founder leading Technoziant with a mission to deliver world-class technology solutions.',
+    achievements: ['Visionary Leader', 'Strategic Thinker', 'Innovation Driver']
   },
   {
-    name: 'Priya Patel',
-    role: 'Co-Founder & CTO',
-    image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=600&q=80',
+    name: 'Sahil',
+    role: 'Co-founder & CEO',
+    image: sahilImg,
     color: '#a855f7',
     gradient: 'linear-gradient(135deg, #a855f7, #f472b6)',
-    bio: 'Former Google engineer turned entrepreneur. Architected systems serving billions. Expert in scalable infrastructure and AI/ML implementations.',
-    achievements: ['Ex-Google Staff Engineer', '100+ OSS Projects', 'AI Pioneer']
+    bio: 'Chief Executive Officer driving the company\'s vision and growth strategy. Expert in business development and scaling digital enterprises.',
+    achievements: ['Business Strategist', 'Growth Expert', 'Team Builder']
   },
   {
-    name: 'Arjun Mehta',
-    role: 'Chief Product Officer',
-    image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=600&q=80',
+    name: 'Ronny',
+    role: 'CTO',
+    image: 'https://ui-avatars.com/api/?name=Ronny&background=06d6a0&color=fff&size=400&bold=true',
     color: '#06d6a0',
     gradient: 'linear-gradient(135deg, #06d6a0, #22d3ee)',
-    bio: 'Product visionary who has launched 50+ successful products. Deep expertise in user research, product strategy, and growth hacking.',
-    achievements: ['50+ Product Launches', 'Y Combinator Mentor', 'Product Hunt #1']
+    bio: 'Chief Technology Officer overseeing all technical operations. Expert in system architecture, scalable infrastructure, and cutting-edge technology implementations.',
+    achievements: ['Tech Architect', 'System Design', 'Innovation Lead']
   },
   {
-    name: 'Sneha Reddy',
-    role: 'Chief Design Officer',
-    image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=600&q=80',
+    name: 'Avnish',
+    role: 'CMO',
+    image: 'https://ui-avatars.com/api/?name=Avnish&background=f472b6&color=fff&size=400&bold=true',
     color: '#f472b6',
     gradient: 'linear-gradient(135deg, #f472b6, #a855f7)',
-    bio: 'Award-winning designer previously at Apple and Airbnb. Creates beautiful functional experiences that delight users worldwide.',
-    achievements: ['Red Dot Design Winner', 'D&AD Pencil', 'Ex-Apple Design']
-  },
-  {
-    name: 'Vikram Singh',
-    role: 'VP of Engineering',
-    image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=600&q=80',
-    color: '#fbbf24',
-    gradient: 'linear-gradient(135deg, #fbbf24, #f472b6)',
-    bio: 'Engineering leader who built teams of 100+ developers. Expert in agile methodologies, system architecture, and developer experience.',
-    achievements: ['Led 100+ Engineers', 'Ex-Microsoft', 'Agile Certified']
-  },
-  {
-    name: 'Ananya Krishnan',
-    role: 'Head of AI/ML',
-    image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=600&q=80',
-    color: '#22d3ee',
-    gradient: 'linear-gradient(135deg, #22d3ee, #4f8eff)',
-    bio: 'PhD Stanford in Computer Science. Leading AI research and implementation. Published 20+ papers in top conferences.',
-    achievements: ['PhD Stanford', '20+ Publications', 'AI Research Lead']
-  },
-  {
-    name: 'Rohan Gupta',
-    role: 'Chief Marketing Officer',
-    image: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=600&q=80',
-    color: '#ef4444',
-    gradient: 'linear-gradient(135deg, #ef4444, #fbbf24)',
-    bio: 'Marketing strategist who scaled brands from zero to millions. Expert in growth marketing, brand building, and community development.',
-    achievements: ['Scaled 10+ Brands', 'Ex-HubSpot', 'Growth Expert']
-  },
-  {
-    name: 'Kavya Nair',
-    role: 'Chief Operations Officer',
-    image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=600&q=80',
-    color: '#8b5cf6',
-    gradient: 'linear-gradient(135deg, #8b5cf6, #06d6a0)',
-    bio: 'Operations expert ensuring seamless delivery across all projects. Built efficient processes that reduced delivery time by 40%.',
-    achievements: ['40% Faster Delivery', 'Ex-Amazon', 'Six Sigma Black Belt']
+    bio: 'Chief Marketing Officer driving brand strategy and digital marketing initiatives. Expert in growth marketing, brand building, and community development.',
+    achievements: ['Brand Builder', 'Growth Hacker', 'Digital Strategist']
   }
 ]
 
@@ -112,10 +78,10 @@ const brokenGlassStyles = {
 const styles = ['angular', 'rounded-heavy', 'diamond-cut', 'pebble', 'sharp-edges', 'blob', 'wave', 'hexagon']
 
 const stats = [
-  { value: '8', label: 'Leaders', icon: '👥' },
-  { value: '80+', label: 'Years Combined', icon: '📅' },
-  { value: '500+', label: 'Projects Led', icon: '🚀' },
-  { value: '50+', label: 'Awards Won', icon: '🏆' }
+  { value: '4', label: 'Leaders', icon: '👥' },
+  { value: '20+', label: 'Years Combined', icon: '📅' },
+  { value: '100+', label: 'Projects Led', icon: '🚀' },
+  { value: '10+', label: 'Awards Won', icon: '🏆' }
 ]
 
 function LeaderCard({ leader, index, onClick }) {
@@ -321,7 +287,7 @@ export function Leaders() {
           </TextReveal>
           <TextReveal delay={0.2}>
             <p style={{ fontSize: '14px', lineHeight: 1.7, color: 'var(--text-muted)', maxWidth: '500px', marginBottom: '32px' }}>
-              The visionary minds behind MIMO/STUDIO. Click any card to learn more.
+              The visionary minds behind Technoziant. Click any card to learn more.
             </p>
           </TextReveal>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px', maxWidth: '450px' }}>
@@ -340,7 +306,7 @@ export function Leaders() {
 
       <section className="section" style={{ borderTop: '1px solid var(--glass-border)' }}>
         <div className="container">
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px', alignItems: 'start' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px', alignItems: 'start' }}>
             {leadership.map((leader, i) => <LeaderCard key={i} leader={leader} index={i} onClick={openLeader} />)}
           </div>
         </div>

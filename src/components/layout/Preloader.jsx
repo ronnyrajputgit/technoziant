@@ -1,13 +1,13 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { useEffect, useState } from 'react'
+import sumanImg from '../../assets/images/Suman.jpeg'
+import sahilImg from '../../assets/images/Shahil.jpeg'
 
 const leaders = [
-  { name: 'Rahul Sharma', role: 'Founder & CEO', image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80', color: '#4f8eff' },
-  { name: 'Priya Patel', role: 'Co-Founder & CTO', image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&q=80', color: '#a855f7' },
-  { name: 'Arjun Mehta', role: 'CPO', image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&q=80', color: '#06d6a0' },
-  { name: 'Sneha Reddy', role: 'CDO', image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&q=80', color: '#f472b6' },
-  { name: 'Vikram Singh', role: 'VP Engineering', image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&q=80', color: '#fbbf24' },
-  { name: 'Ananya Krishnan', role: 'Head of AI/ML', image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&q=80', color: '#22d3ee' }
+  { name: 'Suman', role: 'Founder', image: sumanImg, color: '#4f8eff' },
+  { name: 'Sahil', role: 'Co-founder & CEO', image: sahilImg, color: '#a855f7' },
+  { name: 'Ronny', role: 'CTO', image: 'https://ui-avatars.com/api/?name=Ronny&background=06d6a0&color=fff&size=400&bold=true', color: '#06d6a0' },
+  { name: 'Avnish', role: 'CMO', image: 'https://ui-avatars.com/api/?name=Avnish&background=f472b6&color=fff&size=400&bold=true', color: '#f472b6' }
 ]
 
 export function Preloader() {
@@ -43,7 +43,7 @@ export function Preloader() {
       <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8 }}
         style={{ marginBottom: '48px', zIndex: 2 }}>
         <div style={{ fontSize: '32px', fontWeight: '700', fontFamily: 'var(--font-h)', letterSpacing: '-0.03em' }}>
-          <span className="text-gradient">MIMO</span><span style={{ opacity: 0.25 }}>/</span><span>STUDIO</span>
+          <span className="text-gradient">Techno</span><span style={{ opacity: 0.25 }}>/</span><span>ziant</span>
         </div>
       </motion.div>
 
@@ -58,7 +58,7 @@ export function Preloader() {
       {/* Phase text */}
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}
         style={{ fontSize: '10px', letterSpacing: '0.3em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '40px', zIndex: 2 }}>
-        {phase === 0 && 'Welcome to MIMO/STUDIO'}
+        {phase === 0 && 'Welcome to Technoziant'}
         {phase === 1 && 'Meet Our Team'}
         {phase === 2 && 'Crafting Experiences'}
         {phase === 3 && 'Almost Ready'}
@@ -93,7 +93,7 @@ export function Preloader() {
       {/* Bottom text */}
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 0.4 }} transition={{ delay: 0.8 }}
         style={{ position: 'absolute', bottom: '20px', fontSize: '10px', color: 'var(--text-muted)', letterSpacing: '0.1em', zIndex: 2 }}>
-        © 2024 MIMO/STUDIO. All rights reserved.
+        © 2024 Technoziant. All rights reserved.
       </motion.div>
     </motion.div>
   )

@@ -1,3 +1,6 @@
+import sumanImg from '../assets/images/Suman.jpeg'
+import sahilImg from '../assets/images/Shahil.jpeg'
+
 export const projects = [
   { id: 1, title: 'Nebula Analytics', subtitle: 'SaaS Dashboard', description: 'AI-powered analytics platform with real-time data visualization and predictive insights for enterprise clients.', year: '2024', color: '#4f8eff', image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80', tags: ['React', 'D3.js', 'ML'], category: 'web', client: 'DataCorp' },
   { id: 2, title: 'Quantum Finance', subtitle: 'Fintech App', description: 'Next-gen banking experience with biometric auth and instant transfers across 180+ countries.', year: '2024', color: '#a855f7', image: 'https://images.unsplash.com/photo-1563986768609-322da13575f2?w=800&q=80', tags: ['React Native', 'Node.js', 'Blockchain'], category: 'mobile', client: 'FinSecure' },
@@ -27,12 +30,10 @@ export const solutions = [
 ]
 
 export const team = [
-  { id: 1, name: 'Alex Chen', role: 'Founder & Creative Director', image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80', bio: '15+ years crafting digital experiences for Fortune 500 brands.' },
-  { id: 2, name: 'Sarah Miller', role: 'Head of Engineering', image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&q=80', bio: 'Former Google engineer. Passionate about scalable architecture.' },
-  { id: 3, name: 'James Wilson', role: 'Design Director', image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&q=80', bio: 'Award-winning designer with a focus on motion and interaction.' },
-  { id: 4, name: 'Emily Davis', role: 'Lead Developer', image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&q=80', bio: 'Full-stack wizard. Loves pushing the boundaries of web tech.' },
-  { id: 5, name: 'Michael Brown', role: 'Mobile Lead', image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&q=80', bio: 'Built apps with 10M+ downloads. React Native & Flutter expert.' },
-  { id: 6, name: 'Lisa Anderson', role: 'AI/ML Engineer', image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&q=80', bio: 'PhD in Computer Science. Building the future with AI.' },
+  { id: 1, name: 'Suman', role: 'Founder', image: sumanImg, bio: 'Visionary founder leading Technoziant with a mission to deliver world-class technology solutions.' },
+  { id: 2, name: 'Sahil', role: 'Co-founder & CEO', image: sahilImg, bio: 'Chief Executive Officer driving the company\'s vision and growth strategy.' },
+  { id: 3, name: 'Ronny', role: 'CTO', image: 'https://ui-avatars.com/api/?name=Ronny&background=06d6a0&color=fff&size=400&bold=true', bio: 'Chief Technology Officer overseeing all technical operations and system architecture.' },
+  { id: 4, name: 'Avnish', role: 'CMO', image: 'https://ui-avatars.com/api/?name=Avnish&background=f472b6&color=fff&size=400&bold=true', bio: 'Chief Marketing Officer driving brand strategy and digital marketing initiatives.' },
 ]
 
 export const awards = [

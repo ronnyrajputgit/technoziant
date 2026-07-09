@@ -7,16 +7,16 @@ import { useApp } from '../context/AppContext'
 import { Footer } from '../components/layout/Footer'
 
 const connectMethods = [
-  { icon: '💬', title: 'WhatsApp', value: '+1 (555) 123-4567', link: 'https://wa.me/15551234567', color: '#25D366', description: 'Quick chat anytime' },
-  { icon: '✉️', title: 'Email', value: 'hello@mimostudio.dev', link: 'mailto:hello@mimostudio.dev', color: '#4f8eff', description: 'For detailed inquiries' },
-  { icon: '💼', title: 'LinkedIn', value: 'MIMO/STUDIO', link: 'https://linkedin.com/company/mimostudio', color: '#0A66C2', description: 'Connect professionally' },
-  { icon: '🐦', title: 'Twitter / X', value: '@mimostudio', link: 'https://x.com/mimostudio', color: '#1DA1F2', description: 'Follow our updates' },
-  { icon: '📸', title: 'Instagram', value: '@mimostudio.dev', link: 'https://instagram.com/mimostudio', color: '#E4405F', description: 'See our visual work' },
-  { icon: '🐙', title: 'GitHub', value: 'mimostudio', link: 'https://github.com/mimostudio', color: '#8b5cf6', description: 'Check our open source' },
-  { icon: '📞', title: 'Phone', value: '+1 (555) 987-6543', link: 'tel:+15559876543', color: '#06d6a0', description: 'Mon-Fri 9AM-6PM PST' },
-  { icon: '📍', title: 'Office', value: 'San Francisco, CA', link: 'https://maps.google.com/?q=San+Francisco', color: '#fbbf24', description: 'Visit us anytime' },
-  { icon: '🎮', title: 'Discord', value: 'MIMO Community', link: 'https://discord.gg/mimostudio', color: '#5865F2', description: 'Join our community' },
-  { icon: '📺', title: 'YouTube', value: 'MIMO/STUDIO', link: 'https://youtube.com/@mimostudio', color: '#FF0000', description: 'Watch our tutorials' }
+  { icon: '💬', title: 'WhatsApp', value: '+91 98765 43210', link: 'https://wa.me/919876543210', color: '#25D366', description: 'Quick chat anytime' },
+  { icon: '✉️', title: 'Email', value: 'hello@technoziant.com', link: 'mailto:hello@technoziant.com', color: '#4f8eff', description: 'For detailed inquiries' },
+  { icon: '💼', title: 'LinkedIn', value: 'Technoziant', link: 'https://linkedin.com/company/technoziant', color: '#0A66C2', description: 'Connect professionally' },
+  { icon: '🐦', title: 'Twitter / X', value: '@technoziant', link: 'https://x.com/technoziant', color: '#1DA1F2', description: 'Follow our updates' },
+  { icon: '📸', title: 'Instagram', value: '@technoziant', link: 'https://instagram.com/technoziant', color: '#E4405F', description: 'See our visual work' },
+  { icon: '🐙', title: 'GitHub', value: 'technoziant', link: 'https://github.com/technoziant', color: '#8b5cf6', description: 'Check our open source' },
+  { icon: '📞', title: 'Phone', value: '+91 98765 43210', link: 'tel:+919876543210', color: '#06d6a0', description: 'Mon-Fri 9AM-6PM IST' },
+  { icon: '📍', title: 'Office', value: 'India', link: 'https://maps.google.com/?q=India', color: '#fbbf24', description: 'Visit us anytime' },
+  { icon: '🎮', title: 'Discord', value: 'Technoziant Community', link: 'https://discord.gg/technoziant', color: '#5865F2', description: 'Join our community' },
+  { icon: '📺', title: 'YouTube', value: 'Technoziant', link: 'https://youtube.com/@technoziant', color: '#FF0000', description: 'Watch our tutorials' }
 ]
 
 function ConnectCard({ method, index }) {
@@ -109,7 +109,7 @@ export function Contact() {
               <div style={{ fontSize: '14px', fontWeight: '600', marginBottom: '4px' }}>Need immediate help?</div>
               <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Our WhatsApp bot responds instantly 24/7</div>
             </div>
-            <a href="https://wa.me/15551234567" target="_blank" rel="noopener noreferrer"
+            <a href="https://wa.me/919876543210" target="_blank" rel="noopener noreferrer"
               style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '10px 20px', background: '#25D365', borderRadius: '100px', fontSize: '12px', fontWeight: '600', color: '#fff', textDecoration: 'none' }}>
               💬 Chat on WhatsApp
             </a>
@@ -145,7 +145,7 @@ export function Contact() {
               <TextReveal delay={0.1}><p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '24px', lineHeight: 1.6 }}>Visit us or reach out through any channel.</p></TextReveal>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                {[['📍', 'Address', '123 Innovation Blvd, San Francisco, CA 94102'], ['🕐', 'Hours', 'Mon - Fri: 9:00 AM - 6:00 PM PST'], ['📧', 'General', 'hello@mimostudio.dev'], ['💼', 'Business', 'partnerships@mimostudio.dev'], ['🚨', 'Emergency', 'support@mimostudio.dev']].map(([icon, label, val], i) => (
+                {[['📍', 'Address', 'India'], ['🕐', 'Hours', 'Mon - Fri: 9:00 AM - 6:00 PM IST'], ['📧', 'General', 'hello@technoziant.com'], ['💼', 'Business', 'partnerships@technoziant.com'], ['🚨', 'Emergency', 'support@technoziant.com']].map(([icon, label, val], i) => (
                   <GlowCard key={i} style={{ padding: '14px 16px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                       <span style={{ fontSize: '16px' }}>{icon}</span>
