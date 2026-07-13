@@ -3,14 +3,16 @@ import { motion } from 'framer-motion'
 import { TextReveal } from '../components/ui/TextReveal'
 import { WaterDropCard } from '../components/ui/Cards'
 import { ProjectModal } from '../components/ui/ProjectModal'
+import { InteractiveSnippet, EcommerceVisual, HealthcareVisual, FintechVisual } from '../components/ui/InteractiveSnippet'
 import { projects } from '../data/projects'
 import { useApp } from '../context/AppContext'
 import { Footer } from '../components/layout/Footer'
 
 const projectSnippets = [
   {
-    title: 'E-Commerce Platform',
+    title: 'bloom-store.ts',
     client: 'Bloom Corp',
+    color: '#22c55e',
     code: `const store = new BloomStore({
   vendors: 500+,
   products: '100K+',
@@ -19,11 +21,12 @@ const projectSnippets = [
 });
 
 await store.launch({ scale: 'auto' });`,
-    color: '#22c55e'
+    visual: <EcommerceVisual />
   },
   {
-    title: 'Healthcare Portal',
+    title: 'pulse-health.ts',
     client: 'PulseMed',
+    color: '#3b82f6',
     code: `const telemedicine = new Telehealth({
   hipaa: true,
   video: 'webrtc',
@@ -33,11 +36,12 @@ await store.launch({ scale: 'auto' });`,
 });
 
 await telemedicine.deploy();`,
-    color: '#3b82f6'
+    visual: <HealthcareVisual />
   },
   {
-    title: 'Fintech App',
+    title: 'finsecure-app.ts',
     client: 'FinSecure',
+    color: '#a855f7',
     code: `const banking = new FinSecure({
   auth: 'biometric',
   transfers: 'instant',
@@ -47,7 +51,7 @@ await telemedicine.deploy();`,
 });
 
 await banking.goLive();`,
-    color: '#a855f7'
+    visual: <FintechVisual />
   }
 ]
 
@@ -85,7 +89,6 @@ export function Work() {
         </div>
       </section>
 
-      {/* Project Cards */}
       <section className="section" style={{ paddingTop: 0 }}>
         <div className="container">
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '12px' }}>
@@ -125,52 +128,27 @@ export function Work() {
         </div>
       </section>
 
-      {/* Code Snippets Section */}
+      {/* Interactive Code Snippets */}
       <section className="section" style={{ borderTop: '1px solid var(--glass-border)' }}>
         <div className="container">
           <div style={{ textAlign: 'center', marginBottom: '32px' }}>
             <TextReveal><div style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '8px', fontFamily: "var(--font-code)" }}>case_studies</div></TextReveal>
             <TextReveal delay={0.1}><h2 style={{ fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: '700', lineHeight: 1 }}>How We <span className="text-gradient">Built It</span></h2></TextReveal>
+            <TextReveal delay={0.2}><p style={{ fontSize: '13px', color: 'var(--text-muted)', maxWidth: '400px', margin: '12px auto 0', lineHeight: 1.6 }}>Click on any snippet to see the live preview of what we built.</p></TextReveal>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '16px' }}>
             {projectSnippets.map((snippet, i) => (
-              <motion.div key={i} initial={{ opacity: 0, x: i % 2 === 0 ? -30 : 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}
-                transition={{ delay: i * 0.1, duration: 0.6 }}
-                className="liquid-glass" style={{ borderRadius: '10px', overflow: 'hidden' }}>
-                {/* Title bar */}
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 14px', borderBottom: '1px solid var(--glass-border)', background: 'var(--surface)' }}>
-                  <div style={{ display: 'flex', gap: '4px' }}>
-                    <div style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#ff5f57' }} />
-                    <div style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#febc2e' }} />
-                    <div style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#28c840' }} />
-                  </div>
-                  <span style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>{snippet.title.toLowerCase().replace(/\s+/g, '-')}.ts</span>
-                  <span style={{ fontSize: '9px', padding: '2px 6px', borderRadius: '3px', background: `${snippet.color}15`, color: snippet.color, fontFamily: "var(--font-code)" }}>{snippet.client}</span>
-                </div>
-                {/* Code content */}
-                <div style={{ padding: '16px', fontFamily: "var(--font-code)", fontSize: '12px', lineHeight: '22px', background: 'var(--code-bg)' }}>
-                  {snippet.code.split('\n').map((line, j) => (
-                    <motion.div key={j} initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}
-                      transition={{ delay: i * 0.1 + j * 0.03, duration: 0.4 }}
-                      style={{ display: 'flex' }}>
-                      <span style={{ color: 'var(--text-muted)', opacity: 0.3, marginRight: '14px', minWidth: '14px', textAlign: 'right', fontSize: '10px' }}>{j + 1}</span>
-                      <span style={{ color: 'var(--code-text)' }}>
-                        {line.includes('const') ? <><span style={{ color: 'var(--code-keyword)' }}>const</span> {line.replace('const ', '')}</> :
-                         line.includes('await') ? <><span style={{ color: 'var(--code-keyword)' }}>await</span> {line.replace('await ', '')}</> :
-                         line.includes('//') ? <span style={{ color: 'var(--code-comment)' }}>{line}</span> :
-                         line}
-                      </span>
-                    </motion.div>
-                  ))}
-                </div>
+              <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                transition={{ delay: i * 0.1, duration: 0.5 }}>
+                <InteractiveSnippet {...snippet} />
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Process Section */}
+      {/* Process as Code */}
       <section className="section" style={{ borderTop: '1px solid var(--glass-border)' }}>
         <div className="container">
           <div style={{ textAlign: 'center', marginBottom: '32px' }}>
@@ -178,9 +156,8 @@ export function Work() {
             <TextReveal delay={0.1}><h2 style={{ fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: '700', lineHeight: 1 }}>Our <span className="text-gradient">Process</span></h2></TextReveal>
           </div>
 
-          {/* Process as code */}
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-            className="liquid-glass" style={{ borderRadius: '10px', overflow: 'hidden', maxWidth: '600px', margin: '0 auto' }}>
+            className="liquid-glass" style={{ borderRadius: '10px', overflow: 'hidden', maxWidth: '500px', margin: '0 auto' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '5px', padding: '8px 14px', borderBottom: '1px solid var(--glass-border)', background: 'var(--surface)' }}>
               <div style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#ff5f57' }} />
               <div style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#febc2e' }} />

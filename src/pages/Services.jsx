@@ -1,4 +1,5 @@
-import { motion } from 'framer-motion'
+import { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { TextReveal } from '../components/ui/TextReveal'
 import { WaterDropCard } from '../components/ui/Cards'
@@ -39,14 +40,25 @@ const techStack = [
   { name: 'Redis', icon: '🔴' }
 ]
 
+const industries = [
+  { name: 'Startups', desc: 'MVP development, rapid prototyping, scaling', icon: '🚀', flow: ['ideate', 'build', 'launch', 'scale'] },
+  { name: 'E-Commerce', desc: 'Marketplaces, payment integration, analytics', icon: '🛒', flow: ['catalog', 'cart', 'checkout', 'revenue'] },
+  { name: 'Healthcare', desc: 'HIPAA compliance, telemedicine, EHR', icon: '🏥', flow: ['patient', 'diagnose', 'treat', 'follow-up'] },
+  { name: 'Finance', desc: 'Fintech, banking, secure transactions', icon: '💰', flow: ['auth', 'transact', 'verify', 'settle'] },
+  { name: 'Education', desc: 'LMS, virtual classrooms, assessment', icon: '📚', flow: ['enroll', 'learn', 'practice', 'certify'] },
+  { name: 'Logistics', desc: 'Fleet tracking, supply chain, optimization', icon: '🚚', flow: ['track', 'route', 'deliver', 'confirm'] }
+]
+
 export function Services() {
   const { setCursorType } = useApp()
+  const [activeIndustry, setActiveIndustry] = useState(null)
+
   return (
     <main style={{ paddingTop: '100px', minHeight: '100vh' }}>
       <section className="container" style={{ marginBottom: '32px' }}>
         <TextReveal><div style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '8px', fontFamily: "var(--font-code)" }}>services</div></TextReveal>
         <TextReveal delay={0.1}><h1 style={{ fontSize: 'clamp(40px, 8vw, 90px)', fontWeight: '700', lineHeight: 0.95, marginBottom: '12px' }}>What we<br /><span className="text-gradient">do best</span></h1></TextReveal>
-        <TextReveal delay={0.2}><p style={{ fontSize: '14px', lineHeight: 1.7, color: 'var(--text-muted)', maxWidth: '420px' }}>Comprehensive digital services designed to elevate your brand and create meaningful experiences.</p></TextReveal>
+        <TextReveal delay={0.2}><p style={{ fontSize: '14px', lineHeight: 1.7, color: 'var(--text-muted)', maxWidth: '420px' }}>Comprehensive digital solutions for every industry. From startups to enterprises.</p></TextReveal>
       </section>
 
       <section className="section" style={{ borderTop: '1px solid var(--glass-border)', paddingTop: 0 }}>
@@ -81,50 +93,62 @@ export function Services() {
             <TextReveal><div style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '8px', fontFamily: "var(--font-code)" }}>tech_stack</div></TextReveal>
             <TextReveal delay={0.1}><h2 style={{ fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: '700', lineHeight: 1 }}>Technologies We <span className="text-gradient">Use</span></h2></TextReveal>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: '8px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '8px' }}>
             {techStack.map((tech, i) => (
               <motion.div key={i} initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }}
                 transition={{ delay: i * 0.03, duration: 0.4 }}
                 whileHover={{ scale: 1.05, y: -2 }}
-                className="liquid-glass" style={{ padding: '16px', borderRadius: '8px', textAlign: 'center', cursor: 'default' }}>
-                <div style={{ fontSize: '24px', marginBottom: '6px' }}>{tech.icon}</div>
-                <div style={{ fontSize: '11px', fontWeight: '500', fontFamily: "var(--font-code)" }}>{tech.name}</div>
+                className="liquid-glass" style={{ padding: '14px', borderRadius: '8px', textAlign: 'center', cursor: 'default' }}>
+                <div style={{ fontSize: '22px', marginBottom: '4px' }}>{tech.icon}</div>
+                <div style={{ fontSize: '10px', fontWeight: '500', fontFamily: "var(--font-code)" }}>{tech.name}</div>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Industries */}
+      {/* Interactive Industries */}
       <section className="section" style={{ borderTop: '1px solid var(--glass-border)' }}>
         <div className="container">
           <div style={{ textAlign: 'center', marginBottom: '32px' }}>
             <TextReveal><div style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '8px', fontFamily: "var(--font-code)" }}>industries</div></TextReveal>
             <TextReveal delay={0.1}><h2 style={{ fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: '700', lineHeight: 1 }}>Industries We <span className="text-gradient">Serve</span></h2></TextReveal>
+            <TextReveal delay={0.2}><p style={{ fontSize: '13px', color: 'var(--text-muted)', maxWidth: '400px', margin: '12px auto 0', lineHeight: 1.6 }}>Click any industry to see the workflow pipeline.</p></TextReveal>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '10px' }}>
-            {[
-              { name: 'Startups', desc: 'MVP development, rapid prototyping, scaling', icon: '🚀', code: 'mvp → scale → fund' },
-              { name: 'E-Commerce', desc: 'Marketplaces, payment integration, analytics', icon: '🛒', code: 'cart → checkout → revenue' },
-              { name: 'Healthcare', desc: 'HIPAA compliance, telemedicine, EHR', icon: '🏥', code: 'patient → diagnose → treat' },
-              { name: 'Finance', desc: 'Fintech, banking, secure transactions', icon: '💰', code: 'auth → transact → secure' },
-              { name: 'Education', desc: 'LMS, virtual classrooms, assessment', icon: '📚', code: 'learn → practice → certify' },
-              { name: 'Logistics', desc: 'Fleet tracking, supply chain, optimization', icon: '🚚', code: 'track → optimize → deliver' }
-            ].map((industry, i) => (
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '10px' }}>
+            {industries.map((industry, i) => (
               <motion.div key={i} initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
                 transition={{ delay: i * 0.05, duration: 0.4 }}
-                className="liquid-glass" style={{ padding: '18px', borderRadius: '10px' }}>
+                className="liquid-glass" style={{ padding: '18px', borderRadius: '10px', cursor: 'pointer' }}
+                onClick={() => setActiveIndustry(activeIndustry === i ? null : i)}>
                 <div style={{ fontSize: '24px', marginBottom: '8px' }}>{industry.icon}</div>
                 <div style={{ fontSize: '14px', fontWeight: '600', marginBottom: '4px' }}>{industry.name}</div>
                 <div style={{ fontSize: '11px', color: 'var(--text-muted)', lineHeight: 1.5, marginBottom: '8px' }}>{industry.desc}</div>
-                <div style={{ fontSize: '9px', color: '#22c55e', fontFamily: "var(--font-code)", opacity: 0.7 }}>{industry.code}</div>
+
+                <AnimatePresence>
+                  {activeIndustry === i && (
+                    <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3 }} style={{ overflow: 'hidden' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flexWrap: 'wrap', marginTop: '8px', paddingTop: '8px', borderTop: '1px solid var(--glass-border)' }}>
+                        {industry.flow.map((step, j) => (
+                          <motion.div key={j} initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: j * 0.1 }}
+                            style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                            <span style={{ fontSize: '9px', padding: '3px 8px', borderRadius: '4px', background: 'rgba(34,197,94,0.1)', color: '#22c55e', fontFamily: "var(--font-code)" }}>{step}</span>
+                            {j < industry.flow.length - 1 && <span style={{ fontSize: '8px', color: 'var(--text-muted)' }}>→</span>}
+                          </motion.div>
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Why Choose Us - Code Style */}
+      {/* Why Choose Us */}
       <section className="section" style={{ borderTop: '1px solid var(--glass-border)' }}>
         <div className="container">
           <div style={{ textAlign: 'center', marginBottom: '32px' }}>
