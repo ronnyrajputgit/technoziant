@@ -3,65 +3,95 @@ import { useEffect, useState } from 'react'
 
 export function Preloader() {
   const [phase, setPhase] = useState(0)
+  const [typedText, setTypedText] = useState('')
+
+  const lines = [
+    'import { Technoziant } from "@technoziant/core"',
+    'const app = new Technoziant({ mode: "production" })',
+    'await app.initialize()',
+    'console.log("🚀 Ready to launch")'
+  ]
 
   useEffect(() => {
-    const t1 = setTimeout(() => setPhase(1), 800)
-    const t2 = setTimeout(() => setPhase(2), 2000)
-    const t3 = setTimeout(() => setPhase(3), 3500)
+    const t1 = setTimeout(() => setPhase(1), 600)
+    const t2 = setTimeout(() => setPhase(2), 1800)
+    const t3 = setTimeout(() => setPhase(3), 3000)
     return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3) }
   }, [])
 
+  useEffect(() => {
+    if (phase === 0) return
+    const currentLine = lines[Math.min(phase - 1, lines.length - 1)]
+    let i = 0
+    const interval = setInterval(() => {
+      if (i <= currentLine.length) {
+        setTypedText(currentLine.slice(0, i))
+        i++
+      } else {
+        clearInterval(interval)
+      }
+    }, 20)
+    return () => clearInterval(interval)
+  }, [phase])
+
   return (
-    <motion.div exit={{ clipPath: 'inset(0 0 100% 0)' }} transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}
+    <motion.div exit={{ opacity: 0 }} transition={{ duration: 0.5, ease: [0.76, 0, 0.24, 1] }}
       style={{ position: 'fixed', inset: 0, background: 'var(--bg)', zIndex: 10000, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
 
-      {/* Ambient blobs */}
-      <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
-        <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.05, 0.1, 0.05] }} transition={{ duration: 4, repeat: Infinity }}
-          style={{ position: 'absolute', top: '15%', left: '10%', width: '500px', height: '500px', borderRadius: '50%', background: 'radial-gradient(circle, #4f8eff, transparent 70%)', filter: 'blur(80px)' }} />
-        <motion.div animate={{ scale: [1, 1.3, 1], opacity: [0.04, 0.08, 0.04] }} transition={{ duration: 5, repeat: Infinity, delay: 1 }}
-          style={{ position: 'absolute', bottom: '10%', right: '10%', width: '450px', height: '450px', borderRadius: '50%', background: 'radial-gradient(circle, #a855f7, transparent 70%)', filter: 'blur(70px)' }} />
-        <motion.div animate={{ scale: [1, 1.15, 1], opacity: [0.03, 0.07, 0.03] }} transition={{ duration: 6, repeat: Infinity, delay: 2 }}
-          style={{ position: 'absolute', top: '60%', left: '50%', width: '350px', height: '350px', borderRadius: '50%', background: 'radial-gradient(circle, #06d6a0, transparent 70%)', filter: 'blur(60px)' }} />
-      </div>
+      {/* Terminal window */}
+      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.6 }}
+        style={{
+          width: 'min(90vw, 500px)',
+          background: 'var(--code-bg)',
+          border: '1px solid var(--code-border)',
+          borderRadius: '12px',
+          overflow: 'hidden',
+          zIndex: 2
+        }}>
+        {/* Title bar */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '12px 16px', borderBottom: '1px solid var(--code-border)', background: 'var(--surface)' }}>
+          <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#ff5f57' }} />
+          <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#febc2e' }} />
+          <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#28c840' }} />
+          <span style={{ marginLeft: '8px', fontSize: '11px', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>terminal</span>
+        </div>
 
-      {/* Grid texture */}
-      <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', opacity: 0.02,
-        backgroundImage: 'linear-gradient(var(--text) 1px, transparent 1px), linear-gradient(90deg, var(--text) 1px, transparent 1px)',
-        backgroundSize: '60px 60px' }} />
-
-      {/* Logo */}
-      <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8 }}
-        style={{ marginBottom: '48px', zIndex: 2 }}>
-        <div style={{ fontSize: '32px', fontWeight: '700', fontFamily: 'var(--font-h)', letterSpacing: '-0.03em' }}>
-          <span className="text-gradient">Techno</span><span style={{ opacity: 0.25 }}>/</span><span>ziant</span>
+        {/* Terminal content */}
+        <div style={{ padding: '20px', fontFamily: "var(--font-code)", fontSize: '12px', lineHeight: '24px', minHeight: '180px' }}>
+          {lines.slice(0, phase).map((line, i) => (
+            <div key={i} style={{ display: 'flex', alignItems: 'center' }}>
+              <span style={{ color: '#22c55e', marginRight: '8px' }}>$</span>
+              <span style={{ color: 'var(--code-text)' }}>
+                {i === phase - 1 ? typedText : line}
+              </span>
+              {i === phase - 1 && typedText.length < lines[Math.min(phase - 1, lines.length - 1)].length && (
+                <span style={{ display: 'inline-block', width: '7px', height: '14px', background: '#22c55e', marginLeft: '2px', animation: 'blink 1s step-end infinite' }} />
+              )}
+              {i < phase - 1 && <span style={{ color: '#22c55e', marginLeft: '8px' }}>✓</span>}
+            </div>
+          ))}
+          {phase >= lines.length && (
+            <div style={{ marginTop: '12px', color: '#22c55e', fontSize: '11px' }}>
+              {'>'} Application ready
+            </div>
+          )}
         </div>
       </motion.div>
 
       {/* Loading bar */}
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}
-        style={{ width: '200px', height: '2px', background: 'var(--glass-border)', borderRadius: '1px', marginBottom: '20px', zIndex: 2, overflow: 'hidden' }}>
-        <motion.div animate={{ width: phase === 0 ? '30%' : phase === 1 ? '60%' : phase === 2 ? '90%' : '100%' }}
-          transition={{ duration: 1, ease: 'easeOut' }}
-          style={{ height: '100%', background: 'linear-gradient(90deg, #4f8eff, #a855f7, #06d6a0)', borderRadius: '1px' }} />
+        style={{ width: '200px', height: '2px', background: 'var(--glass-border)', borderRadius: '1px', marginTop: '24px', zIndex: 2, overflow: 'hidden' }}>
+        <motion.div animate={{ width: phase === 0 ? '25%' : phase === 1 ? '50%' : phase === 2 ? '75%' : '100%' }}
+          transition={{ duration: 0.8, ease: 'easeOut' }}
+          style={{ height: '100%', background: 'linear-gradient(90deg, #22c55e, #16a34a)', borderRadius: '1px' }} />
       </motion.div>
 
-      {/* Phase text */}
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}
-        style={{ fontSize: '10px', letterSpacing: '0.3em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '40px', zIndex: 2 }}>
-        {phase === 0 && 'Welcome to Technoziant'}
-        {phase === 1 && 'Meet Our Team'}
-        {phase === 2 && 'Crafting Experiences'}
-        {phase === 3 && 'Almost Ready'}
-      </motion.div>
-
-
-
-      {/* Bottom text */}
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 0.4 }} transition={{ delay: 0.8 }}
-        style={{ position: 'absolute', bottom: '20px', fontSize: '10px', color: 'var(--text-muted)', letterSpacing: '0.1em', zIndex: 2 }}>
-        © 2026 Technoziant. All rights reserved.
-      </motion.div>
+      <style>{`
+        @keyframes blink {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0; }
+        }
+      `}</style>
     </motion.div>
   )
 }
