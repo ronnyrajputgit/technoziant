@@ -68,6 +68,14 @@ export function Contact() {
   const { setCursorType } = useApp()
   const [f, setF] = useState({ name: '', email: '', company: '', service: '', message: '' })
   const [focus, setFocus] = useState(null)
+  const [submitted, setSubmitted] = useState(false)
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    setSubmitted(true)
+    setTimeout(() => setSubmitted(false), 4000)
+    setF({ name: '', email: '', company: '', service: '', message: '' })
+  }
 
   const inp = (n) => ({
     width: '100%', background: 'transparent', border: 'none',
@@ -124,7 +132,7 @@ export function Contact() {
             <div>
               <TextReveal><h2 style={{ fontSize: 'clamp(24px, 3vw, 32px)', fontWeight: '700', marginBottom: '8px' }}>Send a Message</h2></TextReveal>
               <TextReveal delay={0.1}><p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '24px', lineHeight: 1.6 }}>Fill out the form and we'll get back to you within 24 hours.</p></TextReveal>
-              <form onSubmit={e => e.preventDefault()}>
+              <form onSubmit={handleSubmit}>
                 {[['name', 'Your Name', 'John Doe', 'text'], ['email', 'Email', 'john@example.com', 'email'], ['company', 'Company', 'Company Inc', 'text'], ['service', 'Service', 'Web, Mobile, Design...', 'text']].map(([n, l, ph, t]) => (
                   <div key={n} style={{ marginBottom: '16px' }}>
                     <label style={{ fontSize: '9px', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '4px', display: 'block' }}>{l}</label>
@@ -135,8 +143,14 @@ export function Contact() {
                   <label style={{ fontSize: '9px', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '4px', display: 'block' }}>Details</label>
                   <textarea value={f.message} onChange={e => setF({ ...f, message: e.target.value })} onFocus={() => setFocus('message')} onBlur={() => setFocus(null)} placeholder="Tell us about your project..." rows={3} style={{ ...inp('message'), resize: 'none' }} />
                 </div>
-                <motion.button type="submit" whileHover={{ scale: 1.02, boxShadow: '0 0 30px var(--accent)' }} whileTap={{ scale: 0.98 }}
-                  className="liquid-glass-strong" style={{ padding: '13px 30px', borderRadius: '100px', fontSize: '13px', fontWeight: '600', color: 'var(--text)', width: '100%' }}>Send Message</motion.button>
+                {submitted ? (
+                  <div style={{ padding: '14px', borderRadius: '100px', fontSize: '13px', fontWeight: '600', color: '#06d6a0', background: 'rgba(6,214,160,0.1)', border: '1px solid rgba(6,214,160,0.2)', textAlign: 'center' }}>
+                    Message sent successfully!
+                  </div>
+                ) : (
+                  <motion.button type="submit" whileHover={{ scale: 1.02, boxShadow: '0 0 30px var(--accent)' }} whileTap={{ scale: 0.98 }}
+                    className="liquid-glass-strong" style={{ padding: '13px 30px', borderRadius: '100px', fontSize: '13px', fontWeight: '600', color: 'var(--text)', width: '100%' }}>Send Message</motion.button>
+                )}
               </form>
             </div>
 
@@ -161,8 +175,8 @@ export function Contact() {
               <div style={{ marginTop: '16px' }}>
                 <div style={{ fontSize: '9px', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '10px' }}>Follow Us</div>
                 <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-                  {[['💬', '#25D366'], ['💼', '#0A66C2'], ['🐦', '#1DA1F2'], ['📸', '#E4405F'], ['🐙', '#8b5cf6'], ['📺', '#FF0000']].map(([icon, color], i) => (
-                    <a key={i} href="#" className="liquid-glass" style={{ width: '34px', height: '34px', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', transition: 'all 0.3s', border: '1px solid transparent' }}
+                  {[['💬', '#25D366', 'https://wa.me/919876543210'], ['💼', '#0A66C2', 'https://www.linkedin.com/in/technoziant'], ['🐦', '#1DA1F2', 'https://x.com/technoziant'], ['📸', '#E4405F', 'https://instagram.com/technoziant'], ['🐙', '#8b5cf6', 'https://github.com/technoziant'], ['📺', '#FF0000', 'https://youtube.com/@technoziant']].map(([icon, color, url], i) => (
+                    <a key={i} href={url} target="_blank" rel="noopener noreferrer" className="liquid-glass" style={{ width: '34px', height: '34px', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', transition: 'all 0.3s', border: '1px solid transparent' }}
                       onMouseEnter={e => e.currentTarget.style.borderColor = `${color}40`}
                       onMouseLeave={e => e.currentTarget.style.borderColor = 'transparent'}>
                       {icon}

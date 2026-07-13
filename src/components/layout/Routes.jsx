@@ -8,6 +8,7 @@ import { Solutions } from '../../pages/Solutions'
 import { Process } from '../../pages/Process'
 import { FAQ } from '../../pages/FAQ'
 import { Careers } from '../../pages/Careers'
+import { Leaders } from '../../pages/Leaders'
 import { ServiceDetail } from '../../pages/ServiceDetail'
 import { SolutionDetail } from '../../pages/SolutionDetail'
 import { ProcessDetail } from '../../pages/ProcessDetail'
@@ -19,6 +20,7 @@ export function Routes() {
       <Route path="/" element={<Home />} />
       <Route path="/work" element={<Work />} />
       <Route path="/about" element={<About />} />
+      <Route path="/leaders" element={<Leaders />} />
       <Route path="/services" element={<Services />} />
       <Route path="/services/:slug" element={<ServiceDetail />} />
       <Route path="/solutions" element={<Solutions />} />
@@ -28,6 +30,7 @@ export function Routes() {
       <Route path="/process/:slug" element={<ProcessDetail />} />
       <Route path="/faq" element={<FAQ />} />
       <Route path="/careers" element={<Careers />} />
+      <Route path="*" element={<Home />} />
     </RouterRoutes>
   )
 }

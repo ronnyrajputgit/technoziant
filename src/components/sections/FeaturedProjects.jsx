@@ -5,13 +5,21 @@ import { projects } from '../../data/projects'
 import { useApp } from '../../context/AppContext'
 import { TextReveal } from '../ui/TextReveal'
 import { WaterDropCard } from '../ui/Cards'
+import { ProjectModal } from '../ui/ProjectModal'
 
 export function FeaturedProjects() {
   const ref = useRef(null)
   const { setCursorType } = useApp()
   const [hovered, setHovered] = useState(null)
+  const [selectedProject, setSelectedProject] = useState(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] })
   const x = useTransform(scrollYProgress, [0, 1], ['0%', '-8%'])
+
+  const openProject = (project) => {
+    setSelectedProject(project)
+    setIsModalOpen(true)
+  }
 
   return (
     <section ref={ref} className="section" style={{ overflow: 'hidden' }}>
@@ -26,7 +34,7 @@ export function FeaturedProjects() {
         <div style={{ display: 'flex', gap: '16px', padding: '0 clamp(20px, 4vw, 60px)' }}>
           {projects.slice(0, 5).map(p => (
             <WaterDropCard key={p.id} color={p.color} style={{ minWidth: '280px', width: '34vw', padding: 0 }}>
-              <Link to="/work" style={{ display: 'block' }}>
+              <div onClick={() => openProject(p)} style={{ display: 'block', cursor: 'pointer' }}>
                 <div onMouseEnter={() => { setHovered(p.id); setCursorType('project') }} onMouseLeave={() => { setHovered(null); setCursorType('default') }}
                   style={{ position: 'relative', aspectRatio: '16/10', overflow: 'hidden', borderRadius: '20px 20px 0 0' }}>
                   <motion.img src={p.image} alt={p.title} animate={{ scale: hovered === p.id ? 1.05 : 1 }} transition={{ duration: 0.6, ease: [0.76, 0, 0.24, 1] }}
@@ -45,11 +53,12 @@ export function FeaturedProjects() {
                     {p.tags.slice(0, 3).map(t => <span key={t} className="liquid-glass" style={{ padding: '2px 8px', fontSize: '9px', fontWeight: '500', borderRadius: '100px', color: p.color }}>{t}</span>)}
                   </div>
                 </div>
-              </Link>
+              </div>
             </WaterDropCard>
           ))}
         </div>
       </motion.div>
+      <ProjectModal project={selectedProject} isOpen={isModalOpen} onClose={() => { setIsModalOpen(false); setSelectedProject(null) }} />
     </section>
   )
 }

@@ -4,7 +4,7 @@ export const solutionDetails = {
     subtitle: 'Multi-Vendor Marketplace',
     color: '#4f8eff',
     heroImage: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=1200&q=80',
-    tagline: 'Powering $50M+ in annual transactions across 500+ vendors',
+    tagline: 'Powering high-volume transactions across 500+ vendors',
     problems: [
       { title: 'Fragmented Inventory', description: 'Vendors managing inventory across multiple platforms leading to overselling and stockouts.', icon: '📦', impact: '35% revenue loss' },
       { title: 'Payment Complexity', description: 'Handling multiple payment methods, currencies, and vendor splits was a nightmare.', icon: '💳', impact: '28% cart abandonment' },
@@ -27,7 +27,7 @@ export const solutionDetails = {
     ],
     metrics: [
       { before: '35%', after: '0%', label: 'Overselling Rate', icon: '📦' },
-      { before: '$2.1M', after: '$50M+', label: 'Annual GMV', icon: '💰' },
+      { before: 'Low', after: 'High', label: 'Annual GMV', icon: '💰' },
       { before: '45%', after: '12%', label: 'Bounce Rate', icon: '📉' },
       { before: '10K', after: '100K+', label: 'Concurrent Users', icon: '👥' }
     ],
@@ -43,7 +43,7 @@ export const solutionDetails = {
       { title: 'Access Barriers', description: 'Patients in rural areas waiting 3+ weeks for specialist appointments.', icon: '🏥', impact: '60% miss early diagnosis' },
       { title: 'Paper Records', description: 'Fragmented medical records across providers leading to medical errors.', icon: '📋', impact: '250K medical errors/year' },
       { title: 'No Telemedicine', description: 'COVID exposed the lack of remote consultation infrastructure.', icon: '💻', impact: '70% patients want remote care' },
-      { title: 'Compliance Burden', description: 'HIPAA compliance was manual, expensive, and error-prone.', icon: '🔒', impact: '$1.5M avg breach cost' }
+      { title: 'Compliance Burden', description: 'HIPAA compliance was manual, expensive, and error-prone.', icon: '🔒', impact: 'High risk exposure' }
     ],
     solutions: [
       { title: 'Telemedicine Engine', description: 'HD video consultations with real-time vitals sharing, screen sharing, and prescription generation.', tech: ['WebRTC', 'React', 'Node.js'], result: '500K consultations/month' },
@@ -143,7 +143,7 @@ export const solutionDetails = {
     tagline: 'Managing 5,000+ vehicles with 40% fuel savings',
     problems: [
       { title: 'Blind Fleet', description: 'No real-time visibility into vehicle locations, routes, or driver behavior.', icon: '🚛', impact: '30% unauthorized use' },
-      { title: 'Fuel Waste', description: 'Inefficient routing and idle time burning through fuel budgets.', icon: '⛽', impact: '$2M annual fuel waste' },
+      { title: 'Fuel Waste', description: 'Inefficient routing and idle time burning through fuel budgets.', icon: '⛽', impact: 'Significant annual waste' },
       { title: 'Late Deliveries', description: 'Manual dispatch and poor route planning causing 25% late deliveries.', icon: '📦', impact: '25% SLA violations' },
       { title: 'Reactive Maintenance', description: 'Vehicles breaking down on routes due to lack of preventive maintenance.', icon: '🔧', impact: '15% fleet downtime' }
     ],
@@ -163,7 +163,7 @@ export const solutionDetails = {
     ],
     metrics: [
       { before: '0%', after: '100%', label: 'Fleet Visibility', icon: '🚛' },
-      { before: '$2M', after: '$1.2M', label: 'Annual Fuel Cost', icon: '⛽' },
+      { before: 'High', after: 'Optimized', label: 'Annual Fuel Cost', icon: '⛽' },
       { before: '75%', after: '98%', label: 'On-Time Delivery', icon: '📦' },
       { before: '15%', after: '2%', label: 'Fleet Downtime', icon: '🔧' }
     ],

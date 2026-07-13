@@ -24,13 +24,15 @@ export function CTA() {
         ))}
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.4 }}
           style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', justifyContent: 'center' }}>
-          <Link to="/contact" onMouseEnter={() => setCursorType('hover')} onMouseLeave={() => setCursorType('default')}>
-            <motion.button whileHover={{ scale: 1.05, boxShadow: '0 0 40px var(--accent)' }} whileTap={{ scale: 0.95 }}
-              className="liquid-glass-strong" style={{ padding: '15px 34px', borderRadius: '100px', fontSize: '13px', fontWeight: '600', color: 'var(--text)' }}>Get in Touch</motion.button>
+          <Link to="/contact" onMouseEnter={() => setCursorType('hover')} onMouseLeave={() => setCursorType('default')}
+            style={{ display: 'inline-block' }}>
+            <motion.div whileHover={{ scale: 1.05, boxShadow: '0 0 40px var(--accent)' }} whileTap={{ scale: 0.95 }}
+              className="liquid-glass-strong" style={{ padding: '15px 34px', borderRadius: '100px', fontSize: '13px', fontWeight: '600', color: 'var(--text)', cursor: 'pointer', textAlign: 'center' }}>Get in Touch</motion.div>
           </Link>
-          <Link to="/work" onMouseEnter={() => setCursorType('hover')} onMouseLeave={() => setCursorType('default')}>
-            <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
-              className="liquid-glass" style={{ padding: '15px 34px', borderRadius: '100px', fontSize: '13px', fontWeight: '500', color: 'var(--text)' }}>View Work</motion.button>
+          <Link to="/work" onMouseEnter={() => setCursorType('hover')} onMouseLeave={() => setCursorType('default')}
+            style={{ display: 'inline-block' }}>
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
+              className="liquid-glass" style={{ padding: '15px 34px', borderRadius: '100px', fontSize: '13px', fontWeight: '500', color: 'var(--text)', cursor: 'pointer', textAlign: 'center' }}>View Work</motion.div>
           </Link>
         </motion.div>
       </div>

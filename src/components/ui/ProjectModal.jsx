@@ -55,13 +55,13 @@ const projectGallery = {
 
 const projectDetails = {
   1: { client: 'DataCorp Inc.', duration: '4 months', team: '6 members', result: '3x user engagement' },
-  2: { client: 'FinSecure', duration: '6 months', team: '8 members', result: '$2M+ transactions' },
+  2: { client: 'FinSecure', duration: '6 months', team: '8 members', result: 'High-volume transactions' },
   3: { client: 'Echo Inc.', duration: '5 months', team: '7 members', result: '2M+ active users' },
   4: { client: 'Prism Labs', duration: '8 months', team: '5 members', result: '50K+ creators' },
   5: { client: 'Atlas Co.', duration: '4 months', team: '4 members', result: '4.8★ App Store' },
   6: { client: 'Vortex Games', duration: '6 months', team: '9 members', result: '500K+ gamers' },
   7: { client: 'PulseMed', duration: '7 months', team: '8 members', result: '10K+ doctors' },
-  8: { client: 'Bloom Corp', duration: '5 months', team: '7 members', result: '$50M+ GMV' }
+  8: { client: 'Bloom Corp', duration: '5 months', team: '7 members', result: 'High GMV growth' }
 }
 
 export function ProjectModal({ project, isOpen, onClose }) {

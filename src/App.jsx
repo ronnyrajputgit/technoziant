@@ -11,7 +11,7 @@ import './styles/global.css'
 
 function App() {
   const [isLoading, setIsLoading] = useState(true)
-  useEffect(() => { const t = setTimeout(() => setIsLoading(false), 2800); return () => clearTimeout(t) }, [])
+  useEffect(() => { const t = setTimeout(() => setIsLoading(false), 3800); return () => clearTimeout(t) }, [])
 
   return (
     <AppProvider>

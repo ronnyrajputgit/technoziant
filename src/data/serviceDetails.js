@@ -254,7 +254,7 @@ export const tokens = {
     phases: [
       { id: 'discovery', title: 'Infrastructure Audit', description: 'Assessing current setup, identifying bottlenecks, security gaps, and cost optimization opportunities.', icon: '🔎', code: `# Infrastructure Assessment
 Services: 12
-Monthly Cost: $4,200
+Monthly Cost: Optimized
 Uptime: 99.2%
 Security Score: 78/100`, duration: '3-5 days' },
       { id: 'design', title: 'Architecture Design', description: 'Cloud-native architecture with auto-scaling, redundancy, and disaster recovery planning.', icon: '🏗️', code: `┌─────────┐     ┌─────────┐
@@ -290,7 +290,7 @@ service/api configured
 Uptime: 99.99%
 Avg Response: 42ms
 Active Users: 15,234
-Cost Today: $127`, duration: 'Ongoing' }
+Status: Optimized`, duration: 'Ongoing' }
     ],
     technologies: ['AWS', 'GCP', 'Docker', 'Kubernetes', 'Terraform', 'GitHub Actions', 'Datadog'],
     stats: [{ value: '99.99%', label: 'Uptime' }, { value: '40%', label: 'Cost Reduction' }, { value: '<50ms', label: 'Response Time' }, { value: '0', label: 'Security Incidents' }]

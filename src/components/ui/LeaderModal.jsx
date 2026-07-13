@@ -260,8 +260,12 @@ export function LeaderModal({ leader, isOpen, onClose }) {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.6, duration: 0.5 }}
                 style={{ display: 'flex', gap: '8px' }}>
-                {['LinkedIn', 'Twitter', 'Email'].map((social, i) => (
-                  <a key={i} href="#" className="liquid-glass" style={{
+                {[
+                  { name: 'LinkedIn', url: 'https://www.linkedin.com/in/technoziant' },
+                  { name: 'Twitter', url: 'https://x.com/technoziant' },
+                  { name: 'Email', url: 'mailto:business@technoziant.com' }
+                ].map((social, i) => (
+                  <a key={i} href={social.url} target="_blank" rel="noopener noreferrer" className="liquid-glass" style={{
                     padding: '8px 16px',
                     borderRadius: '100px',
                     fontSize: '11px',
@@ -270,7 +274,7 @@ export function LeaderModal({ leader, isOpen, onClose }) {
                     textDecoration: 'none',
                     transition: 'all 0.3s'
                   }}>
-                    {social}
+                    {social.name}
                   </a>
                 ))}
               </motion.div>

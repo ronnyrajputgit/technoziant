@@ -6,8 +6,18 @@ import { useApp } from '../../context/AppContext'
 export function Footer() {
   const { setCursorType } = useApp()
   const [email, setEmail] = useState('')
+  const [subscribed, setSubscribed] = useState(false)
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, margin: '-50px' })
+
+  const handleSubscribe = (e) => {
+    e.preventDefault()
+    if (email) {
+      setSubscribed(true)
+      setEmail('')
+      setTimeout(() => setSubscribed(false), 4000)
+    }
+  }
 
   return (
     <footer ref={ref} style={{ position: 'relative', overflow: 'hidden', background: 'var(--bg)' }}>
@@ -129,7 +139,7 @@ export function Footer() {
               <p style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: 1.6, marginBottom: '16px' }}>
                 Subscribe for updates, insights, and exclusive content.
               </p>
-              <form onSubmit={e => e.preventDefault()} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              <form onSubmit={handleSubscribe} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                 <input
                   type="email"
                   placeholder="your@email.com"
@@ -149,24 +159,30 @@ export function Footer() {
                   onFocus={e => e.target.style.borderColor = '#22c55e'}
                   onBlur={e => e.target.style.borderColor = 'var(--glass-border)'}
                 />
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  type="submit"
-                  style={{
-                    padding: '14px',
-                    background: 'linear-gradient(135deg, #22c55e, #16a34a)',
-                    color: '#fff',
-                    border: 'none',
-                    borderRadius: '12px',
-                    fontSize: '13px',
-                    fontWeight: '600',
-                    cursor: 'pointer',
-                    fontFamily: 'var(--font-b)',
-                    transition: 'opacity 0.3s'
-                  }}>
-                  Subscribe
-                </motion.button>
+                {subscribed ? (
+                  <div style={{ padding: '14px', borderRadius: '12px', fontSize: '13px', fontWeight: '600', color: '#06d6a0', background: 'rgba(6,214,160,0.1)', border: '1px solid rgba(6,214,160,0.2)', textAlign: 'center' }}>
+                    Subscribed successfully!
+                  </div>
+                ) : (
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    type="submit"
+                    style={{
+                      padding: '14px',
+                      background: 'linear-gradient(135deg, #22c55e, #16a34a)',
+                      color: '#fff',
+                      border: 'none',
+                      borderRadius: '12px',
+                      fontSize: '13px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      fontFamily: 'var(--font-b)',
+                      transition: 'opacity 0.3s'
+                    }}>
+                    Subscribe
+                  </motion.button>
+                )}
               </form>
             </motion.div>
           </div>
@@ -186,7 +202,7 @@ export function Footer() {
               {[
                 { title: 'Company', links: [{ l: 'Home', p: '/' }, { l: 'Work', p: '/work' }, { l: 'Services', p: '/services' }, { l: 'Contact', p: '/contact' }] },
                 { title: 'About', links: [{ l: 'About Us', p: '/about' }, { l: 'Careers', p: '/careers' }, { l: 'FAQ', p: '/faq' }] },
-                { title: 'Social', links: [{ l: 'LinkedIn', p: '#' }, { l: 'Twitter', p: '#' }, { l: 'Instagram', p: '#' }, { l: 'GitHub', p: '#' }] }
+                { title: 'Social', links: [{ l: 'LinkedIn', p: 'https://www.linkedin.com/in/technoziant' }, { l: 'Twitter', p: 'https://x.com/technoziant' }, { l: 'Instagram', p: 'https://instagram.com/technoziant' }, { l: 'GitHub', p: 'https://github.com/technoziant' }] }
               ].map((col, i) => (
                 <div key={i}>
                   <div style={{ fontSize: '10px', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '12px', fontWeight: '600' }}>
@@ -195,10 +211,11 @@ export function Footer() {
                   <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
                     {col.links.map(link => (
                       <li key={link.l} style={{ marginBottom: '8px' }}>
-                        <Link to={link.p} onMouseEnter={() => setCursorType('hover')} onMouseLeave={() => setCursorType('default')}
+                        <a href={link.p} target={link.p.startsWith('http') ? '_blank' : '_self'} rel={link.p.startsWith('http') ? 'noopener noreferrer' : undefined}
+                          onMouseEnter={() => setCursorType('hover')} onMouseLeave={() => setCursorType('default')}
                           style={{ fontSize: '13px', color: 'rgba(255,255,255,0.4)', transition: 'color 0.2s', textDecoration: 'none' }}>
                           {link.l}
-                        </Link>
+                        </a>
                       </li>
                     ))}
                   </ul>

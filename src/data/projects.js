@@ -9,7 +9,7 @@ export const projects = [
   { id: 5, title: 'Atlas Navigation', subtitle: 'Navigation App', description: 'Offline-first navigation with terrain mapping and weather integration for adventure seekers.', year: '2023', color: '#fbbf24', image: 'https://images.unsplash.com/photo-1519066629768-8ffcb8f06079?w=800&q=80', tags: ['Flutter', 'Maps API', 'Offline'], category: 'mobile', client: 'Atlas Co' },
   { id: 6, title: 'Vortex Gaming', subtitle: 'Gaming Platform', description: 'Cloud gaming platform with low-latency streaming and social features for 500K+ gamers.', year: '2023', color: '#ef4444', image: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=800&q=80', tags: ['WebRTC', 'WebGPU', 'WebSocket'], category: 'web', client: 'Vortex Games' },
   { id: 7, title: 'Pulse Health', subtitle: 'Healthcare Platform', description: 'HIPAA-compliant telemedicine platform connecting patients with 10K+ doctors worldwide.', year: '2024', color: '#22d3ee', image: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=800&q=80', tags: ['React', 'WebRTC', 'HIPAA'], category: 'web', client: 'PulseMed' },
-  { id: 8, title: 'Bloom E-Commerce', subtitle: 'Online Store', description: 'Multi-vendor marketplace with AI recommendations processing $50M+ in annual transactions.', year: '2024', color: '#10b981', image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&q=80', tags: ['Next.js', 'Stripe', 'PostgreSQL'], category: 'web', client: 'Bloom Corp' },
+  { id: 8, title: 'Bloom E-Commerce', subtitle: 'Online Store', description: 'Multi-vendor marketplace with AI recommendations processing high-volume annual transactions.', year: '2024', color: '#10b981', image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&q=80', tags: ['Next.js', 'Stripe', 'PostgreSQL'], category: 'web', client: 'Bloom Corp' },
 ]
 
 export const services = [
@@ -30,8 +30,8 @@ export const solutions = [
 ]
 
 export const team = [
-  { id: 1, name: 'Suman', role: 'Founder', image: sumanImg, bio: 'Visionary founder leading Technoziant with a mission to deliver world-class technology solutions.' },
-  { id: 2, name: 'Sahil', role: 'Co-founder & CEO', image: sahilImg, bio: 'Chief Executive Officer driving the company\'s vision and growth strategy.' },
+  { id: 1, name: 'Suman Kumar Sah', role: 'Founder', image: sumanImg, bio: 'Visionary founder leading Technoziant with a mission to deliver world-class technology solutions.' },
+  { id: 2, name: 'Shahil Kumar Sharma', role: 'Co-founder & CEO', image: sahilImg, bio: 'Chief Executive Officer driving the company\'s vision and growth strategy.' },
   { id: 3, name: 'Ronny', role: 'CTO', image: 'https://ui-avatars.com/api/?name=Ronny&background=06d6a0&color=fff&size=400&bold=true', bio: 'Chief Technology Officer overseeing all technical operations and system architecture.' },
   { id: 4, name: 'Avnish', role: 'CMO', image: 'https://ui-avatars.com/api/?name=Avnish&background=f472b6&color=fff&size=400&bold=true', bio: 'Chief Marketing Officer driving brand strategy and digital marketing initiatives.' },
 ]

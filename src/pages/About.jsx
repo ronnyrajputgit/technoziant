@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react'
+import { Link } from 'react-router-dom'
 import { motion, useInView } from 'framer-motion'
 import { TextReveal } from '../components/ui/TextReveal'
 import { GlowCard } from '../components/ui/Cards'
@@ -215,6 +216,12 @@ export function About() {
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px' }}>
             {team.map((member, i) => <TeamCard key={i} member={member} index={i} onClick={openMember} />)}
+          </div>
+          <div style={{ textAlign: 'center', marginTop: '32px' }}>
+            <Link to="/leaders" onMouseEnter={() => setCursorType('hover')} onMouseLeave={() => setCursorType('default')}
+              style={{ fontSize: '13px', color: 'var(--accent)', fontWeight: '500' }}>
+              Meet Our Full Leadership Team →
+            </Link>
           </div>
         </div>
       </section>

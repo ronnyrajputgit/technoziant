@@ -47,17 +47,19 @@ export function Hero() {
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.9 }}
           style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginBottom: '60px' }}>
-          <Link to="/work" onMouseEnter={() => setCursorType('hover')} onMouseLeave={() => setCursorType('default')}>
-            <motion.button whileHover={{ scale: 1.05, boxShadow: '0 0 40px var(--accent)' }} whileTap={{ scale: 0.95 }}
-              className="liquid-glass-strong" style={{ padding: '15px 34px', color: 'var(--text)', borderRadius: '100px', fontSize: '13px', fontWeight: '600', letterSpacing: '0.02em' }}>
+          <Link to="/work" onMouseEnter={() => setCursorType('hover')} onMouseLeave={() => setCursorType('default')}
+            style={{ display: 'inline-block' }}>
+            <motion.div whileHover={{ scale: 1.05, boxShadow: '0 0 40px var(--accent)' }} whileTap={{ scale: 0.95 }}
+              className="liquid-glass-strong" style={{ padding: '15px 34px', color: 'var(--text)', borderRadius: '100px', fontSize: '13px', fontWeight: '600', letterSpacing: '0.02em', cursor: 'pointer', textAlign: 'center' }}>
               View Our Work →
-            </motion.button>
+            </motion.div>
           </Link>
-          <Link to="/contact" onMouseEnter={() => setCursorType('hover')} onMouseLeave={() => setCursorType('default')}>
-            <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
-              className="liquid-glass" style={{ padding: '15px 34px', color: 'var(--text)', borderRadius: '100px', fontSize: '13px', fontWeight: '500' }}>
+          <Link to="/contact" onMouseEnter={() => setCursorType('hover')} onMouseLeave={() => setCursorType('default')}
+            style={{ display: 'inline-block' }}>
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
+              className="liquid-glass" style={{ padding: '15px 34px', color: 'var(--text)', borderRadius: '100px', fontSize: '13px', fontWeight: '500', cursor: 'pointer', textAlign: 'center' }}>
               Start a Project
-            </motion.button>
+            </motion.div>
           </Link>
         </motion.div>
 

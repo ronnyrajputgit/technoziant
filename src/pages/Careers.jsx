@@ -6,11 +6,11 @@ import { useApp } from '../context/AppContext'
 import { Footer } from '../components/layout/Footer'
 
 const jobs = [
-  { id: 1, title: 'Senior React Developer', type: 'Full-time', location: 'Remote / SF', team: 'Engineering', color: '#4f8eff' },
-  { id: 2, title: 'UI/UX Designer', type: 'Full-time', location: 'SF / NYC', team: 'Design', color: '#a855f7' },
+  { id: 1, title: 'Senior React Developer', type: 'Full-time', location: 'Remote', team: 'Engineering', color: '#4f8eff' },
+  { id: 2, title: 'UI/UX Designer', type: 'Full-time', location: 'Remote', team: 'Design', color: '#a855f7' },
   { id: 3, title: 'Mobile Developer (Flutter)', type: 'Full-time', location: 'Remote', team: 'Engineering', color: '#06d6a0' },
   { id: 4, title: 'DevOps Engineer', type: 'Full-time', location: 'Remote', team: 'Infrastructure', color: '#22d3ee' },
-  { id: 5, title: 'Project Manager', type: 'Full-time', location: 'SF', team: 'Operations', color: '#fbbf24' },
+  { id: 5, title: 'Project Manager', type: 'Full-time', location: 'Remote', team: 'Operations', color: '#fbbf24' },
   { id: 6, title: 'Content Strategist', type: 'Contract', location: 'Remote', team: 'Marketing', color: '#f472b6' },
 ]
 
@@ -41,8 +41,8 @@ export function Careers() {
                   <div><h3 style={{ fontSize: '15px', fontWeight: '600', marginBottom: '1px' }}>{job.title}</h3><p style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{job.team}</p></div>
                   <span className="liquid-glass" style={{ padding: '3px 10px', borderRadius: '100px', fontSize: '10px', color: 'var(--text-muted)' }}>{job.type}</span>
                   <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{job.location}</span>
-                  <Link to="/contact"><motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
-                    className="liquid-glass" style={{ padding: '7px 18px', borderRadius: '100px', fontSize: '11px', color: job.color, fontWeight: '500' }}>Apply →</motion.button></Link>
+                  <Link to="/contact" style={{ display: 'inline-block' }}><motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
+                    className="liquid-glass" style={{ padding: '7px 18px', borderRadius: '100px', fontSize: '11px', color: job.color, fontWeight: '500', cursor: 'pointer', textAlign: 'center' }}>Apply →</motion.div></Link>
                 </div>
               </WaterDropCard>
             ))}

@@ -60,9 +60,10 @@ export function Services() {
       <section className="section" style={{ borderTop: '1px solid var(--glass-border)', textAlign: 'center' }}>
         <div className="container">
           <TextReveal><h2 style={{ fontSize: 'clamp(30px, 4vw, 50px)', fontWeight: '700', lineHeight: 1.1, marginBottom: '20px' }}>Ready to start?</h2></TextReveal>
-          <Link to="/contact" onMouseEnter={() => setCursorType('hover')} onMouseLeave={() => setCursorType('default')}>
-            <motion.button whileHover={{ scale: 1.05, boxShadow: '0 0 40px var(--accent)' }} whileTap={{ scale: 0.95 }}
-              className="liquid-glass-strong" style={{ padding: '15px 34px', borderRadius: '100px', fontSize: '13px', fontWeight: '600', color: 'var(--text)' }}>Get in Touch</motion.button>
+          <Link to="/contact" onMouseEnter={() => setCursorType('hover')} onMouseLeave={() => setCursorType('default')}
+            style={{ display: 'inline-block' }}>
+            <motion.div whileHover={{ scale: 1.05, boxShadow: '0 0 40px var(--accent)' }} whileTap={{ scale: 0.95 }}
+              className="liquid-glass-strong" style={{ padding: '15px 34px', borderRadius: '100px', fontSize: '13px', fontWeight: '600', color: 'var(--text)', cursor: 'pointer', textAlign: 'center' }}>Get in Touch</motion.div>
           </Link>
         </div>
       </section>

@@ -4,6 +4,15 @@ import { useApp } from '../../context/AppContext'
 import { TextReveal } from '../ui/TextReveal'
 import { WaterDropCard } from '../ui/Cards'
 
+const slugMap = {
+  'Web Development': 'web-development',
+  'Mobile Apps': 'mobile-apps',
+  'Brand & Identity': 'brand-identity',
+  'UI/UX Design': 'ui-ux-design',
+  'Cloud & DevOps': 'cloud-devops',
+  'AI & Machine Learning': 'ai-machine-learning'
+}
+
 const icons = {
   web: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>,
   mobile: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></svg>,
@@ -27,7 +36,7 @@ export function ServicesGrid() {
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '12px' }}>
           {services.map(s => (
-            <Link to="/services" key={s.id}>
+            <Link to={`/services/${slugMap[s.title] || s.title.toLowerCase().replace(/\s+/g, '-')}`} key={s.id}>
               <WaterDropCard color={s.color} style={{ padding: 0 }}>
                 <div onMouseEnter={() => setCursorType('hover')} onMouseLeave={() => setCursorType('default')} style={{ padding: '24px' }}>
                   <div className="liquid-glass" style={{ width: '40px', height: '40px', borderRadius: 'var(--radius-sm)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px', color: s.color }}>{icons[s.icon]}</div>
