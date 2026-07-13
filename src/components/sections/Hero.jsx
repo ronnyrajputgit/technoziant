@@ -29,7 +29,7 @@ export function Hero() {
         backgroundImage: `linear-gradient(var(--text) 1px, transparent 1px), linear-gradient(90deg, var(--text) 1px, transparent 1px)`,
         backgroundSize: '80px 80px' }} />
 
-      <motion.div style={{ y, opacity, scale }} className="container" position="relative" zIndex="1">
+      <motion.div style={{ y, opacity, scale, position: 'relative', zIndex: 1 }} className="container">
         {/* Heading with clear separation */}
         <div style={{ marginBottom: '24px' }}>
           {['We craft', 'digital', 'products'].map((line, i) => (
