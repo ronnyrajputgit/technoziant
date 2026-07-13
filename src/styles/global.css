@@ -1,34 +1,34 @@
 :root {
-  --bg: #050a18;
-  --bg-2: #0a1029;
-  --surface: rgba(255,255,255,0.04);
-  --surface-2: rgba(255,255,255,0.06);
-  --glass: rgba(255,255,255,0.05);
-  --glass-border: rgba(255,255,255,0.08);
-  --glass-strong: rgba(255,255,255,0.08);
-  --text: #e4eaf5;
-  --text-muted: #6b7ba3;
-  --accent: #4f8eff;
-  --accent-2: #a855f7;
-  --accent-3: #06d6a0;
+  --bg: #0a0e1a;
+  --bg-2: #0f1424;
+  --surface: rgba(255,255,255,0.03);
+  --surface-2: rgba(255,255,255,0.05);
+  --glass: rgba(255,255,255,0.04);
+  --glass-border: rgba(255,255,255,0.07);
+  --glass-strong: rgba(255,255,255,0.06);
+  --text: #e2e8f0;
+  --text-muted: #64748b;
+  --accent: #22c55e;
+  --accent-2: #3b82f6;
+  --accent-3: #a855f7;
   --blur: 20px;
-  --radius: 20px;
-  --radius-sm: 12px;
-  --radius-xs: 8px;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --radius-xs: 6px;
   --font-h: 'Space Grotesk', sans-serif;
   --font-b: 'Inter', sans-serif;
   --font-code: 'JetBrains Mono', monospace;
 
   /* Navigation */
-  --nav-bg: rgba(10, 15, 30, 0.92);
-  --nav-bg-transparent: rgba(10, 15, 30, 0.6);
+  --nav-bg: rgba(10, 14, 26, 0.95);
+  --nav-bg-transparent: rgba(10, 14, 26, 0.6);
 
   /* Shadows */
-  --shadow-sm: 0 2px 8px rgba(0,0,0,0.15);
-  --shadow-lg: 0 8px 32px rgba(0,0,0,0.3);
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.2);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.4);
 
   /* Code theme */
-  --code-bg: rgba(0,0,0,0.4);
+  --code-bg: rgba(0,0,0,0.3);
   --code-border: rgba(255,255,255,0.06);
   --code-comment: #6a737d;
   --code-keyword: #c678dd;
@@ -40,23 +40,23 @@
 }
 
 [data-theme="light"] {
-  --bg: #f5f7fb;
-  --bg-2: #e8ecf4;
-  --surface: rgba(0,0,0,0.03);
-  --surface-2: rgba(0,0,0,0.05);
-  --glass: rgba(255,255,255,0.6);
+  --bg: #f8fafc;
+  --bg-2: #f1f5f9;
+  --surface: rgba(0,0,0,0.02);
+  --surface-2: rgba(0,0,0,0.04);
+  --glass: rgba(255,255,255,0.7);
   --glass-border: rgba(0,0,0,0.08);
-  --glass-strong: rgba(255,255,255,0.7);
-  --text: #1a2240;
-  --text-muted: #5a6580;
-  --accent: #2563eb;
-  --accent-2: #9333ea;
-  --accent-3: #059669;
+  --glass-strong: rgba(255,255,255,0.8);
+  --text: #0f172a;
+  --text-muted: #64748b;
+  --accent: #16a34a;
+  --accent-2: #2563eb;
+  --accent-3: #9333ea;
   --blur: 30px;
 
   /* Navigation */
-  --nav-bg: rgba(245, 247, 251, 0.92);
-  --nav-bg-transparent: rgba(245, 247, 251, 0.6);
+  --nav-bg: rgba(248, 250, 252, 0.95);
+  --nav-bg-transparent: rgba(248, 250, 252, 0.6);
 
   /* Shadows */
   --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);

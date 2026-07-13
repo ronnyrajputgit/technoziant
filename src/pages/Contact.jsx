@@ -6,17 +6,32 @@ import { WaterDropCard, GlowCard } from '../components/ui/Cards'
 import { useApp } from '../context/AppContext'
 import { Footer } from '../components/layout/Footer'
 
+const Icon = ({ d, color = 'currentColor', size = 20 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d={d} />
+  </svg>
+)
+
+const icons = {
+  whatsapp: 'M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z',
+  email: 'M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z M22 6l-10 7L2 6',
+  linkedin: 'M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z M2 9h4v12H2z M4 2a2 2 0 1 1 0 4 2 2 0 0 1 0-4z',
+  twitter: 'M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z',
+  instagram: 'M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z M17.5 6.5h.01 M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9a5.5 5.5 0 0 1-5.5 5.5h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2z',
+  phone: 'M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z',
+  map: 'M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z M12 7a3 3 0 1 1 0 6 3 3 0 0 1 0-6z',
+  youtube: 'M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19.1c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z M9.75 15.02V8.48l5.75 3.27-5.75 3.27z'
+}
+
 const connectMethods = [
-  { icon: '💬', title: 'WhatsApp', value: '+91 98765 43210', link: 'https://wa.me/919876543210', color: '#25D366', description: 'Quick chat anytime' },
-  { icon: '✉️', title: 'Email', value: 'business@technoziant.com', link: 'mailto:business@technoziant.com', color: '#4f8eff', description: 'For detailed inquiries' },
-  { icon: '💼', title: 'LinkedIn', value: 'Technoziant', link: 'https://www.linkedin.com/in/technoziant', color: '#0A66C2', description: 'Connect professionally' },
-  { icon: '🐦', title: 'Twitter / X', value: '@technoziant', link: 'https://x.com/technoziant', color: '#1DA1F2', description: 'Follow our updates' },
-  { icon: '📸', title: 'Instagram', value: '@technoziant', link: 'https://instagram.com/technoziant', color: '#E4405F', description: 'See our visual work' },
-  { icon: '🐙', title: 'GitHub', value: 'technoziant', link: 'https://github.com/technoziant', color: '#8b5cf6', description: 'Check our open source' },
-  { icon: '📞', title: 'Phone', value: '+91 98765 43210', link: 'tel:+919876543210', color: '#06d6a0', description: 'Mon-Fri 9AM-6PM IST' },
-  { icon: '📍', title: 'Office', value: 'India', link: 'https://maps.google.com/?q=India', color: '#fbbf24', description: 'Visit us anytime' },
-  { icon: '🎮', title: 'Discord', value: 'Technoziant Community', link: 'https://discord.gg/technoziant', color: '#5865F2', description: 'Join our community' },
-  { icon: '📺', title: 'YouTube', value: 'Technoziant', link: 'https://youtube.com/@technoziant', color: '#FF0000', description: 'Watch our tutorials' }
+  { icon: 'whatsapp', title: 'WhatsApp', value: '+91 98765 43210', link: 'https://wa.me/919876543210', color: '#25D366', description: 'Quick chat anytime' },
+  { icon: 'email', title: 'Email', value: 'business@technoziant.com', link: 'mailto:business@technoziant.com', color: '#4f8eff', description: 'For detailed inquiries' },
+  { icon: 'linkedin', title: 'LinkedIn', value: 'Technoziant', link: 'https://www.linkedin.com/in/technoziant', color: '#0A66C2', description: 'Connect professionally' },
+  { icon: 'twitter', title: 'Twitter / X', value: '@technoziant', link: 'https://x.com/technoziant', color: '#1DA1F2', description: 'Follow our updates' },
+  { icon: 'instagram', title: 'Instagram', value: '@technoziant', link: 'https://instagram.com/technoziant', color: '#E4405F', description: 'See our visual work' },
+  { icon: 'youtube', title: 'YouTube', value: 'Technoziant', link: 'https://youtube.com/@technoziant', color: '#FF0000', description: 'Watch our tutorials' },
+  { icon: 'phone', title: 'Phone', value: '+91 98765 43210', link: 'tel:+919876543210', color: '#06d6a0', description: 'Mon-Fri 9AM-6PM IST' },
+  { icon: 'map', title: 'Office', value: 'India', link: 'https://maps.google.com/?q=India', color: '#fbbf24', description: 'Visit us anytime' }
 ]
 
 function ConnectCard({ method, index }) {
@@ -31,7 +46,7 @@ function ConnectCard({ method, index }) {
       className="liquid-glass texture-noise"
       style={{
         display: 'flex', alignItems: 'center', gap: '14px', padding: '16px',
-        borderRadius: '14px', textDecoration: 'none', color: 'var(--text)',
+        borderRadius: '12px', textDecoration: 'none', color: 'var(--text)',
         cursor: 'pointer', transition: 'all 0.3s', border: '1px solid var(--glass-border)',
         position: 'relative', overflow: 'hidden'
       }}
@@ -44,18 +59,18 @@ function ConnectCard({ method, index }) {
         e.currentTarget.style.boxShadow = 'none'
       }}>
       <div style={{
-        width: '44px', height: '44px', borderRadius: '12px',
-        background: `${method.color}15`, display: 'flex', alignItems: 'center', justifyContent: 'center',
-        fontSize: '20px', flexShrink: 0, border: `1px solid ${method.color}20`
+        width: '40px', height: '40px', borderRadius: '10px',
+        background: `${method.color}12`, display: 'flex', alignItems: 'center', justifyContent: 'center',
+        flexShrink: 0, border: `1px solid ${method.color}20`
       }}>
-        {method.icon}
+        <Icon d={icons[method.icon]} color={method.color} size={18} />
       </div>
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2px' }}>
-          <span style={{ fontSize: '13px', fontWeight: '600' }}>{method.title}</span>
-          <span style={{ fontSize: '12px', color: method.color }}>→</span>
+          <span style={{ fontSize: '13px', fontWeight: '600', fontFamily: "var(--font-code)" }}>{method.title}</span>
+          <span style={{ fontSize: '11px', color: method.color }}>{'->'}</span>
         </div>
-        <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '1px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+        <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '1px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontFamily: "var(--font-code)" }}>
           {method.value}
         </div>
         <div style={{ fontSize: '10px', color: 'var(--text-muted)', opacity: 0.6 }}>{method.description}</div>
@@ -80,109 +95,77 @@ export function Contact() {
   const inp = (n) => ({
     width: '100%', background: 'transparent', border: 'none',
     borderBottom: `1px solid ${focus === n ? 'var(--accent)' : 'var(--glass-border)'}`,
-    padding: '12px 0', fontSize: '14px', color: 'var(--text)', outline: 'none',
-    transition: 'border-color 0.3s', fontFamily: 'var(--font-b)'
+    padding: '12px 0', fontSize: '13px', color: 'var(--text)', outline: 'none',
+    transition: 'border-color 0.3s', fontFamily: "var(--font-code)"
   })
 
   return (
-    <main style={{ paddingTop: '110px', minHeight: '100vh' }}>
-      <section className="container" style={{ marginBottom: '40px' }}>
-        <TextReveal><div style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '12px' }}>Get in Touch</div></TextReveal>
-        <TextReveal delay={0.1}><h1 style={{ fontSize: 'clamp(40px, 7vw, 90px)', fontWeight: '700', lineHeight: 0.95, marginBottom: '12px' }}>Let's create<br /><span className="text-gradient">something amazing</span></h1></TextReveal>
+    <main style={{ paddingTop: '100px', minHeight: '100vh' }}>
+      <section className="container" style={{ marginBottom: '32px' }}>
+        <TextReveal><div style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '8px', fontFamily: "var(--font-code)" }}>get_in_touch</div></TextReveal>
+        <TextReveal delay={0.1}><h1 style={{ fontSize: 'clamp(36px, 7vw, 80px)', fontWeight: '700', lineHeight: 0.95, marginBottom: '12px' }}>Let's create<br /><span className="text-gradient">something amazing</span></h1></TextReveal>
         <TextReveal delay={0.2}><p style={{ fontSize: '14px', lineHeight: 1.7, color: 'var(--text-muted)', maxWidth: '420px' }}>Choose your preferred way to connect. We're available across multiple platforms.</p></TextReveal>
       </section>
 
-      {/* Multiple Ways to Connect */}
-      <section className="section" style={{ borderTop: '1px solid var(--glass-border)', paddingTop: '40px' }}>
+      <section className="section" style={{ borderTop: '1px solid var(--glass-border)', paddingTop: '32px' }}>
         <div className="container">
-          <TextReveal>
-            <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-              <span className="liquid-glass" style={{ display: 'inline-block', padding: '5px 14px', borderRadius: '100px', fontSize: '10px', color: 'var(--accent)', fontWeight: '600', letterSpacing: '0.1em', marginBottom: '12px' }}>
-                10+ Ways to Connect
-              </span>
-              <h2 style={{ fontSize: 'clamp(24px, 3vw, 36px)', fontWeight: '700', fontFamily: 'var(--font-h)' }}>
-                Multiple Ways to <span className="text-gradient">Reach Us</span>
-              </h2>
-            </div>
-          </TextReveal>
-
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '10px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '10px' }}>
             {connectMethods.map((method, i) => <ConnectCard key={i} method={method} index={i} />)}
           </div>
-
-          {/* Quick Connect Banner */}
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-            className="liquid-glass texture-noise" style={{ marginTop: '24px', padding: '20px', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
-            <div>
-              <div style={{ fontSize: '14px', fontWeight: '600', marginBottom: '4px' }}>Need immediate help?</div>
-              <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Our WhatsApp bot responds instantly 24/7</div>
-            </div>
-            <a href="https://wa.me/919876543210" target="_blank" rel="noopener noreferrer"
-              style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '10px 20px', background: '#25D365', borderRadius: '100px', fontSize: '12px', fontWeight: '600', color: '#fff', textDecoration: 'none' }}>
-              💬 Chat on WhatsApp
-            </a>
-          </motion.div>
         </div>
       </section>
 
-      {/* Contact Form */}
       <section className="section" style={{ borderTop: '1px solid var(--glass-border)' }}>
         <div className="container">
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '36px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '32px' }}>
             <div>
-              <TextReveal><h2 style={{ fontSize: 'clamp(24px, 3vw, 32px)', fontWeight: '700', marginBottom: '8px' }}>Send a Message</h2></TextReveal>
-              <TextReveal delay={0.1}><p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '24px', lineHeight: 1.6 }}>Fill out the form and we'll get back to you within 24 hours.</p></TextReveal>
+              <TextReveal><h2 style={{ fontSize: 'clamp(22px, 3vw, 28px)', fontWeight: '700', marginBottom: '8px' }}>Send a Message</h2></TextReveal>
+              <TextReveal delay={0.1}><p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '20px', lineHeight: 1.6 }}>Fill out the form and we'll get back to you within 24 hours.</p></TextReveal>
               <form onSubmit={handleSubmit}>
-                {[['name', 'Your Name', 'John Doe', 'text'], ['email', 'Email', 'john@example.com', 'email'], ['company', 'Company', 'Company Inc', 'text'], ['service', 'Service', 'Web, Mobile, Design...', 'text']].map(([n, l, ph, t]) => (
-                  <div key={n} style={{ marginBottom: '16px' }}>
-                    <label style={{ fontSize: '9px', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '4px', display: 'block' }}>{l}</label>
+                {[['name', 'name', 'John Doe', 'text'], ['email', 'email', 'john@example.com', 'email'], ['company', 'company', 'Company Inc', 'text'], ['service', 'service', 'Web, Mobile, Design...', 'text']].map(([n, l, ph, t]) => (
+                  <div key={n} style={{ marginBottom: '14px' }}>
+                    <label style={{ fontSize: '9px', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '4px', display: 'block', fontFamily: "var(--font-code)" }}>{l}</label>
                     <input type={t} value={f[n]} onChange={e => setF({ ...f, [n]: e.target.value })} onFocus={() => setFocus(n)} onBlur={() => setFocus(null)} placeholder={ph} style={inp(n)} />
                   </div>
                 ))}
-                <div style={{ marginBottom: '16px' }}>
-                  <label style={{ fontSize: '9px', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '4px', display: 'block' }}>Details</label>
+                <div style={{ marginBottom: '14px' }}>
+                  <label style={{ fontSize: '9px', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '4px', display: 'block', fontFamily: "var(--font-code)" }}>message</label>
                   <textarea value={f.message} onChange={e => setF({ ...f, message: e.target.value })} onFocus={() => setFocus('message')} onBlur={() => setFocus(null)} placeholder="Tell us about your project..." rows={3} style={{ ...inp('message'), resize: 'none' }} />
                 </div>
                 {submitted ? (
-                  <div style={{ padding: '14px', borderRadius: '100px', fontSize: '13px', fontWeight: '600', color: '#06d6a0', background: 'rgba(6,214,160,0.1)', border: '1px solid rgba(6,214,160,0.2)', textAlign: 'center' }}>
-                    Message sent successfully!
+                  <div style={{ padding: '12px', borderRadius: '8px', fontSize: '12px', fontWeight: '600', color: '#22c55e', background: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.15)', textAlign: 'center', fontFamily: "var(--font-code)" }}>
+                    ✓ Message sent successfully!
                   </div>
                 ) : (
-                  <motion.button type="submit" whileHover={{ scale: 1.02, boxShadow: '0 0 30px var(--accent)' }} whileTap={{ scale: 0.98 }}
-                    className="liquid-glass-strong" style={{ padding: '13px 30px', borderRadius: '100px', fontSize: '13px', fontWeight: '600', color: 'var(--text)', width: '100%' }}>Send Message</motion.button>
+                  <motion.button type="submit" whileHover={{ scale: 1.02, boxShadow: '0 0 20px var(--accent)' }} whileTap={{ scale: 0.98 }}
+                    style={{ padding: '12px 28px', borderRadius: '8px', fontSize: '12px', fontWeight: '600', color: '#fff', width: '100%', background: 'linear-gradient(135deg, #22c55e, #16a34a)', fontFamily: "var(--font-code)" }}>
+                    {'>'} send_message
+                  </motion.button>
                 )}
               </form>
             </div>
 
             <div>
-              <TextReveal><h2 style={{ fontSize: 'clamp(24px, 3vw, 32px)', fontWeight: '700', marginBottom: '8px' }}>Office Info</h2></TextReveal>
-              <TextReveal delay={0.1}><p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '24px', lineHeight: 1.6 }}>Visit us or reach out through any channel.</p></TextReveal>
+              <TextReveal><h2 style={{ fontSize: 'clamp(22px, 3vw, 28px)', fontWeight: '700', marginBottom: '8px' }}>Office Info</h2></TextReveal>
+              <TextReveal delay={0.1}><p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '20px', lineHeight: 1.6 }}>Visit us or reach out through any channel.</p></TextReveal>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                {[['📍', 'Address', 'India'], ['🕐', 'Hours', 'Mon - Fri: 9:00 AM - 6:00 PM IST'], ['📧', 'General', 'business@technoziant.com'], ['💼', 'Business', 'partnerships@technoziant.com'], ['🚨', 'Emergency', 'support@technoziant.com']].map(([icon, label, val], i) => (
-                  <GlowCard key={i} style={{ padding: '14px 16px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                      <span style={{ fontSize: '16px' }}>{icon}</span>
+                {[
+                  { icon: 'map', label: 'address', val: 'India', color: '#fbbf24' },
+                  { icon: 'phone', label: 'hours', val: 'Mon - Fri: 9:00 AM - 6:00 PM IST', color: '#06d6a0' },
+                  { icon: 'email', label: 'general', val: 'business@technoziant.com', color: '#4f8eff' },
+                  { icon: 'email', label: 'business', val: 'partnerships@technoziant.com', color: '#a855f7' }
+                ].map((item, i) => (
+                  <GlowCard key={i} style={{ padding: '12px 14px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <Icon d={icons[item.icon]} color={item.color} size={16} />
                       <div>
-                        <div style={{ fontSize: '9px', color: 'var(--text-muted)', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '1px' }}>{label}</div>
-                        <div style={{ fontSize: '12px', fontWeight: '500' }}>{val}</div>
+                        <div style={{ fontSize: '9px', color: 'var(--text-muted)', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '1px', fontFamily: "var(--font-code)" }}>{item.label}</div>
+                        <div style={{ fontSize: '12px', fontWeight: '500', fontFamily: "var(--font-code)" }}>{item.val}</div>
                       </div>
                     </div>
                   </GlowCard>
                 ))}
-              </div>
-
-              <div style={{ marginTop: '16px' }}>
-                <div style={{ fontSize: '9px', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '10px' }}>Follow Us</div>
-                <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-                  {[['💬', '#25D366', 'https://wa.me/919876543210'], ['💼', '#0A66C2', 'https://www.linkedin.com/in/technoziant'], ['🐦', '#1DA1F2', 'https://x.com/technoziant'], ['📸', '#E4405F', 'https://instagram.com/technoziant'], ['🐙', '#8b5cf6', 'https://github.com/technoziant'], ['📺', '#FF0000', 'https://youtube.com/@technoziant']].map(([icon, color, url], i) => (
-                    <a key={i} href={url} target="_blank" rel="noopener noreferrer" className="liquid-glass" style={{ width: '34px', height: '34px', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', transition: 'all 0.3s', border: '1px solid transparent' }}
-                      onMouseEnter={e => e.currentTarget.style.borderColor = `${color}40`}
-                      onMouseLeave={e => e.currentTarget.style.borderColor = 'transparent'}>
-                      {icon}
-                    </a>
-                  ))}
-                </div>
               </div>
             </div>
           </div>

@@ -37,12 +37,14 @@ export const team = [
 ]
 
 export const awards = [
-  { year: '2024', name: 'FWA Site of the Day', count: 5, icon: '🏆' },
-  { year: '2024', name: 'Awwwards SOTD', count: 8, icon: '🥇' },
-  { year: '2024', name: 'Webby Awards', count: 3, icon: '⭐' },
-  { year: '2023', name: 'CSS Design Awards', count: 12, icon: '🎨' },
-  { year: '2023', name: 'Red Dot Design', count: 2, icon: '🔴' },
-  { year: '2023', name: 'IF Design Award', count: 4, icon: '💎' },
+  { year: '2024-2026', name: 'FWA Site of the Day', count: 12, icon: '🏆', description: 'Recognized for exceptional web design and innovation' },
+  { year: '2024-2026', name: 'Awwwards SOTD', count: 18, icon: '🥇', description: 'Awarded for outstanding digital experiences' },
+  { year: '2024-2026', name: 'Webby Awards', count: 8, icon: '⭐', description: 'International awards for web excellence' },
+  { year: '2023-2026', name: 'CSS Design Awards', count: 24, icon: '🎨', description: 'Best CSS design and creative development' },
+  { year: '2023-2026', name: 'Red Dot Design', count: 5, icon: '🔴', description: 'Product design and communication design' },
+  { year: '2023-2026', name: 'IF Design Award', count: 9, icon: '💎', description: 'International forum for design excellence' },
+  { year: '2024-2026', name: 'Good Design Award', count: 6, icon: '🏅', description: 'Innovation and design quality recognition' },
+  { year: '2024-2026', name: 'German Design Award', count: 4, icon: '🎯', description: 'International design competition winner' },
 ]
 
 export const testimonials = [

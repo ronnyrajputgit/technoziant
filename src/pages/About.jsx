@@ -230,16 +230,30 @@ export function About() {
       <section className="section" style={{ borderTop: '1px solid var(--glass-border)' }}>
         <div className="container">
           <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-            <TextReveal><h2 style={{ fontSize: 'clamp(34px, 5vw, 64px)', fontWeight: '700', lineHeight: 1 }}>Our <span className="text-gradient">Awards</span></h2></TextReveal>
+            <TextReveal><div style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '8px', fontFamily: "var(--font-code)" }}>achievements</div></TextReveal>
+            <TextReveal delay={0.1}><h2 style={{ fontSize: 'clamp(34px, 5vw, 64px)', fontWeight: '700', lineHeight: 1 }}>Our <span className="text-gradient">Awards</span></h2></TextReveal>
+            <TextReveal delay={0.2}><p style={{ fontSize: '13px', color: 'var(--text-muted)', maxWidth: '500px', margin: '12px auto 0', lineHeight: 1.6 }}>
+              Recognized by industry leaders for our commitment to design excellence and innovation.
+            </p></TextReveal>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: '10px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '12px' }}>
             {awards.map((a, i) => (
-              <GlowCard key={i} style={{ padding: '18px', textAlign: 'center' }}>
-                <div style={{ fontSize: '24px', marginBottom: '6px' }}>{a.icon}</div>
-                <div style={{ fontSize: '20px', fontWeight: '700', marginBottom: '1px', fontFamily: 'var(--font-h)' }}>{a.count}x</div>
-                <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{a.name}</div>
-                <div style={{ fontSize: '9px', color: 'var(--text-muted)', marginTop: '2px', opacity: 0.6 }}>{a.year}</div>
-              </GlowCard>
+              <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                transition={{ delay: i * 0.05, duration: 0.5 }}
+                whileHover={{ y: -4, boxShadow: '0 8px 30px rgba(79,142,255,0.1)' }}
+                className="liquid-glass" style={{ padding: '20px', borderRadius: '12px', cursor: 'default', transition: 'all 0.3s' }}>
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '14px' }}>
+                  <div style={{ fontSize: '28px', flexShrink: 0 }}>{a.icon}</div>
+                  <div>
+                    <div style={{ fontSize: '18px', fontWeight: '700', fontFamily: 'var(--font-h)', marginBottom: '2px' }}>
+                      <span className="text-gradient">{a.count}x</span>
+                    </div>
+                    <div style={{ fontSize: '13px', fontWeight: '600', color: 'var(--text)', marginBottom: '4px' }}>{a.name}</div>
+                    <div style={{ fontSize: '11px', color: 'var(--text-muted)', lineHeight: 1.5, marginBottom: '6px' }}>{a.description}</div>
+                    <div style={{ fontSize: '9px', color: 'var(--text-muted)', fontFamily: "var(--font-code)", opacity: 0.6 }}>{a.year}</div>
+                  </div>
+                </div>
+              </motion.div>
             ))}
           </div>
         </div>
