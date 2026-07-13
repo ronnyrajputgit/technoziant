@@ -23,7 +23,7 @@ export function Careers() {
         <TextReveal delay={0.1}><h1 style={{ fontSize: 'clamp(44px, 8vw, 100px)', fontWeight: '700', lineHeight: 0.95, marginBottom: '16px' }}>Join our <span className="text-gradient">team</span></h1></TextReveal>
         <TextReveal delay={0.2}><p style={{ fontSize: '14px', lineHeight: 1.7, color: 'var(--text-muted)', maxWidth: '460px', marginBottom: '32px' }}>We're always looking for talented individuals who are passionate about creating exceptional digital experiences.</p></TextReveal>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '10px' }}>
-          {[{ l: 'Remote First', v: 'Work from anywhere' }, { l: 'Flexible Hours', v: 'Work-life balance' }, { l: 'Health Benefits', v: 'Full coverage' }, { l: 'Learning Budget', v: '$3K/year' }, { l: 'Equity Options', v: 'For all employees' }].map((b, i) => (
+          {[{ l: 'Remote First', v: 'Work from anywhere' }, { l: 'Flexible Hours', v: 'Work-life balance' }, { l: 'Health Benefits', v: 'Full coverage' }, { l: 'Learning Budget', v: 'Annual allowance' }, { l: 'Equity Options', v: 'For all employees' }].map((b, i) => (
             <WaterDropCard key={i} color="var(--accent)" style={{ padding: '18px' }}>
               <div style={{ fontSize: '9px', color: 'var(--accent)', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '4px', fontWeight: '600' }}>{b.l}</div>
               <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{b.v}</div>

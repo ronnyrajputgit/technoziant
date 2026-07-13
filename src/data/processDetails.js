@@ -30,9 +30,9 @@ export const processDetails = {
       { title: 'Architecture Planning', description: 'System architecture, API design, database schema, and infrastructure planning.', icon: '🏗️', image: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=400&q=80' },
       { title: 'Timeline Creation', description: 'Sprint planning, milestone definitions, and resource allocation.', icon: '📅', image: 'https://images.unsplash.com/photo-1506784983877-45594efa4cbe?w=400&q=80' },
       { title: 'Risk Assessment', description: 'Identifying potential risks, mitigation strategies, and contingency plans.', icon: '⚠️', image: 'https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?w=400&q=80' },
-      { title: 'Budget Planning', description: 'Detailed cost estimation, resource planning, and ROI projections.', icon: '💰', image: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=400&q=80' }
+      { title: 'Resource Planning', description: 'Team allocation, skill mapping, and resource optimization.', icon: '💰', image: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=400&q=80' }
     ],
-    deliverables: ['Project Roadmap', 'Technical Architecture', 'Sprint Plan', 'Risk Register', 'Budget Proposal'],
+    deliverables: ['Project Roadmap', 'Technical Architecture', 'Sprint Plan', 'Risk Register', 'Resource Plan'],
     tools: ['Jira', 'Confluence', 'Lucidchart', 'Figma', 'GitHub']
   },
   design: {
@@ -105,8 +105,8 @@ export const processDetails = {
       { title: 'Video Consultation', description: 'Screen sharing and video calls for complex troubleshooting and training.', icon: '📹', image: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&q=80', availability: 'By Appointment', responseTime: 'Scheduled' }
     ],
     plans: [
-      { name: 'Starter', price: '$999/mo', features: ['AI Chatbot', 'Email Support', '8-hour Response SLA', 'Monthly Report'], color: '#4f8eff' },
-      { name: 'Professional', price: '$2,499/mo', features: ['AI Chatbot + Assistant', 'Human Agents', '4-hour Response SLA', 'Weekly Report', 'Dedicated Manager'], color: '#a855f7' },
+      { name: 'Starter', price: 'Contact Us', features: ['AI Chatbot', 'Email Support', '8-hour Response SLA', 'Monthly Report'], color: '#4f8eff' },
+      { name: 'Professional', price: 'Contact Us', features: ['AI Chatbot + Assistant', 'Human Agents', '4-hour Response SLA', 'Weekly Report', 'Dedicated Manager'], color: '#a855f7' },
       { name: 'Enterprise', price: 'Custom', features: ['All Channels', 'Phone Support', '1-hour Response SLA', 'Real-time Dashboard', 'On-site Support', 'Custom SLA'], color: '#06d6a0' }
     ],
     metrics: [

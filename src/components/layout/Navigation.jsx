@@ -108,80 +108,87 @@ export function Navigation() {
         {isOpen && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
-            style={{ position: 'fixed', inset: 0, zIndex: 99, background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)' }}
+            style={{ position: 'fixed', inset: 0, zIndex: 99, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)' }}
             onClick={() => setIsOpen(false)}>
-            <motion.div initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -20, opacity: 0 }}
-              transition={{ duration: 0.4, ease: [0.76, 0, 0.24, 1] }}
+            <motion.div initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}
+              transition={{ duration: 0.35, ease: [0.76, 0, 0.24, 1] }}
               onClick={e => e.stopPropagation()}
               style={{
-                position: 'absolute', top: '90px', left: 'clamp(16px, 3vw, 60px)', right: 'clamp(16px, 3vw, 60px)',
-                borderRadius: '24px', padding: '24px', maxHeight: 'calc(100vh - 120px)', overflowY: 'auto',
-                background: 'rgba(15, 15, 15, 0.95)', backdropFilter: 'blur(20px)',
-                border: '1px solid rgba(255,255,255,0.1)',
-                boxShadow: '0 25px 50px rgba(0,0,0,0.5)'
+                position: 'absolute', top: 0, right: 0, bottom: 0,
+                width: 'min(85vw, 340px)', padding: '24px 20px',
+                display: 'flex', flexDirection: 'column',
+                background: 'rgba(12, 12, 12, 0.98)', backdropFilter: 'blur(24px)',
+                borderLeft: '1px solid rgba(255,255,255,0.06)',
+                boxShadow: '-20px 0 60px rgba(0,0,0,0.5)'
               }}>
-              {/* Header */}
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                <span style={{ fontSize: '11px', fontWeight: '600', color: 'rgba(255,255,255,0.4)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Navigation</span>
-                <div style={{ display: 'flex', gap: '8px' }}>
-                  <motion.button onClick={toggleTheme} whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
-                    style={{
-                      width: '34px', height: '34px', borderRadius: '50%',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontSize: '14px', background: 'rgba(255,255,255,0.1)', border: 'none',
-                      cursor: 'pointer', color: '#fff'
-                    }}>
-                    {theme === 'dark' ? '☀️' : '🌙'}
-                  </motion.button>
-                  <button onClick={() => setIsOpen(false)} style={{
-                    width: '34px', height: '34px', borderRadius: '50%',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: '14px', background: 'rgba(255,255,255,0.1)', border: 'none',
-                    cursor: 'pointer', color: '#fff'
-                  }}>✕</button>
-                </div>
+              {/* Close button */}
+              <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '32px' }}>
+                <button onClick={() => setIsOpen(false)} style={{
+                  width: '40px', height: '40px', borderRadius: '12px',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: '18px', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)',
+                  cursor: 'pointer', color: 'rgba(255,255,255,0.5)', transition: 'all 0.2s'
+                }}
+                  onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; e.currentTarget.style.color = '#fff' }}
+                  onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; e.currentTarget.style.color = 'rgba(255,255,255,0.5)' }}>
+                  ✕
+                </button>
               </div>
 
               {/* Navigation links */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '20px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', flex: 1 }}>
                 {links.map((ln, i) => (
                   <motion.div key={ln.p}
-                    initial={{ opacity: 0, x: -20 }}
+                    initial={{ opacity: 0, x: 30 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.05, duration: 0.3 }}>
+                    transition={{ delay: 0.1 + i * 0.06, duration: 0.35 }}>
                     <Link to={ln.p} onClick={() => setIsOpen(false)}
-                      onMouseEnter={() => setCursorType('hover')} onMouseLeave={() => setCursorType('default')}
                       style={{
                         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                        padding: '14px 18px', borderRadius: '14px', textDecoration: 'none',
-                        color: location.pathname === ln.p ? '#fff' : 'rgba(255,255,255,0.5)',
-                        fontSize: '15px', fontWeight: '500', transition: 'all 0.2s',
-                        background: location.pathname === ln.p ? 'rgba(255,255,255,0.08)' : 'transparent'
+                        padding: '16px 14px', borderRadius: '12px', textDecoration: 'none',
+                        color: location.pathname === ln.p ? '#fff' : 'rgba(255,255,255,0.45)',
+                        fontSize: '16px', fontWeight: location.pathname === ln.p ? '600' : '400',
+                        transition: 'all 0.2s', letterSpacing: '0.01em',
+                        background: location.pathname === ln.p ? 'rgba(255,255,255,0.06)' : 'transparent'
                       }}>
                       <span>{ln.l}</span>
-                      <span style={{ opacity: 0.4, fontSize: '14px' }}>→</span>
+                      <span style={{ opacity: 0.3, fontSize: '13px' }}>→</span>
                     </Link>
                   </motion.div>
                 ))}
               </div>
 
-              {/* CTA */}
-              <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '16px' }}>
-                <Link to="/contact" onClick={() => setIsOpen(false)} onMouseEnter={() => setCursorType('hover')} onMouseLeave={() => setCursorType('default')}
-                  style={{
-                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-                    padding: '14px', borderRadius: '14px', fontSize: '14px', fontWeight: '600',
-                    textDecoration: 'none', background: 'linear-gradient(135deg, #22c55e, #16a34a)',
-                    color: '#fff', transition: 'all 0.3s'
-                  }}>
-                  Get in Touch →
-                </Link>
-              </div>
+              {/* Bottom section */}
+              <div style={{ marginTop: 'auto' }}>
+                {/* Theme toggle */}
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}
+                  style={{ marginBottom: '16px' }}>
+                  <button onClick={toggleTheme} style={{
+                    width: '100%', padding: '14px', borderRadius: '12px',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px',
+                    fontSize: '13px', fontWeight: '500',
+                    background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)',
+                    cursor: 'pointer', color: 'rgba(255,255,255,0.6)', transition: 'all 0.2s'
+                  }}
+                    onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.08)'; e.currentTarget.style.color = '#fff' }}
+                    onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; e.currentTarget.style.color = 'rgba(255,255,255,0.6)' }}>
+                    <span>{theme === 'dark' ? '☀️' : '🌙'}</span>
+                    <span>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
+                  </button>
+                </motion.div>
 
-              {/* Footer */}
-              <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '14px', marginTop: '16px', display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: 'rgba(255,255,255,0.3)' }}>
-                <span>business@technoziant.com</span>
-                <span>© 2026 Technoziant</span>
+                {/* CTA */}
+                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }}>
+                  <Link to="/contact" onClick={() => setIsOpen(false)}
+                    style={{
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+                      padding: '16px', borderRadius: '14px', fontSize: '15px', fontWeight: '600',
+                      textDecoration: 'none', background: 'linear-gradient(135deg, #22c55e, #16a34a)',
+                      color: '#fff', transition: 'all 0.3s', boxShadow: '0 8px 30px rgba(34,197,94,0.25)'
+                    }}>
+                    Get in Touch →
+                  </Link>
+                </motion.div>
               </div>
             </motion.div>
           </motion.div>

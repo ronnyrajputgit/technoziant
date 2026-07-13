@@ -66,7 +66,7 @@ function ConnectCard({ method, index }) {
 
 export function Contact() {
   const { setCursorType } = useApp()
-  const [f, setF] = useState({ name: '', email: '', company: '', service: '', budget: '', message: '' })
+  const [f, setF] = useState({ name: '', email: '', company: '', service: '', message: '' })
   const [focus, setFocus] = useState(null)
 
   const inp = (n) => ({
@@ -125,7 +125,7 @@ export function Contact() {
               <TextReveal><h2 style={{ fontSize: 'clamp(24px, 3vw, 32px)', fontWeight: '700', marginBottom: '8px' }}>Send a Message</h2></TextReveal>
               <TextReveal delay={0.1}><p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '24px', lineHeight: 1.6 }}>Fill out the form and we'll get back to you within 24 hours.</p></TextReveal>
               <form onSubmit={e => e.preventDefault()}>
-                {[['name', 'Your Name', 'John Doe', 'text'], ['email', 'Email', 'john@example.com', 'email'], ['company', 'Company', 'Company Inc', 'text'], ['service', 'Service', 'Web, Mobile, Design...', 'text'], ['budget', 'Budget', '$10K - $50K', 'text']].map(([n, l, ph, t]) => (
+                {[['name', 'Your Name', 'John Doe', 'text'], ['email', 'Email', 'john@example.com', 'email'], ['company', 'Company', 'Company Inc', 'text'], ['service', 'Service', 'Web, Mobile, Design...', 'text']].map(([n, l, ph, t]) => (
                   <div key={n} style={{ marginBottom: '16px' }}>
                     <label style={{ fontSize: '9px', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '4px', display: 'block' }}>{l}</label>
                     <input type={t} value={f[n]} onChange={e => setF({ ...f, [n]: e.target.value })} onFocus={() => setFocus(n)} onBlur={() => setFocus(null)} placeholder={ph} style={inp(n)} />

@@ -62,8 +62,7 @@ export const processSteps = [
 
 export const faqData = [
   { question: 'How long does a typical project take?', answer: 'Project timelines vary based on scope and complexity. A standard website takes 6-10 weeks, while complex web applications can take 3-6 months. We provide detailed timelines during our discovery phase.' },
-  { question: 'What is your pricing structure?', answer: 'We offer flexible pricing models including fixed-price projects, hourly rates, and retainer agreements. Each project is unique, so we provide custom quotes based on your specific requirements.' },
-  { question: 'Do you work with startups?', answer: 'Absolutely! We work with companies of all sizes, from early-stage startups to Fortune 500 enterprises. We have experience adapting our process to different budgets and timelines.' },
+  { question: 'Do you work with startups?', answer: 'Absolutely! We work with companies of all sizes, from early-stage startups to Fortune 500 enterprises. We have experience adapting our process to different requirements and timelines.' },
   { question: 'What technologies do you specialize in?', answer: 'We specialize in React, Next.js, React Native, Flutter, Node.js, and cloud technologies. Our team stays current with the latest frameworks and tools to deliver optimal solutions.' },
   { question: 'Do you provide ongoing support?', answer: 'Yes, we offer comprehensive support and maintenance packages. This includes bug fixes, performance monitoring, security updates, and feature enhancements as needed.' },
 ]
