@@ -8,8 +8,8 @@ import { Footer } from '../components/layout/Footer'
 
 const connectMethods = [
   { icon: '💬', title: 'WhatsApp', value: '+91 98765 43210', link: 'https://wa.me/919876543210', color: '#25D366', description: 'Quick chat anytime' },
-  { icon: '✉️', title: 'Email', value: 'hello@technoziant.com', link: 'mailto:hello@technoziant.com', color: '#4f8eff', description: 'For detailed inquiries' },
-  { icon: '💼', title: 'LinkedIn', value: 'Technoziant', link: 'https://linkedin.com/company/technoziant', color: '#0A66C2', description: 'Connect professionally' },
+  { icon: '✉️', title: 'Email', value: 'business@technoziant.com', link: 'mailto:business@technoziant.com', color: '#4f8eff', description: 'For detailed inquiries' },
+  { icon: '💼', title: 'LinkedIn', value: 'Technoziant', link: 'https://www.linkedin.com/in/technoziant', color: '#0A66C2', description: 'Connect professionally' },
   { icon: '🐦', title: 'Twitter / X', value: '@technoziant', link: 'https://x.com/technoziant', color: '#1DA1F2', description: 'Follow our updates' },
   { icon: '📸', title: 'Instagram', value: '@technoziant', link: 'https://instagram.com/technoziant', color: '#E4405F', description: 'See our visual work' },
   { icon: '🐙', title: 'GitHub', value: 'technoziant', link: 'https://github.com/technoziant', color: '#8b5cf6', description: 'Check our open source' },
@@ -145,7 +145,7 @@ export function Contact() {
               <TextReveal delay={0.1}><p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '24px', lineHeight: 1.6 }}>Visit us or reach out through any channel.</p></TextReveal>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                {[['📍', 'Address', 'India'], ['🕐', 'Hours', 'Mon - Fri: 9:00 AM - 6:00 PM IST'], ['📧', 'General', 'hello@technoziant.com'], ['💼', 'Business', 'partnerships@technoziant.com'], ['🚨', 'Emergency', 'support@technoziant.com']].map(([icon, label, val], i) => (
+                {[['📍', 'Address', 'India'], ['🕐', 'Hours', 'Mon - Fri: 9:00 AM - 6:00 PM IST'], ['📧', 'General', 'business@technoziant.com'], ['💼', 'Business', 'partnerships@technoziant.com'], ['🚨', 'Emergency', 'support@technoziant.com']].map(([icon, label, val], i) => (
                   <GlowCard key={i} style={{ padding: '14px 16px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                       <span style={{ fontSize: '16px' }}>{icon}</span>

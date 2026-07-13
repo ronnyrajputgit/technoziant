@@ -103,7 +103,7 @@ export function Footer() {
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                 {[
-                  { label: 'Email', value: 'hello@technoziant.com', icon: '✉' },
+                  { label: 'Email', value: 'business@technoziant.com', icon: '✉' },
                   { label: 'Phone', value: '+91 98765 43210', icon: '☎' },
                   { label: 'Location', value: 'India', icon: '◎' }
                 ].map((item, i) => (
@@ -220,7 +220,7 @@ export function Footer() {
                 </span>
               </div>
               <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '4px' }}>
-                © 2024 All rights reserved
+                © 2026 All rights reserved
               </div>
             </div>
           </motion.div>

@@ -180,8 +180,8 @@ export function Navigation() {
 
               {/* Footer */}
               <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '14px', marginTop: '16px', display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: 'rgba(255,255,255,0.3)' }}>
-                <span>hello@technoziant.com</span>
-                <span>© 2024 Technoziant</span>
+                <span>business@technoziant.com</span>
+                <span>© 2026 Technoziant</span>
               </div>
             </motion.div>
           </motion.div>

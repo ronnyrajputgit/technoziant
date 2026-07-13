@@ -1,14 +1,5 @@
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
-import sumanImg from '../../assets/images/Suman.jpeg'
-import sahilImg from '../../assets/images/Shahil.jpeg'
-
-const leaders = [
-  { name: 'Suman', role: 'Founder', image: sumanImg, color: '#4f8eff' },
-  { name: 'Sahil', role: 'Co-founder & CEO', image: sahilImg, color: '#a855f7' },
-  { name: 'Ronny', role: 'CTO', image: 'https://ui-avatars.com/api/?name=Ronny&background=06d6a0&color=fff&size=400&bold=true', color: '#06d6a0' },
-  { name: 'Avnish', role: 'CMO', image: 'https://ui-avatars.com/api/?name=Avnish&background=f472b6&color=fff&size=400&bold=true', color: '#f472b6' }
-]
 
 export function Preloader() {
   const [phase, setPhase] = useState(0)
@@ -64,36 +55,12 @@ export function Preloader() {
         {phase === 3 && 'Almost Ready'}
       </motion.div>
 
-      {/* Leader cards - shown during loading */}
-      <AnimatePresence>
-        {phase >= 1 && (
-          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.6, ease: [0.76, 0, 0.24, 1] }}
-            style={{ display: 'flex', gap: '14px', justifyContent: 'center', flexWrap: 'wrap', maxWidth: '800px', padding: '0 20px', zIndex: 2 }}>
-            {leaders.map((leader, i) => (
-              <motion.div key={i}
-                initial={{ opacity: 0, y: 20, scale: 0.9 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                transition={{ delay: i * 0.1, duration: 0.5 }}
-                className="liquid-glass texture-noise"
-                style={{ padding: '14px 18px', borderRadius: '14px', display: 'flex', alignItems: 'center', gap: '12px', minWidth: '190px' }}>
-                <div style={{ width: '44px', height: '44px', borderRadius: '50%', overflow: 'hidden', border: `2px solid ${leader.color}`, flexShrink: 0, boxShadow: `0 0 15px ${leader.color}30` }}>
-                  <img src={leader.image} alt={leader.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                </div>
-                <div>
-                  <div style={{ fontSize: '12px', fontWeight: '600', marginBottom: '1px' }}>{leader.name}</div>
-                  <div style={{ fontSize: '9px', color: leader.color, fontWeight: '500', letterSpacing: '0.05em' }}>{leader.role}</div>
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
-        )}
-      </AnimatePresence>
+
 
       {/* Bottom text */}
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 0.4 }} transition={{ delay: 0.8 }}
         style={{ position: 'absolute', bottom: '20px', fontSize: '10px', color: 'var(--text-muted)', letterSpacing: '0.1em', zIndex: 2 }}>
-        © 2024 Technoziant. All rights reserved.
+        © 2026 Technoziant. All rights reserved.
       </motion.div>
     </motion.div>
   )

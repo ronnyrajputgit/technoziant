@@ -11,7 +11,7 @@ import sahilImg from '../assets/images/Shahil.jpeg'
 
 const team = [
   {
-    name: 'Suman',
+    name: 'Suman Kumar Sah',
     role: 'Founder',
     image: sumanImg,
     color: '#4f8eff',
@@ -20,7 +20,7 @@ const team = [
     achievements: ['Visionary Leader', 'Strategic Thinker', 'Innovation Driver']
   },
   {
-    name: 'Sahil',
+    name: 'Shahil Kumar Sharma',
     role: 'Co-founder & CEO',
     image: sahilImg,
     color: '#a855f7',

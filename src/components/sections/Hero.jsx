@@ -28,7 +28,7 @@ export function Hero() {
       <motion.div style={{ y, opacity, scale }} className="container">
         {/* Heading with clear separation */}
         <div style={{ marginBottom: '24px' }}>
-          {['We craft', 'digital', 'experiences'].map((line, i) => (
+          {['We craft', 'digital', 'products'].map((line, i) => (
             <div key={i} style={{ overflow: 'hidden', marginBottom: i === 2 ? '0' : '4px' }}>
               <motion.h1 initial={{ y: '110%' }} animate={{ y: 0 }}
                 transition={{ duration: 1, ease: [0.76, 0, 0.24, 1], delay: 0.3 + i * 0.08 }}
