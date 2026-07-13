@@ -7,6 +7,50 @@ import { projects } from '../data/projects'
 import { useApp } from '../context/AppContext'
 import { Footer } from '../components/layout/Footer'
 
+const projectSnippets = [
+  {
+    title: 'E-Commerce Platform',
+    client: 'Bloom Corp',
+    code: `const store = new BloomStore({
+  vendors: 500+,
+  products: '100K+',
+  payments: ['stripe', 'razorpay'],
+  ai: { recommendations: true }
+});
+
+await store.launch({ scale: 'auto' });`,
+    color: '#22c55e'
+  },
+  {
+    title: 'Healthcare Portal',
+    client: 'PulseMed',
+    code: `const telemedicine = new Telehealth({
+  hipaa: true,
+  video: 'webrtc',
+  doctors: '10K+',
+  patients: 'unlimited',
+  compliance: ['hipaa', 'gdpr']
+});
+
+await telemedicine.deploy();`,
+    color: '#3b82f6'
+  },
+  {
+    title: 'Fintech App',
+    client: 'FinSecure',
+    code: `const banking = new FinSecure({
+  auth: 'biometric',
+  transfers: 'instant',
+  countries: 180+,
+  security: 'bank-grade',
+  encryption: 'AES-256'
+});
+
+await banking.goLive();`,
+    color: '#a855f7'
+  }
+]
+
 export function Work() {
   const { setCursorType } = useApp()
   const [h, setH] = useState(null)
@@ -41,6 +85,7 @@ export function Work() {
         </div>
       </section>
 
+      {/* Project Cards */}
       <section className="section" style={{ paddingTop: 0 }}>
         <div className="container">
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '12px' }}>
@@ -80,6 +125,51 @@ export function Work() {
         </div>
       </section>
 
+      {/* Code Snippets Section */}
+      <section className="section" style={{ borderTop: '1px solid var(--glass-border)' }}>
+        <div className="container">
+          <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+            <TextReveal><div style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '8px', fontFamily: "var(--font-code)" }}>case_studies</div></TextReveal>
+            <TextReveal delay={0.1}><h2 style={{ fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: '700', lineHeight: 1 }}>How We <span className="text-gradient">Built It</span></h2></TextReveal>
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            {projectSnippets.map((snippet, i) => (
+              <motion.div key={i} initial={{ opacity: 0, x: i % 2 === 0 ? -30 : 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}
+                transition={{ delay: i * 0.1, duration: 0.6 }}
+                className="liquid-glass" style={{ borderRadius: '10px', overflow: 'hidden' }}>
+                {/* Title bar */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 14px', borderBottom: '1px solid var(--glass-border)', background: 'var(--surface)' }}>
+                  <div style={{ display: 'flex', gap: '4px' }}>
+                    <div style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#ff5f57' }} />
+                    <div style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#febc2e' }} />
+                    <div style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#28c840' }} />
+                  </div>
+                  <span style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>{snippet.title.toLowerCase().replace(/\s+/g, '-')}.ts</span>
+                  <span style={{ fontSize: '9px', padding: '2px 6px', borderRadius: '3px', background: `${snippet.color}15`, color: snippet.color, fontFamily: "var(--font-code)" }}>{snippet.client}</span>
+                </div>
+                {/* Code content */}
+                <div style={{ padding: '16px', fontFamily: "var(--font-code)", fontSize: '12px', lineHeight: '22px', background: 'var(--code-bg)' }}>
+                  {snippet.code.split('\n').map((line, j) => (
+                    <motion.div key={j} initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}
+                      transition={{ delay: i * 0.1 + j * 0.03, duration: 0.4 }}
+                      style={{ display: 'flex' }}>
+                      <span style={{ color: 'var(--text-muted)', opacity: 0.3, marginRight: '14px', minWidth: '14px', textAlign: 'right', fontSize: '10px' }}>{j + 1}</span>
+                      <span style={{ color: 'var(--code-text)' }}>
+                        {line.includes('const') ? <><span style={{ color: 'var(--code-keyword)' }}>const</span> {line.replace('const ', '')}</> :
+                         line.includes('await') ? <><span style={{ color: 'var(--code-keyword)' }}>await</span> {line.replace('await ', '')}</> :
+                         line.includes('//') ? <span style={{ color: 'var(--code-comment)' }}>{line}</span> :
+                         line}
+                      </span>
+                    </motion.div>
+                  ))}
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Process Section */}
       <section className="section" style={{ borderTop: '1px solid var(--glass-border)' }}>
         <div className="container">
@@ -87,25 +177,40 @@ export function Work() {
             <TextReveal><div style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '8px', fontFamily: "var(--font-code)" }}>how_we_work</div></TextReveal>
             <TextReveal delay={0.1}><h2 style={{ fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: '700', lineHeight: 1 }}>Our <span className="text-gradient">Process</span></h2></TextReveal>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '12px' }}>
-            {[
-              { step: '01', title: 'Discovery', desc: 'Understanding your vision and goals', icon: '🔍' },
-              { step: '02', title: 'Strategy', desc: 'Planning the technical architecture', icon: '📋' },
-              { step: '03', title: 'Design', desc: 'Creating intuitive interfaces', icon: '🎨' },
-              { step: '04', title: 'Develop', desc: 'Building with clean code', icon: '⚡' },
-              { step: '05', title: 'Launch', desc: 'Deploying with confidence', icon: '🚀' },
-              { step: '06', title: 'Support', desc: 'Ongoing maintenance', icon: '🛡️' }
-            ].map((item, i) => (
-              <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-                transition={{ delay: i * 0.05, duration: 0.5 }}
-                className="liquid-glass" style={{ padding: '20px', borderRadius: '10px', textAlign: 'center' }}>
-                <div style={{ fontSize: '24px', marginBottom: '8px' }}>{item.icon}</div>
-                <div style={{ fontSize: '9px', color: '#22c55e', fontFamily: "var(--font-code)", marginBottom: '4px' }}>{item.step}</div>
-                <div style={{ fontSize: '14px', fontWeight: '600', marginBottom: '4px' }}>{item.title}</div>
-                <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{item.desc}</div>
-              </motion.div>
-            ))}
-          </div>
+
+          {/* Process as code */}
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+            className="liquid-glass" style={{ borderRadius: '10px', overflow: 'hidden', maxWidth: '600px', margin: '0 auto' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '5px', padding: '8px 14px', borderBottom: '1px solid var(--glass-border)', background: 'var(--surface)' }}>
+              <div style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#ff5f57' }} />
+              <div style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#febc2e' }} />
+              <div style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#28c840' }} />
+              <span style={{ marginLeft: '8px', fontSize: '10px', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>process.ts</span>
+            </div>
+            <div style={{ padding: '20px', fontFamily: "var(--font-code)", fontSize: '12px', lineHeight: '24px' }}>
+              <div><span style={{ color: 'var(--code-comment)' }}>{'// The Technoziant development pipeline'}</span></div>
+              <div><span style={{ color: 'var(--code-keyword)' }}>export const</span> <span style={{ color: 'var(--code-property)' }}>process</span> = {'['}</div>
+              {[
+                { step: 'Discovery', desc: 'Understanding your vision', icon: '🔍' },
+                { step: 'Strategy', desc: 'Planning architecture', icon: '📋' },
+                { step: 'Design', desc: 'Creating interfaces', icon: '🎨' },
+                { step: 'Development', desc: 'Building with code', icon: '⚡' },
+                { step: 'Launch', desc: 'Deploying live', icon: '🚀' },
+                { step: 'Support', desc: 'Ongoing maintenance', icon: '🛡️' }
+              ].map((item, i) => (
+                <motion.div key={i} initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}
+                  transition={{ delay: i * 0.05, duration: 0.4 }}
+                  style={{ paddingLeft: '16px' }}>
+                  <span style={{ color: 'var(--code-text)' }}>{'  { '}</span>
+                  <span style={{ color: 'var(--code-property)' }}>step</span>: <span style={{ color: 'var(--code-string)' }}>'{item.step}'</span>,
+                  <span style={{ color: 'var(--code-property)' }}> desc</span>: <span style={{ color: 'var(--code-string)' }}>'{item.desc}'</span>,
+                  <span style={{ color: 'var(--code-property)' }}> icon</span>: <span style={{ color: 'var(--code-string)' }}>'{item.icon}'</span>
+                  <span style={{ color: 'var(--code-text)' }}>{' }'}</span>{i < 5 && ','}
+                </motion.div>
+              ))}
+              <div>{']'}</div>
+            </div>
+          </motion.div>
         </div>
       </section>
 

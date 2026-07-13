@@ -13,13 +13,12 @@ export function Hero() {
   const scale = useTransform(scrollYProgress, [0, 0.5], [1, 0.97])
 
   return (
-    <section ref={ref} style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', position: 'relative', overflow: 'hidden', paddingTop: '80px', paddingBottom: '40px' }}>
+    <section ref={ref} style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', position: 'relative', overflow: 'hidden', paddingTop: '80px', paddingBottom: '60px' }}>
       <NetworkAnimation />
 
       <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
         <div style={{ position: 'absolute', top: '10%', left: '15%', width: '500px', height: '500px', borderRadius: '50%', background: 'radial-gradient(circle, var(--accent), transparent 70%)', opacity: 0.06, filter: 'blur(80px)' }} />
         <div style={{ position: 'absolute', bottom: '10%', right: '10%', width: '400px', height: '400px', borderRadius: '50%', background: 'radial-gradient(circle, var(--accent-2), transparent 70%)', opacity: 0.05, filter: 'blur(80px)' }} />
-        <div style={{ position: 'absolute', top: '50%', left: '60%', width: '300px', height: '300px', borderRadius: '50%', background: 'radial-gradient(circle, var(--accent-3), transparent 70%)', opacity: 0.04, filter: 'blur(60px)' }} />
       </div>
 
       <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', opacity: 0.025,
@@ -50,7 +49,7 @@ export function Hero() {
           <Link to="/work" onMouseEnter={() => setCursorType('hover')} onMouseLeave={() => setCursorType('default')}
             style={{ display: 'inline-block' }}>
             <motion.div whileHover={{ scale: 1.05, boxShadow: '0 0 30px var(--accent)' }} whileTap={{ scale: 0.95 }}
-              className="liquid-glass-strong" style={{ padding: '12px 28px', color: 'var(--text)', borderRadius: '8px', fontSize: '12px', fontWeight: '600', letterSpacing: '0.01em', cursor: 'pointer', textAlign: 'center', fontFamily: "var(--font-code)" }}>
+              className="liquid-glass-strong" style={{ padding: '12px 28px', color: 'var(--text)', borderRadius: '8px', fontSize: '12px', fontWeight: '600', cursor: 'pointer', textAlign: 'center', fontFamily: "var(--font-code)" }}>
               {'> view_work'}
             </motion.div>
           </Link>
@@ -63,22 +62,17 @@ export function Hero() {
           </Link>
         </motion.div>
 
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.2 }}
-          style={{ display: 'flex', gap: '32px', flexWrap: 'wrap' }}>
-          {[{ n: '150+', l: 'Projects' }, { n: '50+', l: 'Clients' }, { n: '12+', l: 'Awards' }, { n: '99%', l: 'Satisfaction' }].map((s, i) => (
-            <div key={i}>
-              <div style={{ fontSize: '22px', fontWeight: '700', fontFamily: 'var(--font-h)' }}><span className="text-gradient">{s.n}</span></div>
-              <div style={{ fontSize: '9px', color: 'var(--text-muted)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>{s.l}</div>
-            </div>
-          ))}
+        {/* Code snippet stats */}
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.1 }}
+          className="liquid-glass" style={{ padding: '16px 20px', borderRadius: '10px', maxWidth: '400px', fontFamily: "var(--font-code)", fontSize: '11px', lineHeight: '20px' }}>
+          <div style={{ color: 'var(--code-comment)' }}>{'// our impact'}</div>
+          <div><span style={{ color: 'var(--code-keyword)' }}>const</span> <span style={{ color: 'var(--code-property)' }}>stats</span> = {'{'}</div>
+          <div style={{ paddingLeft: '16px' }}><span style={{ color: 'var(--code-property)' }}>projects</span>: <span style={{ color: 'var(--code-string)' }}>'150+'</span>,</div>
+          <div style={{ paddingLeft: '16px' }}><span style={{ color: 'var(--code-property)' }}>clients</span>: <span style={{ color: 'var(--code-string)' }}>'50+'</span>,</div>
+          <div style={{ paddingLeft: '16px' }}><span style={{ color: 'var(--code-property)' }}>awards</span>: <span style={{ color: 'var(--code-string)' }}>'12+'</span>,</div>
+          <div style={{ paddingLeft: '16px' }}><span style={{ color: 'var(--code-property)' }}>satisfaction</span>: <span style={{ color: 'var(--code-string)' }}>'99%'</span></div>
+          <div>{'}'}</div>
         </motion.div>
-      </motion.div>
-
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.5 }}
-        style={{ position: 'absolute', bottom: '24px', left: 'clamp(20px, 4vw, 60px)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-        <span style={{ fontSize: '8px', color: 'var(--text-muted)', letterSpacing: '0.15em', textTransform: 'uppercase', fontFamily: "var(--font-code)" }}>scroll</span>
-        <motion.div animate={{ y: [0, 4, 0] }} transition={{ duration: 2, repeat: Infinity }}
-          style={{ width: '1px', height: '24px', background: 'linear-gradient(to bottom, var(--text-muted), transparent)' }} />
       </motion.div>
     </section>
   )

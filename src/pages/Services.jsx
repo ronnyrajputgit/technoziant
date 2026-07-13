@@ -104,22 +104,62 @@ export function Services() {
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '10px' }}>
             {[
-              { name: 'Startups', desc: 'MVP development, rapid prototyping, scaling', icon: '🚀' },
-              { name: 'E-Commerce', desc: 'Marketplaces, payment integration, analytics', icon: '🛒' },
-              { name: 'Healthcare', desc: 'HIPAA compliance, telemedicine, EHR', icon: '🏥' },
-              { name: 'Finance', desc: 'Fintech, banking, secure transactions', icon: '💰' },
-              { name: 'Education', desc: 'LMS, virtual classrooms, assessment', icon: '📚' },
-              { name: 'Logistics', desc: 'Fleet tracking, supply chain, optimization', icon: '🚚' }
+              { name: 'Startups', desc: 'MVP development, rapid prototyping, scaling', icon: '🚀', code: 'mvp → scale → fund' },
+              { name: 'E-Commerce', desc: 'Marketplaces, payment integration, analytics', icon: '🛒', code: 'cart → checkout → revenue' },
+              { name: 'Healthcare', desc: 'HIPAA compliance, telemedicine, EHR', icon: '🏥', code: 'patient → diagnose → treat' },
+              { name: 'Finance', desc: 'Fintech, banking, secure transactions', icon: '💰', code: 'auth → transact → secure' },
+              { name: 'Education', desc: 'LMS, virtual classrooms, assessment', icon: '📚', code: 'learn → practice → certify' },
+              { name: 'Logistics', desc: 'Fleet tracking, supply chain, optimization', icon: '🚚', code: 'track → optimize → deliver' }
             ].map((industry, i) => (
               <motion.div key={i} initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
                 transition={{ delay: i * 0.05, duration: 0.4 }}
                 className="liquid-glass" style={{ padding: '18px', borderRadius: '10px' }}>
                 <div style={{ fontSize: '24px', marginBottom: '8px' }}>{industry.icon}</div>
                 <div style={{ fontSize: '14px', fontWeight: '600', marginBottom: '4px' }}>{industry.name}</div>
-                <div style={{ fontSize: '11px', color: 'var(--text-muted)', lineHeight: 1.5 }}>{industry.desc}</div>
+                <div style={{ fontSize: '11px', color: 'var(--text-muted)', lineHeight: 1.5, marginBottom: '8px' }}>{industry.desc}</div>
+                <div style={{ fontSize: '9px', color: '#22c55e', fontFamily: "var(--font-code)", opacity: 0.7 }}>{industry.code}</div>
               </motion.div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Why Choose Us - Code Style */}
+      <section className="section" style={{ borderTop: '1px solid var(--glass-border)' }}>
+        <div className="container">
+          <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+            <TextReveal><div style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '8px', fontFamily: "var(--font-code)" }}>why_us</div></TextReveal>
+            <TextReveal delay={0.1}><h2 style={{ fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: '700', lineHeight: 1 }}>Why Choose <span className="text-gradient">Technoziant</span></h2></TextReveal>
+          </div>
+
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+            className="liquid-glass" style={{ borderRadius: '10px', overflow: 'hidden', maxWidth: '500px', margin: '0 auto' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '5px', padding: '8px 14px', borderBottom: '1px solid var(--glass-border)', background: 'var(--surface)' }}>
+              <div style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#ff5f57' }} />
+              <div style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#febc2e' }} />
+              <div style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#28c840' }} />
+              <span style={{ marginLeft: '8px', fontSize: '10px', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>advantages.ts</span>
+            </div>
+            <div style={{ padding: '20px', fontFamily: "var(--font-code)", fontSize: '12px', lineHeight: '24px' }}>
+              <div><span style={{ color: 'var(--code-comment)' }}>{'// Why teams choose us'}</span></div>
+              <div><span style={{ color: 'var(--code-keyword)' }}>export const</span> <span style={{ color: 'var(--code-property)' }}>advantages</span> = {'{'}</div>
+              {[
+                { key: 'experience', val: '20+ years combined' },
+                { key: 'delivery', val: '99% on-time delivery' },
+                { key: 'support', val: '24/7 maintenance' },
+                { key: 'tech', val: 'Modern stack only' },
+                { key: 'process', val: 'Agile methodology' },
+                { key: 'result', val: 'Award-winning work' }
+              ].map((item, i) => (
+                <motion.div key={i} initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}
+                  transition={{ delay: i * 0.05, duration: 0.4 }}
+                  style={{ paddingLeft: '16px' }}>
+                  <span style={{ color: 'var(--code-property)' }}>{item.key}</span>: <span style={{ color: 'var(--code-string)' }}>'{item.val}'</span>,
+                </motion.div>
+              ))}
+              <div>{'}'}</div>
+            </div>
+          </motion.div>
         </div>
       </section>
 
