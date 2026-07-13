@@ -2,6 +2,7 @@ import { motion, useScroll, useTransform } from 'framer-motion'
 import { useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { useApp } from '../../context/AppContext'
+import { NetworkAnimation } from '../ui/NetworkAnimation'
 
 export function Hero() {
   const ref = useRef(null)
@@ -13,6 +14,9 @@ export function Hero() {
 
   return (
     <section ref={ref} style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', position: 'relative', overflow: 'hidden', paddingTop: '100px' }}>
+      {/* Network Animation Background */}
+      <NetworkAnimation />
+
       {/* Ambient blobs */}
       <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
         <div style={{ position: 'absolute', top: '10%', left: '15%', width: '500px', height: '500px', borderRadius: '50%', background: 'radial-gradient(circle, var(--accent), transparent 70%)', opacity: 0.06, filter: 'blur(80px)' }} />
@@ -25,7 +29,7 @@ export function Hero() {
         backgroundImage: `linear-gradient(var(--text) 1px, transparent 1px), linear-gradient(90deg, var(--text) 1px, transparent 1px)`,
         backgroundSize: '80px 80px' }} />
 
-      <motion.div style={{ y, opacity, scale }} className="container">
+      <motion.div style={{ y, opacity, scale }} className="container" position="relative" zIndex="1">
         {/* Heading with clear separation */}
         <div style={{ marginBottom: '24px' }}>
           {['We craft', 'digital', 'products'].map((line, i) => (
