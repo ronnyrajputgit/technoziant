@@ -31,7 +31,7 @@ export function FeaturedProjects() {
         </div>
       </div>
       <motion.div style={{ x }}>
-        <div style={{ display: 'flex', gap: '12px', padding: '0 clamp(16px, 4vw, 40px)' }}>
+        <div style={{ display: 'flex', gap: '12px', paddingLeft: 'clamp(20px, 5vw, 80px)', paddingRight: 'clamp(20px, 5vw, 80px)' }}>
           {projects.slice(0, 5).map(p => (
             <WaterDropCard key={p.id} color={p.color} style={{ minWidth: '260px', width: '30vw', padding: 0 }}>
               <div onClick={() => openProject(p)} style={{ display: 'block', cursor: 'pointer' }}>
