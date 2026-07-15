@@ -24,14 +24,14 @@ const icons = {
 }
 
 const connectMethods = [
-  { icon: 'whatsapp', title: 'WhatsApp', value: '+91 98765 43210', link: 'https://wa.me/919876543210', color: '#25D366', description: 'Quick chat anytime' },
+  { icon: 'whatsapp', title: 'WhatsApp', value: '+91 9771291336', link: 'https://wa.me/919771291336', color: '#25D366', description: 'Quick chat anytime' },
   { icon: 'email', title: 'Email', value: 'business@technoziant.com', link: 'mailto:business@technoziant.com', color: '#4f8eff', description: 'For detailed inquiries' },
+  { icon: 'phone', title: 'Contact Us', value: '+91 8882716189', link: 'tel:+918882716189', color: '#06d6a0', description: 'Mon-Fri 10AM-6PM' },
   { icon: 'linkedin', title: 'LinkedIn', value: 'Technoziant', link: 'https://www.linkedin.com/in/technoziant', color: '#0A66C2', description: 'Connect professionally' },
   { icon: 'twitter', title: 'Twitter / X', value: '@technoziant', link: 'https://x.com/technoziant', color: '#1DA1F2', description: 'Follow our updates' },
   { icon: 'instagram', title: 'Instagram', value: '@technoziant', link: 'https://instagram.com/technoziant', color: '#E4405F', description: 'See our visual work' },
   { icon: 'youtube', title: 'YouTube', value: 'Technoziant', link: 'https://youtube.com/@technoziant', color: '#FF0000', description: 'Watch our tutorials' },
-  { icon: 'phone', title: 'Phone', value: '+91 98765 43210', link: 'tel:+919876543210', color: '#06d6a0', description: 'Mon-Fri 9AM-6PM IST' },
-  { icon: 'map', title: 'Office', value: 'India', link: 'https://maps.google.com/?q=India', color: '#fbbf24', description: 'Visit us anytime' }
+  { icon: 'map', title: 'Office', value: 'Deoghar, Jharkhand', link: 'https://maps.google.com/?q=Deoghar+Jharkhand', color: '#fbbf24', description: 'Visit us 10AM-6PM' }
 ]
 
 function ConnectCard({ method, index }) {
@@ -149,12 +149,13 @@ export function Contact() {
               <TextReveal><h2 style={{ fontSize: 'clamp(22px, 3vw, 28px)', fontWeight: '700', marginBottom: '8px' }}>Office Info</h2></TextReveal>
               <TextReveal delay={0.1}><p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '20px', lineHeight: 1.6 }}>Visit us or reach out through any channel.</p></TextReveal>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                 {[
-                  { icon: 'map', label: 'address', val: 'India', color: '#fbbf24' },
-                  { icon: 'phone', label: 'hours', val: 'Mon - Fri: 9:00 AM - 6:00 PM IST', color: '#06d6a0' },
+                  { icon: 'map', label: 'address', val: 'Deoghar, Jharkhand, India', color: '#fbbf24' },
+                  { icon: 'phone', label: 'hours', val: 'Mon - Fri: 10:00 AM - 6:00 PM', color: '#06d6a0' },
                   { icon: 'email', label: 'general', val: 'business@technoziant.com', color: '#4f8eff' },
-                  { icon: 'email', label: 'business', val: 'partnerships@technoziant.com', color: '#a855f7' }
+                  { icon: 'phone', label: 'contact', val: '+91 8882716189', color: '#a855f7' },
+                  { icon: 'whatsapp', label: 'whatsapp', val: '+91 9771291336', color: '#25D366' }
                 ].map((item, i) => (
                   <GlowCard key={i} style={{ padding: '12px 14px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>

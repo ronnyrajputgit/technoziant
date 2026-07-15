@@ -2,94 +2,53 @@ import { motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
 
 export function Preloader() {
-  const [phase, setPhase] = useState(0)
-  const [typedText, setTypedText] = useState('')
-
-  const lines = [
-    'import { Technoziant } from "@technoziant/core"',
-    'const app = new Technoziant({ mode: "production" })',
-    'await app.initialize()',
-    'console.log("🚀 Ready to launch")'
-  ]
+  const [progress, setProgress] = useState(0)
 
   useEffect(() => {
-    const t1 = setTimeout(() => setPhase(1), 600)
-    const t2 = setTimeout(() => setPhase(2), 1800)
-    const t3 = setTimeout(() => setPhase(3), 3000)
-    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3) }
+    const interval = setInterval(() => {
+      setProgress(p => {
+        if (p >= 100) { clearInterval(interval); return 100 }
+        return p + 2
+      })
+    }, 50)
+    return () => clearInterval(interval)
   }, [])
 
-  useEffect(() => {
-    if (phase === 0) return
-    const currentLine = lines[Math.min(phase - 1, lines.length - 1)]
-    let i = 0
-    const interval = setInterval(() => {
-      if (i <= currentLine.length) {
-        setTypedText(currentLine.slice(0, i))
-        i++
-      } else {
-        clearInterval(interval)
-      }
-    }, 20)
-    return () => clearInterval(interval)
-  }, [phase])
-
   return (
-    <motion.div exit={{ opacity: 0 }} transition={{ duration: 0.5, ease: [0.76, 0, 0.24, 1] }}
-      style={{ position: 'fixed', inset: 0, background: 'var(--bg)', zIndex: 10000, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
-
-      {/* Terminal window */}
-      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.6 }}
-        style={{
-          width: 'min(90vw, 500px)',
-          background: 'var(--code-bg)',
-          border: '1px solid var(--code-border)',
-          borderRadius: '12px',
-          overflow: 'hidden',
-          zIndex: 2
-        }}>
-        {/* Title bar */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '12px 16px', borderBottom: '1px solid var(--code-border)', background: 'var(--surface)' }}>
-          <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#ff5f57' }} />
-          <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#febc2e' }} />
-          <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#28c840' }} />
-          <span style={{ marginLeft: '8px', fontSize: '11px', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>terminal</span>
-        </div>
-
-        {/* Terminal content */}
-        <div style={{ padding: '20px', fontFamily: "var(--font-code)", fontSize: '12px', lineHeight: '24px', minHeight: '180px' }}>
-          {lines.slice(0, phase).map((line, i) => (
-            <div key={i} style={{ display: 'flex', alignItems: 'center' }}>
-              <span style={{ color: '#22c55e', marginRight: '8px' }}>$</span>
-              <span style={{ color: 'var(--code-text)' }}>
-                {i === phase - 1 ? typedText : line}
-              </span>
-              {i === phase - 1 && typedText.length < lines[Math.min(phase - 1, lines.length - 1)].length && (
-                <span style={{ display: 'inline-block', width: '7px', height: '14px', background: '#22c55e', marginLeft: '2px', animation: 'blink 1s step-end infinite' }} />
-              )}
-              {i < phase - 1 && <span style={{ color: '#22c55e', marginLeft: '8px' }}>✓</span>}
+    <motion.div exit={{ opacity: 0 }} transition={{ duration: 0.5 }}
+      style={{ position: 'fixed', inset: 0, background: 'var(--bg)', zIndex: 10000, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+      
+      {/* Skeleton Cards */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', width: 'min(85vw, 300px)', marginBottom: '24px' }}>
+        {[1, 2, 3].map(i => (
+          <motion.div key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}
+            className="liquid-glass" style={{ padding: '14px', borderRadius: '8px', display: 'flex', gap: '10px', alignItems: 'center' }}>
+            <div style={{ width: '40px', height: '40px', borderRadius: '6px', background: 'var(--surface-2)', animation: 'pulse 1.5s infinite' }} />
+            <div style={{ flex: 1 }}>
+              <div style={{ height: '10px', width: '60%', background: 'var(--surface-2)', borderRadius: '4px', marginBottom: '6px', animation: 'pulse 1.5s infinite' }} />
+              <div style={{ height: '8px', width: '40%', background: 'var(--surface-2)', borderRadius: '4px', animation: 'pulse 1.5s infinite 0.2s' }} />
             </div>
-          ))}
-          {phase >= lines.length && (
-            <div style={{ marginTop: '12px', color: '#22c55e', fontSize: '11px' }}>
-              {'>'} Application ready
-            </div>
-          )}
-        </div>
-      </motion.div>
+          </motion.div>
+        ))}
+      </div>
 
-      {/* Loading bar */}
+      {/* Logo */}
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}
-        style={{ width: '200px', height: '2px', background: 'var(--glass-border)', borderRadius: '1px', marginTop: '24px', zIndex: 2, overflow: 'hidden' }}>
-        <motion.div animate={{ width: phase === 0 ? '25%' : phase === 1 ? '50%' : phase === 2 ? '75%' : '100%' }}
-          transition={{ duration: 0.8, ease: 'easeOut' }}
-          style={{ height: '100%', background: 'linear-gradient(90deg, #22c55e, #16a34a)', borderRadius: '1px' }} />
+        style={{ marginBottom: '16px' }}>
+        <div style={{ fontSize: '18px', fontWeight: '700', fontFamily: "var(--font-code)", letterSpacing: '-0.02em' }}>
+          <span style={{ color: '#22c55e' }}>techno</span><span style={{ color: 'var(--text-muted)' }}>ziant</span>
+        </div>
       </motion.div>
+
+      {/* Progress bar */}
+      <div style={{ width: '160px', height: '2px', background: 'var(--glass-border)', borderRadius: '1px', overflow: 'hidden' }}>
+        <motion.div animate={{ width: `${progress}%` }} style={{ height: '100%', background: 'linear-gradient(90deg, #22c55e, #16a34a)', borderRadius: '1px' }} />
+      </div>
 
       <style>{`
-        @keyframes blink {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0; }
+        @keyframes pulse {
+          0%, 100% { opacity: 0.4; }
+          50% { opacity: 0.7; }
         }
       `}</style>
     </motion.div>

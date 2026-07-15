@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { TextReveal } from '../components/ui/TextReveal'
 import { WaterDropCard } from '../components/ui/Cards'
-import { services } from '../data/projects'
 import { useApp } from '../context/AppContext'
 import { Footer } from '../components/layout/Footer'
 
@@ -67,11 +66,13 @@ export function Services() {
             <Link to={`/services/${slugMap[s.title] || s.title.toLowerCase().replace(/\s+/g, '-')}`} key={s.id}>
               <WaterDropCard color={s.color} style={{ padding: 0 }}>
                 <div onMouseEnter={() => setCursorType('hover')} onMouseLeave={() => setCursorType('default')}
-                  style={{ display: 'grid', gridTemplateColumns: '40px 1fr auto', gap: '16px', padding: '18px', alignItems: 'center' }}>
-                  <div className="liquid-glass" style={{ width: '38px', height: '38px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: s.color }}>{icons[s.icon]}</div>
+                  style={{ display: 'grid', gridTemplateColumns: '80px 1fr auto', gap: '14px', padding: '14px', alignItems: 'center' }}>
+                  <div style={{ width: '70px', height: '70px', borderRadius: '8px', overflow: 'hidden', flexShrink: 0 }}>
+                    <img src={s.img} alt={s.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  </div>
                   <div>
-                    <h3 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '3px' }}>{s.title}</h3>
-                    <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '6px', lineHeight: 1.5 }}>{s.description}</p>
+                    <h3 style={{ fontSize: '15px', fontWeight: '600', marginBottom: '3px' }}>{s.title}</h3>
+                    <p style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '6px', lineHeight: 1.5 }}>{s.description}</p>
                     <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
                       {s.features.map(f => <span key={f} className="liquid-glass" style={{ padding: '2px 6px', borderRadius: '4px', fontSize: '9px', color: s.color, fontFamily: "var(--font-code)" }}>{f}</span>)}
                     </div>
@@ -189,15 +190,22 @@ export function Services() {
 
       <section className="section" style={{ borderTop: '1px solid var(--glass-border)', textAlign: 'center' }}>
         <div className="container">
-          <TextReveal><h2 style={{ fontSize: 'clamp(28px, 4vw, 44px)', fontWeight: '700', lineHeight: 1.1, marginBottom: '16px' }}>Ready to start?</h2></TextReveal>
-          <TextReveal delay={0.1}><p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '20px', maxWidth: '360px', margin: '0 auto 20px' }}>Let's discuss your project and find the right solution.</p></TextReveal>
-          <Link to="/contact" onMouseEnter={() => setCursorType('hover')} onMouseLeave={() => setCursorType('default')}
-            style={{ display: 'inline-block' }}>
-            <motion.div whileHover={{ scale: 1.05, boxShadow: '0 0 30px var(--accent)' }} whileTap={{ scale: 0.95 }}
-              style={{ padding: '12px 28px', borderRadius: '8px', fontSize: '12px', fontWeight: '600', color: '#fff', cursor: 'pointer', textAlign: 'center', fontFamily: "var(--font-code)", background: 'linear-gradient(135deg, #22c55e, #16a34a)' }}>
-              {'>'} get_in_touch
-            </motion.div>
-          </Link>
+          <div className="liquid-glass" style={{ padding: '32px', borderRadius: '12px', position: 'relative', overflow: 'hidden' }}>
+            <div style={{ position: 'absolute', inset: 0, opacity: 0.1 }}>
+              <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1200&q=80" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            </div>
+            <div style={{ position: 'relative', zIndex: 1 }}>
+              <TextReveal><h2 style={{ fontSize: 'clamp(24px, 4vw, 36px)', fontWeight: '700', lineHeight: 1.1, marginBottom: '12px' }}>Ready to start?</h2></TextReveal>
+              <TextReveal delay={0.1}><p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '16px', maxWidth: '360px', margin: '0 auto 16px' }}>Let's discuss your project and find the right solution.</p></TextReveal>
+              <Link to="/contact" onMouseEnter={() => setCursorType('hover')} onMouseLeave={() => setCursorType('default')}
+                style={{ display: 'inline-block' }}>
+                <motion.div whileHover={{ scale: 1.05, boxShadow: '0 0 30px var(--accent)' }} whileTap={{ scale: 0.95 }}
+                  style={{ padding: '12px 28px', borderRadius: '8px', fontSize: '12px', fontWeight: '600', color: '#fff', cursor: 'pointer', textAlign: 'center', fontFamily: "var(--font-code)", background: 'linear-gradient(135deg, #22c55e, #16a34a)' }}>
+                  {'>'} get_in_touch
+                </motion.div>
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
       <Footer />

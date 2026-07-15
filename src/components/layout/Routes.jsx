@@ -9,6 +9,7 @@ import { Process } from '../../pages/Process'
 import { FAQ } from '../../pages/FAQ'
 import { Careers } from '../../pages/Careers'
 import { Leaders } from '../../pages/Leaders'
+import { Blog } from '../../pages/Blog'
 import { ServiceDetail } from '../../pages/ServiceDetail'
 import { SolutionDetail } from '../../pages/SolutionDetail'
 import { ProcessDetail } from '../../pages/ProcessDetail'
@@ -30,6 +31,7 @@ export function Routes() {
       <Route path="/process/:slug" element={<ProcessDetail />} />
       <Route path="/faq" element={<FAQ />} />
       <Route path="/careers" element={<Careers />} />
+      <Route path="/blog" element={<Blog />} />
       <Route path="*" element={<Home />} />
     </RouterRoutes>
   )
