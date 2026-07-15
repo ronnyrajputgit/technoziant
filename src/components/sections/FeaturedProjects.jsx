@@ -1,4 +1,3 @@
-import { motion, useScroll, useTransform } from 'framer-motion'
 import { useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { projects } from '../../data/projects'
@@ -13,8 +12,6 @@ export function FeaturedProjects() {
   const [hovered, setHovered] = useState(null)
   const [selectedProject, setSelectedProject] = useState(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] })
-  const x = useTransform(scrollYProgress, [0, 1], ['0%', '-5%'])
 
   const openProject = (project) => {
     setSelectedProject(project)
@@ -30,10 +27,9 @@ export function FeaturedProjects() {
           <TextReveal delay={0.2}><Link to="/work" onMouseEnter={() => setCursorType('hover')} onMouseLeave={() => setCursorType('default')} style={{ fontSize: '11px', color: 'var(--accent)', fontWeight: '500', fontFamily: "var(--font-code)" }}>view_all →</Link></TextReveal>
         </div>
       </div>
-      <motion.div style={{ x }}>
-        <div style={{ display: 'flex', gap: '12px', paddingLeft: 'clamp(20px, 5vw, 80px)', paddingRight: 'clamp(20px, 5vw, 80px)' }}>
+      <div style={{ display: 'flex', gap: '12px', overflow: 'auto', paddingBottom: '8px', paddingLeft: 'clamp(20px, 5vw, 80px)', paddingRight: 'clamp(20px, 5vw, 80px)', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
           {projects.slice(0, 5).map(p => (
-            <WaterDropCard key={p.id} color={p.color} style={{ minWidth: '260px', width: '30vw', padding: 0 }}>
+            <WaterDropCard key={p.id} color={p.color} style={{ minWidth: '280px', maxWidth: '320px', flex: '0 0 auto', padding: 0 }}>
               <div onClick={() => openProject(p)} style={{ display: 'block', cursor: 'pointer' }}>
                 <div onMouseEnter={() => { setHovered(p.id); setCursorType('project') }} onMouseLeave={() => { setHovered(null); setCursorType('default') }}
                   style={{ position: 'relative', aspectRatio: '16/10', overflow: 'hidden', borderRadius: '12px 12px 0 0' }}>
@@ -56,8 +52,7 @@ export function FeaturedProjects() {
               </div>
             </WaterDropCard>
           ))}
-        </div>
-      </motion.div>
+      </div>
       <ProjectModal project={selectedProject} isOpen={isModalOpen} onClose={() => { setIsModalOpen(false); setSelectedProject(null) }} />
     </section>
   )
