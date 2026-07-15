@@ -61,36 +61,15 @@ function PhaseCard({ phase, index, color }) {
   )
 }
 
-function PhaseTimeline({ phases, color }) {
-  return (
-    <div style={{ position: 'relative' }}>
-      {/* Vertical line */}
-      <div style={{
-        position: 'absolute', left: '50%', top: 0, bottom: 0, width: '1px',
-        background: `linear-gradient(to bottom, transparent, ${color}40, transparent)`,
-        transform: 'translateX(-50%)'
-      }} />
-
-      {phases.map((phase, i) => (
-        <div key={phase.id} style={{ position: 'relative', marginBottom: '40px' }}>
-          {/* Timeline dot */}
-          <div style={{
-            position: 'absolute', left: '50%', top: '20px', width: '12px', height: '12px',
-            borderRadius: '50%', background: color, border: '3px solid var(--bg)',
-            transform: 'translateX(-50%)', zIndex: 2
-          }} />
-
-          <PhaseCard phase={phase} index={i} color={color} />
-        </div>
-      ))}
-    </div>
-  )
-}
-
 export function ServiceDetail() {
   const { slug } = useParams()
   const { setCursorType } = useApp()
   const service = serviceDetails[slug]
+
+  const heroRef = useRef(null)
+  const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] })
+  const heroY = useTransform(scrollYProgress, [0, 1], [0, 200])
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0])
 
   if (!service) {
     return (
@@ -102,11 +81,6 @@ export function ServiceDetail() {
       </main>
     )
   }
-
-  const heroRef = useRef(null)
-  const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] })
-  const heroY = useTransform(scrollYProgress, [0, 1], [0, 200])
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0])
 
   return (
     <main style={{ paddingTop: '80px', minHeight: '100vh' }}>
@@ -217,7 +191,7 @@ export function ServiceDetail() {
 
 function ScrollProgress({ phases, color }) {
   const ref = useRef(null)
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start center', 'end center'] })
+  useScroll({ target: ref, offset: ['start center', 'end center'] })
 
   return (
     <div ref={ref} className="liquid-glass" style={{ padding: '16px 24px', borderRadius: '100px', display: 'flex', alignItems: 'center', gap: '12px', maxWidth: '600px', margin: '0 auto' }}>

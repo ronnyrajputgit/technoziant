@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { TextReveal } from '../components/ui/TextReveal'
 import { WaterDropCard } from '../components/ui/Cards'
-import { useApp } from '../context/AppContext'
 import { Footer } from '../components/layout/Footer'
 
 const blogPosts = [
@@ -15,7 +14,6 @@ const blogPosts = [
 ]
 
 export function Blog() {
-  const { setCursorType } = useApp()
   const [selectedPost, setSelectedPost] = useState(null)
   const [editorContent, setEditorContent] = useState('')
 

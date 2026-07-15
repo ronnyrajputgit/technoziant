@@ -64,19 +64,6 @@ const leadership = [
   }
 ]
 
-const brokenGlassStyles = {
-  angular: { clipPath: null },
-  'rounded-heavy': { clipPath: null },
-  'diamond-cut': { clipPath: null },
-  pebble: { clipPath: null },
-  'sharp-edges': { clipPath: null },
-  blob: { clipPath: null },
-  wave: { clipPath: null },
-  hexagon: { clipPath: null }
-}
-
-const styles = ['angular', 'rounded-heavy', 'diamond-cut', 'pebble', 'sharp-edges', 'blob', 'wave', 'hexagon']
-
 const stats = [
   { value: '4', label: 'Leaders', icon: '👥' },
   { value: '20+', label: 'Years Combined', icon: '📅' },
@@ -87,8 +74,6 @@ const stats = [
 function LeaderCard({ leader, index, onClick }) {
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, margin: '-20px' })
-  const cardStyle = styles[index % styles.length]
-  const clipPath = brokenGlassStyles[cardStyle].clipPath
   const randomRadius = useRef(generateRandomRadius()).current
 
   return (

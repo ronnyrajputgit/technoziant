@@ -1,9 +1,7 @@
 import { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { Link } from 'react-router-dom'
+import { motion } from 'framer-motion'
 import { TextReveal } from '../components/ui/TextReveal'
 import { WaterDropCard } from '../components/ui/Cards'
-import { ProjectModal } from '../components/ui/ProjectModal'
 import { projects } from '../data/projects'
 import { useApp } from '../context/AppContext'
 import { Footer } from '../components/layout/Footer'
@@ -54,13 +52,9 @@ export function Work() {
   const { setCursorType } = useApp()
   const [h, setH] = useState(null)
   const [f, setF] = useState('all')
-  const [selectedProject, setSelectedProject] = useState(null)
-  const [isModalOpen, setIsModalOpen] = useState(false)
   const filtered = f === 'all' ? projects : projects.filter(p => p.category === f)
 
-  const openProject = (project) => {
-    setSelectedProject(project)
-    setIsModalOpen(true)
+  const openProject = (_project) => {
   }
 
   return (

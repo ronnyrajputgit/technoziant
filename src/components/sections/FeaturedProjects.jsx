@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react'
+import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { projects } from '../../data/projects'
 import { useApp } from '../../context/AppContext'

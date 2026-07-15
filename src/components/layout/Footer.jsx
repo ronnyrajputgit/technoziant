@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
 import { useApp } from '../../context/AppContext'
 
@@ -12,15 +12,8 @@ const socialLinks = [
 
 export function Footer() {
   const { setCursorType } = useApp()
-  const [email, setEmail] = useState('')
-  const [subscribed, setSubscribed] = useState(false)
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, margin: '-50px' })
-
-  const handleSubscribe = (e) => {
-    e.preventDefault()
-    if (email) { setSubscribed(true); setEmail(''); setTimeout(() => setSubscribed(false), 4000) }
-  }
 
   return (
     <footer ref={ref} style={{ position: 'relative', overflow: 'hidden', background: 'var(--bg)' }}>

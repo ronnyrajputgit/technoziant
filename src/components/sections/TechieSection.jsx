@@ -1,4 +1,4 @@
-import { motion, useInView } from 'framer-motion'
+import { useInView } from 'framer-motion'
 import { useRef, useState, useEffect } from 'react'
 
 const codeLines = [

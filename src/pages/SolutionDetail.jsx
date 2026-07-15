@@ -2,7 +2,7 @@ import { useParams, Link } from 'react-router-dom'
 import { motion, useScroll, useTransform, useInView } from 'framer-motion'
 import { useRef } from 'react'
 import { solutionDetails } from '../data/solutionDetails'
-import { WaterDropCard, GlowCard } from '../components/ui/Cards'
+import { WaterDropCard } from '../components/ui/Cards'
 import { useApp } from '../context/AppContext'
 import { Footer } from '../components/layout/Footer'
 
@@ -18,7 +18,7 @@ function ScrollSection({ children, className = '', style = {} }) {
   )
 }
 
-function ProblemCard({ problem, index, color }) {
+function ProblemCard({ problem, index }) {
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, margin: '-50px' })
   return (
@@ -68,10 +68,66 @@ function SolutionCard({ solution, index, color }) {
   )
 }
 
+function PhaseItem({ phase, index }) {
+  const ref = useRef(null)
+  const isInView = useInView(ref, { once: true, margin: '-50px' })
+  return (
+    <motion.div key={index} ref={ref}
+      initial={{ opacity: 0, x: index % 2 === 0 ? -30 : 30 }}
+      animate={isInView ? { opacity: 1, x: 0 } : {}}
+      transition={{ duration: 0.6, delay: index * 0.08 }}>
+      <WaterDropCard color={phase.color} style={{ padding: '20px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '80px 1fr 1fr', gap: '20px', alignItems: 'center' }}>
+          <div style={{ textAlign: 'center' }}>
+            <div className="liquid-glass" style={{ width: '48px', height: '48px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 6px', color: phase.color, fontWeight: '700', fontSize: '14px' }}>
+              W{phase.week}
+            </div>
+          </div>
+          <div>
+            <h4 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '2px' }}>{phase.title}</h4>
+            <p style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Week {phase.week}</p>
+          </div>
+          <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+            {phase.items.map(item => (
+              <span key={item} className="liquid-glass" style={{ padding: '3px 8px', borderRadius: '100px', fontSize: '10px', color: 'var(--text-muted)' }}>{item}</span>
+            ))}
+          </div>
+        </div>
+      </WaterDropCard>
+    </motion.div>
+  )
+}
+
+function MetricItem({ m, index, color }) {
+  const ref = useRef(null)
+  const isInView = useInView(ref, { once: true, margin: '-50px' })
+  return (
+    <motion.div key={index} ref={ref}
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={isInView ? { opacity: 1, scale: 1 } : {}}
+      transition={{ duration: 0.5, delay: index * 0.1 }}>
+      <WaterDropCard color={color} style={{ padding: '24px', textAlign: 'center' }}>
+        <span style={{ fontSize: '28px', marginBottom: '12px', display: 'block' }}>{m.icon}</span>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', marginBottom: '8px' }}>
+          <span style={{ fontSize: '16px', color: '#ef4444', textDecoration: 'line-through', opacity: 0.6 }}>{m.before}</span>
+          <span style={{ fontSize: '14px', color: 'var(--text-muted)' }}>→</span>
+          <span style={{ fontSize: '22px', fontWeight: '700', color: '#06d6a0' }}>{m.after}</span>
+        </div>
+        <p style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{m.label}</p>
+      </WaterDropCard>
+    </motion.div>
+  )
+}
+
 export function SolutionDetail() {
   const { slug } = useParams()
   const { setCursorType } = useApp()
   const solution = solutionDetails[slug]
+
+  const heroRef = useRef(null)
+  const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] })
+  const heroY = useTransform(scrollYProgress, [0, 1], [0, 200])
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0])
 
   if (!solution) {
     return (
@@ -83,11 +139,6 @@ export function SolutionDetail() {
       </main>
     )
   }
-
-  const heroRef = useRef(null)
-  const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] })
-  const heroY = useTransform(scrollYProgress, [0, 1], [0, 200])
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0])
 
   return (
     <main style={{ paddingTop: '80px', minHeight: '100vh' }}>
@@ -126,7 +177,7 @@ export function SolutionDetail() {
             </div>
           </ScrollSection>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '12px' }}>
-            {solution.problems.map((p, i) => <ProblemCard key={i} problem={p} index={i} color={solution.color} />)}
+            {solution.problems.map((p, i) => <ProblemCard key={i} problem={p} index={i} />)}
           </div>
         </div>
       </section>
@@ -164,35 +215,9 @@ export function SolutionDetail() {
             </div>
           </ScrollSection>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            {solution.phases.map((phase, i) => {
-              const ref = useRef(null)
-              const isInView = useInView(ref, { once: true, margin: '-50px' })
-              return (
-                <motion.div key={i} ref={ref}
-                  initial={{ opacity: 0, x: i % 2 === 0 ? -30 : 30 }}
-                  animate={isInView ? { opacity: 1, x: 0 } : {}}
-                  transition={{ duration: 0.6, delay: i * 0.08 }}>
-                  <WaterDropCard color={phase.color} style={{ padding: '20px' }}>
-                    <div style={{ display: 'grid', gridTemplateColumns: '80px 1fr 1fr', gap: '20px', alignItems: 'center' }}>
-                      <div style={{ textAlign: 'center' }}>
-                        <div className="liquid-glass" style={{ width: '48px', height: '48px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 6px', color: phase.color, fontWeight: '700', fontSize: '14px' }}>
-                          W{phase.week}
-                        </div>
-                      </div>
-                      <div>
-                        <h4 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '2px' }}>{phase.title}</h4>
-                        <p style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Week {phase.week}</p>
-                      </div>
-                      <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-                        {phase.items.map(item => (
-                          <span key={item} className="liquid-glass" style={{ padding: '3px 8px', borderRadius: '100px', fontSize: '10px', color: 'var(--text-muted)' }}>{item}</span>
-                        ))}
-                      </div>
-                    </div>
-                  </WaterDropCard>
-                </motion.div>
-              )
-            })}
+            {solution.phases.map((phase, i) => (
+              <PhaseItem key={i} phase={phase} index={i} />
+            ))}
           </div>
         </div>
       </section>
@@ -208,26 +233,9 @@ export function SolutionDetail() {
             </div>
           </ScrollSection>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px' }}>
-            {solution.metrics.map((m, i) => {
-              const ref = useRef(null)
-              const isInView = useInView(ref, { once: true, margin: '-50px' })
-              return (
-                <motion.div key={i} ref={ref}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={isInView ? { opacity: 1, scale: 1 } : {}}
-                  transition={{ duration: 0.5, delay: i * 0.1 }}>
-                  <WaterDropCard color={solution.color} style={{ padding: '24px', textAlign: 'center' }}>
-                    <span style={{ fontSize: '28px', marginBottom: '12px', display: 'block' }}>{m.icon}</span>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', marginBottom: '8px' }}>
-                      <span style={{ fontSize: '16px', color: '#ef4444', textDecoration: 'line-through', opacity: 0.6 }}>{m.before}</span>
-                      <span style={{ fontSize: '14px', color: 'var(--text-muted)' }}>→</span>
-                      <span style={{ fontSize: '22px', fontWeight: '700', color: '#06d6a0' }}>{m.after}</span>
-                    </div>
-                    <p style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{m.label}</p>
-                  </WaterDropCard>
-                </motion.div>
-              )
-            })}
+            {solution.metrics.map((m, i) => (
+              <MetricItem key={i} m={m} index={i} color={solution.color} />
+            ))}
           </div>
         </div>
       </section>

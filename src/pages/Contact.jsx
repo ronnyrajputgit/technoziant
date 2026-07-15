@@ -2,8 +2,7 @@ import { useState } from 'react'
 import { motion, useInView } from 'framer-motion'
 import { useRef } from 'react'
 import { TextReveal } from '../components/ui/TextReveal'
-import { WaterDropCard, GlowCard } from '../components/ui/Cards'
-import { useApp } from '../context/AppContext'
+import { GlowCard } from '../components/ui/Cards'
 import { Footer } from '../components/layout/Footer'
 
 const Icon = ({ d, color = 'currentColor', size = 20 }) => (
@@ -80,7 +79,6 @@ function ConnectCard({ method, index }) {
 }
 
 export function Contact() {
-  const { setCursorType } = useApp()
   const [f, setF] = useState({ name: '', email: '', company: '', service: '', message: '' })
   const [focus, setFocus] = useState(null)
   const [submitted, setSubmitted] = useState(false)

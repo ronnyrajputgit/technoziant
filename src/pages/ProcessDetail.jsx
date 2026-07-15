@@ -182,6 +182,11 @@ export function ProcessDetail() {
   const { setCursorType } = useApp()
   const process = processDetails[slug]
 
+  const heroRef = useRef(null)
+  const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] })
+  const heroY = useTransform(scrollYProgress, [0, 1], [0, 200])
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0])
+
   if (!process) {
     return (
       <main style={{ paddingTop: '110px', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -192,11 +197,6 @@ export function ProcessDetail() {
       </main>
     )
   }
-
-  const heroRef = useRef(null)
-  const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] })
-  const heroY = useTransform(scrollYProgress, [0, 1], [0, 200])
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0])
 
   const hasDeliverables = process.deliverables && process.deliverables.length > 0
   const hasTools = process.tools && process.tools.length > 0
