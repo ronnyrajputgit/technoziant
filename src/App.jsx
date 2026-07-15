@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { BrowserRouter as Router } from 'react-router-dom'
 import { AnimatePresence } from 'framer-motion'
-import { Preloader } from './components/layout/Preloader'
 import { Navigation } from './components/layout/Navigation'
 import { Routes } from './components/layout/Routes'
 import { SmoothScroll } from './components/layout/SmoothScroll'
@@ -11,15 +10,12 @@ import './styles/global.css'
 
 function App() {
   const [isLoading, setIsLoading] = useState(true)
-  useEffect(() => { const t = setTimeout(() => setIsLoading(false), 3800); return () => clearTimeout(t) }, [])
+  useEffect(() => { const t = setTimeout(() => setIsLoading(false), 500); return () => clearTimeout(t) }, [])
 
   return (
     <AppProvider>
       <Router>
         <ScrollToTop />
-        <AnimatePresence mode="wait">
-          {isLoading && <Preloader key="preloader" />}
-        </AnimatePresence>
         {!isLoading && (
           <SmoothScroll>
             <Navigation />

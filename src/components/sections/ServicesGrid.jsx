@@ -27,24 +27,21 @@ export function ServicesGrid() {
   return (
     <section className="section" style={{ borderTop: '1px solid var(--glass-border)' }}>
       <div className="container">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '40px', flexWrap: 'wrap', gap: '12px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '24px', flexWrap: 'wrap', gap: '8px' }}>
           <div>
-            <TextReveal><div style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '12px' }}>What We Do</div></TextReveal>
-            <TextReveal delay={0.1}><h2 style={{ fontSize: 'clamp(34px, 5vw, 64px)', fontWeight: '700', lineHeight: 1, letterSpacing: '-0.03em' }}>Our <span className="text-gradient">Services</span></h2></TextReveal>
+            <TextReveal><div style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '8px', fontFamily: "var(--font-code)" }}>what_we_do</div></TextReveal>
+            <TextReveal delay={0.1}><h2 style={{ fontSize: 'clamp(28px, 4vw, 44px)', fontWeight: '700', lineHeight: 1, letterSpacing: '-0.03em' }}>Our <span className="text-gradient">Services</span></h2></TextReveal>
           </div>
-          <TextReveal delay={0.2}><Link to="/services" onMouseEnter={() => setCursorType('hover')} onMouseLeave={() => setCursorType('default')} style={{ fontSize: '12px', color: 'var(--accent)', fontWeight: '500' }}>View All →</Link></TextReveal>
+          <TextReveal delay={0.2}><Link to="/services" onMouseEnter={() => setCursorType('hover')} onMouseLeave={() => setCursorType('default')} style={{ fontSize: '11px', color: 'var(--accent)', fontWeight: '500', fontFamily: "var(--font-code)" }}>view_all →</Link></TextReveal>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '12px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '10px' }}>
           {services.map(s => (
             <Link to={`/services/${slugMap[s.title] || s.title.toLowerCase().replace(/\s+/g, '-')}`} key={s.id}>
               <WaterDropCard color={s.color} style={{ padding: 0 }}>
-                <div onMouseEnter={() => setCursorType('hover')} onMouseLeave={() => setCursorType('default')} style={{ padding: '24px' }}>
-                  <div className="liquid-glass" style={{ width: '40px', height: '40px', borderRadius: 'var(--radius-sm)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px', color: s.color }}>{icons[s.icon]}</div>
-                  <h3 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '8px' }}>{s.title}</h3>
-                  <p style={{ fontSize: '12px', lineHeight: 1.6, color: 'var(--text-muted)', marginBottom: '14px' }}>{s.description}</p>
-                  <div style={{ display: 'flex', gap: '5px', flexWrap: 'wrap' }}>
-                    {s.features.map(f => <span key={f} className="liquid-glass" style={{ padding: '2px 7px', borderRadius: '100px', fontSize: '9px', color: 'var(--text-muted)' }}>{f}</span>)}
-                  </div>
+                <div onMouseEnter={() => setCursorType('hover')} onMouseLeave={() => setCursorType('default')} style={{ padding: '20px' }}>
+                  <div className="liquid-glass" style={{ width: '36px', height: '36px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '12px', color: s.color }}>{icons[s.icon]}</div>
+                  <h3 style={{ fontSize: '15px', fontWeight: '600', marginBottom: '6px' }}>{s.title}</h3>
+                  <p style={{ fontSize: '12px', lineHeight: 1.6, color: 'var(--text-muted)' }}>{s.description}</p>
                 </div>
               </WaterDropCard>
             </Link>

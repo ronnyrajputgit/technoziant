@@ -66,16 +66,13 @@ export function Services() {
             <Link to={`/services/${slugMap[s.title] || s.title.toLowerCase().replace(/\s+/g, '-')}`} key={s.id}>
               <WaterDropCard color={s.color} style={{ padding: 0 }}>
                 <div onMouseEnter={() => setCursorType('hover')} onMouseLeave={() => setCursorType('default')}
-                  style={{ display: 'grid', gridTemplateColumns: '80px 1fr auto', gap: '14px', padding: '14px', alignItems: 'center' }}>
-                  <div style={{ width: '70px', height: '70px', borderRadius: '8px', overflow: 'hidden', flexShrink: 0 }}>
+                  style={{ display: 'grid', gridTemplateColumns: '70px 1fr auto', gap: '14px', padding: '14px', alignItems: 'center' }}>
+                  <div style={{ width: '60px', height: '60px', borderRadius: '8px', overflow: 'hidden', flexShrink: 0 }}>
                     <img src={s.img} alt={s.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   </div>
                   <div>
                     <h3 style={{ fontSize: '15px', fontWeight: '600', marginBottom: '3px' }}>{s.title}</h3>
-                    <p style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '6px', lineHeight: 1.5 }}>{s.description}</p>
-                    <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
-                      {s.features.map(f => <span key={f} className="liquid-glass" style={{ padding: '2px 6px', borderRadius: '4px', fontSize: '9px', color: s.color, fontFamily: "var(--font-code)" }}>{f}</span>)}
-                    </div>
+                    <p style={{ fontSize: '11px', color: 'var(--text-muted)', lineHeight: 1.5 }}>{s.description}</p>
                   </div>
                   <div className="liquid-glass" style={{ padding: '5px 12px', borderRadius: '6px', fontSize: '10px', color: s.color, fontWeight: '500', whiteSpace: 'nowrap', fontFamily: "var(--font-code)" }}>
                     {'->'}
