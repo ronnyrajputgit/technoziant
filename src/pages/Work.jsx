@@ -1,57 +1,50 @@
 import { useState } from 'react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Link } from 'react-router-dom'
 import { TextReveal } from '../components/ui/TextReveal'
 import { WaterDropCard } from '../components/ui/Cards'
-import { ProjectModal } from '../components/ui/ProjectModal'
-import { InteractiveSnippet, EcommerceVisual, HealthcareVisual, FintechVisual } from '../components/ui/InteractiveSnippet'
-import { projects } from '../data/projects'
 import { useApp } from '../context/AppContext'
 import { Footer } from '../components/layout/Footer'
 
 const projectSnippets = [
   {
-    title: 'bloom-store.ts',
+    title: 'Bloom E-Commerce',
     client: 'Bloom Corp',
     color: '#22c55e',
-    code: `const store = new BloomStore({
-  vendors: 500+,
-  products: '100K+',
-  payments: ['stripe', 'razorpay'],
-  ai: { recommendations: true }
-});
-
-await store.launch({ scale: 'auto' });`,
-    visual: <EcommerceVisual />
+    stats: [
+      { label: 'Vendors', value: '500+', icon: '🏪' },
+      { label: 'Products', value: '100K+', icon: '📦' },
+      { label: 'Payments', value: 'Stripe, Razorpay', icon: '💳' },
+      { label: 'AI', value: 'Recommendations', icon: '🤖' }
+    ],
+    result: '3x user engagement',
+    image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&q=80'
   },
   {
-    title: 'pulse-health.ts',
+    title: 'Pulse Healthcare',
     client: 'PulseMed',
     color: '#3b82f6',
-    code: `const telemedicine = new Telehealth({
-  hipaa: true,
-  video: 'webrtc',
-  doctors: '10K+',
-  patients: 'unlimited',
-  compliance: ['hipaa', 'gdpr']
-});
-
-await telemedicine.deploy();`,
-    visual: <HealthcareVisual />
+    stats: [
+      { label: 'Doctors', value: '10K+', icon: '👨‍⚕️' },
+      { label: 'Patients', value: 'Unlimited', icon: '👥' },
+      { label: 'Video', value: 'WebRTC', icon: '📹' },
+      { label: 'Compliance', value: 'HIPAA, GDPR', icon: '🔒' }
+    ],
+    result: '50K+ consultations',
+    image: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=600&q=80'
   },
   {
-    title: 'finsecure-app.ts',
+    title: 'FinSecure Banking',
     client: 'FinSecure',
     color: '#a855f7',
-    code: `const banking = new FinSecure({
-  auth: 'biometric',
-  transfers: 'instant',
-  countries: 180+,
-  security: 'bank-grade',
-  encryption: 'AES-256'
-});
-
-await banking.goLive();`,
-    visual: <FintechVisual />
+    stats: [
+      { label: 'Auth', value: 'Biometric', icon: '🔐' },
+      { label: 'Countries', value: '180+', icon: '🌍' },
+      { label: 'Security', value: 'Bank-grade', icon: '🛡️' },
+      { label: 'Encryption', value: 'AES-256', icon: '🔑' }
+    ],
+    result: 'Instant transfers',
+    image: 'https://images.unsplash.com/photo-1563986768609-322da13575f2?w=600&q=80'
   }
 ]
 
@@ -62,16 +55,6 @@ export function Work() {
   const [selectedProject, setSelectedProject] = useState(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const filtered = f === 'all' ? projects : projects.filter(p => p.category === f)
-
-  const openProject = (project) => {
-    setSelectedProject(project)
-    setIsModalOpen(true)
-  }
-
-  const closeProject = () => {
-    setIsModalOpen(false)
-    setSelectedProject(null)
-  }
 
   return (
     <main style={{ paddingTop: '100px', minHeight: '100vh' }}>
@@ -128,70 +111,86 @@ export function Work() {
         </div>
       </section>
 
-      {/* Interactive Code Snippets */}
+      {/* Case Studies - Card Stats View */}
       <section className="section" style={{ borderTop: '1px solid var(--glass-border)' }}>
         <div className="container">
-          <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+          <div style={{ textAlign: 'center', marginBottom: '24px' }}>
             <TextReveal><div style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '8px', fontFamily: "var(--font-code)" }}>case_studies</div></TextReveal>
             <TextReveal delay={0.1}><h2 style={{ fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: '700', lineHeight: 1 }}>How We <span className="text-gradient">Built It</span></h2></TextReveal>
-            <TextReveal delay={0.2}><p style={{ fontSize: '13px', color: 'var(--text-muted)', maxWidth: '400px', margin: '12px auto 0', lineHeight: 1.6 }}>Click on any snippet to see the live preview of what we built.</p></TextReveal>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '16px' }}>
-            {projectSnippets.map((snippet, i) => (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '16px' }}>
+            {projectSnippets.map((project, i) => (
               <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
                 transition={{ delay: i * 0.1, duration: 0.5 }}>
-                <InteractiveSnippet {...snippet} />
+                <div className="liquid-glass" style={{ borderRadius: '12px', overflow: 'hidden' }}>
+                  {/* Image */}
+                  <div style={{ position: 'relative', height: '160px', overflow: 'hidden' }}>
+                    <img src={project.image} alt={project.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, var(--bg) 0%, transparent 100%)' }} />
+                    <div style={{ position: 'absolute', top: '12px', left: '12px', display: 'flex', gap: '6px' }}>
+                      <span style={{ fontSize: '9px', padding: '3px 8px', borderRadius: '4px', background: `${project.color}20`, color: project.color, fontFamily: "var(--font-code)", fontWeight: '600' }}>{project.client}</span>
+                    </div>
+                  </div>
+
+                  {/* Content */}
+                  <div style={{ padding: '16px' }}>
+                    <h3 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '12px' }}>{project.title}</h3>
+                    
+                    {/* Stats Grid */}
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '12px' }}>
+                      {project.stats.map((stat, j) => (
+                        <motion.div key={j} initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }}
+                          transition={{ delay: i * 0.1 + j * 0.05, duration: 0.4 }}
+                          className="liquid-glass" style={{ padding: '10px', borderRadius: '8px', textAlign: 'center' }}>
+                          <div style={{ fontSize: '16px', marginBottom: '4px' }}>{stat.icon}</div>
+                          <div style={{ fontSize: '12px', fontWeight: '700', color: project.color, fontFamily: "var(--font-code)" }}>{stat.value}</div>
+                          <div style={{ fontSize: '9px', color: 'var(--text-muted)' }}>{stat.label}</div>
+                        </motion.div>
+                      ))}
+                    </div>
+
+                    {/* Result */}
+                    <div className="liquid-glass" style={{ padding: '8px 12px', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+                      <span style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>Result:</span>
+                      <span style={{ fontSize: '11px', fontWeight: '600', color: project.color }}>{project.result}</span>
+                    </div>
+                  </div>
+                </div>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Process as Code */}
+      {/* Process */}
       <section className="section" style={{ borderTop: '1px solid var(--glass-border)' }}>
         <div className="container">
-          <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+          <div style={{ textAlign: 'center', marginBottom: '24px' }}>
             <TextReveal><div style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '8px', fontFamily: "var(--font-code)" }}>how_we_work</div></TextReveal>
             <TextReveal delay={0.1}><h2 style={{ fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: '700', lineHeight: 1 }}>Our <span className="text-gradient">Process</span></h2></TextReveal>
           </div>
-
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-            className="liquid-glass" style={{ borderRadius: '10px', overflow: 'hidden', maxWidth: '500px', margin: '0 auto' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '5px', padding: '8px 14px', borderBottom: '1px solid var(--glass-border)', background: 'var(--surface)' }}>
-              <div style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#ff5f57' }} />
-              <div style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#febc2e' }} />
-              <div style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#28c840' }} />
-              <span style={{ marginLeft: '8px', fontSize: '10px', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>process.ts</span>
-            </div>
-            <div style={{ padding: '20px', fontFamily: "var(--font-code)", fontSize: '12px', lineHeight: '24px' }}>
-              <div><span style={{ color: 'var(--code-comment)' }}>{'// The Technoziant development pipeline'}</span></div>
-              <div><span style={{ color: 'var(--code-keyword)' }}>export const</span> <span style={{ color: 'var(--code-property)' }}>process</span> = {'['}</div>
-              {[
-                { step: 'Discovery', desc: 'Understanding your vision', icon: '🔍' },
-                { step: 'Strategy', desc: 'Planning architecture', icon: '📋' },
-                { step: 'Design', desc: 'Creating interfaces', icon: '🎨' },
-                { step: 'Development', desc: 'Building with code', icon: '⚡' },
-                { step: 'Launch', desc: 'Deploying live', icon: '🚀' },
-                { step: 'Support', desc: 'Ongoing maintenance', icon: '🛡️' }
-              ].map((item, i) => (
-                <motion.div key={i} initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}
-                  transition={{ delay: i * 0.05, duration: 0.4 }}
-                  style={{ paddingLeft: '16px' }}>
-                  <span style={{ color: 'var(--code-text)' }}>{'  { '}</span>
-                  <span style={{ color: 'var(--code-property)' }}>step</span>: <span style={{ color: 'var(--code-string)' }}>'{item.step}'</span>,
-                  <span style={{ color: 'var(--code-property)' }}> desc</span>: <span style={{ color: 'var(--code-string)' }}>'{item.desc}'</span>,
-                  <span style={{ color: 'var(--code-property)' }}> icon</span>: <span style={{ color: 'var(--code-string)' }}>'{item.icon}'</span>
-                  <span style={{ color: 'var(--code-text)' }}>{' }'}</span>{i < 5 && ','}
-                </motion.div>
-              ))}
-              <div>{']'}</div>
-            </div>
-          </motion.div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '10px' }}>
+            {[
+              { step: '01', title: 'Discovery', icon: '🔍' },
+              { step: '02', title: 'Strategy', icon: '📋' },
+              { step: '03', title: 'Design', icon: '🎨' },
+              { step: '04', title: 'Develop', icon: '⚡' },
+              { step: '05', title: 'Launch', icon: '🚀' },
+              { step: '06', title: 'Support', icon: '🛡️' }
+            ].map((item, i) => (
+              <motion.div key={i} initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                transition={{ delay: i * 0.05, duration: 0.4 }}
+                className="liquid-glass" style={{ padding: '18px', borderRadius: '10px', textAlign: 'center' }}>
+                <div style={{ fontSize: '24px', marginBottom: '6px' }}>{item.icon}</div>
+                <div style={{ fontSize: '9px', color: '#22c55e', fontFamily: "var(--font-code)", marginBottom: '4px' }}>{item.step}</div>
+                <div style={{ fontSize: '13px', fontWeight: '600' }}>{item.title}</div>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
 
-      <ProjectModal project={selectedProject} isOpen={isModalOpen} onClose={closeProject} />
       <Footer />
     </main>
   )
