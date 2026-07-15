@@ -16,7 +16,7 @@ export function TechStack() {
   return (
     <section ref={ref} className="section" style={{ borderTop: '1px solid var(--glass-border)', overflow: 'hidden' }}>
       <div className="container" style={{ textAlign: 'center', marginBottom: '24px' }}>
-        <TextReveal><div style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '8px', fontFamily: "var(--font-code)" }}>tech_stack</div></TextReveal>
+        <TextReveal><div style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '8px', fontFamily: "var(--font-code)" }}>tech stack</div></TextReveal>
         <TextReveal delay={0.1}><h2 style={{ fontSize: 'clamp(28px, 4vw, 44px)', fontWeight: '700', lineHeight: 1 }}>Our <span className="text-gradient">Tech Stack</span></h2></TextReveal>
       </div>
       {[{ items: r1, emojis: e1, m: x1 }, { items: r2, emojis: e2, m: x2 }].map((row, ri) => (

@@ -60,7 +60,7 @@ export function Work() {
   return (
     <main style={{ paddingTop: '100px', minHeight: '100vh' }}>
       <section className="container" style={{ marginBottom: '32px' }}>
-        <TextReveal><div style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '8px', fontFamily: "var(--font-code)" }}>our_work</div></TextReveal>
+        <TextReveal><div style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '8px', fontFamily: "var(--font-code)" }}>our work</div></TextReveal>
         <TextReveal delay={0.1}><h1 style={{ fontSize: 'clamp(40px, 8vw, 90px)', fontWeight: '700', lineHeight: 0.95, marginBottom: '12px' }}>Selected<br /><span className="text-gradient">Projects</span></h1></TextReveal>
         <TextReveal delay={0.2}><p style={{ fontSize: '14px', lineHeight: 1.7, color: 'var(--text-muted)', maxWidth: '420px', marginBottom: '24px' }}>Crafting digital experiences for startups, enterprises, and everything in between.</p></TextReveal>
         <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
@@ -88,7 +88,7 @@ export function Work() {
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: h === p.id ? 1 : 0 }}
                       style={{ position: 'absolute', inset: 0, background: `${p.color}20`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       <span className="liquid-glass-strong" style={{ padding: '8px 20px', borderRadius: '6px', fontSize: '11px', fontWeight: '600', color: 'var(--text)', fontFamily: "var(--font-code)" }}>
-                        {'>'} view_project
+                        {'>'} view project
                       </span>
                     </motion.div>
                   </div>
@@ -116,7 +116,7 @@ export function Work() {
       <section className="section" style={{ borderTop: '1px solid var(--glass-border)' }}>
         <div className="container">
           <div style={{ textAlign: 'center', marginBottom: '24px' }}>
-            <TextReveal><div style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '8px', fontFamily: "var(--font-code)" }}>case_studies</div></TextReveal>
+            <TextReveal><div style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '8px', fontFamily: "var(--font-code)" }}>case studies</div></TextReveal>
             <TextReveal delay={0.1}><h2 style={{ fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: '700', lineHeight: 1 }}>How We <span className="text-gradient">Built It</span></h2></TextReveal>
           </div>
 
@@ -168,7 +168,7 @@ export function Work() {
       <section className="section" style={{ borderTop: '1px solid var(--glass-border)' }}>
         <div className="container">
           <div style={{ textAlign: 'center', marginBottom: '24px' }}>
-            <TextReveal><div style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '8px', fontFamily: "var(--font-code)" }}>how_we_work</div></TextReveal>
+            <TextReveal><div style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '8px', fontFamily: "var(--font-code)" }}>how we work</div></TextReveal>
             <TextReveal delay={0.1}><h2 style={{ fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: '700', lineHeight: 1 }}>Our <span className="text-gradient">Process</span></h2></TextReveal>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '10px' }}>

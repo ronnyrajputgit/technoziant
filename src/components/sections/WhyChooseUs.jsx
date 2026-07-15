@@ -15,7 +15,7 @@ export function WhyChooseUs() {
     <section className="section" style={{ borderTop: '1px solid var(--glass-border)' }}>
       <div className="container">
         <div style={{ textAlign: 'center', marginBottom: '24px' }}>
-          <TextReveal><div style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '8px', fontFamily: "var(--font-code)" }}>why_us</div></TextReveal>
+          <TextReveal><div style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '8px', fontFamily: "var(--font-code)" }}>why us</div></TextReveal>
           <TextReveal delay={0.1}><h2 style={{ fontSize: 'clamp(28px, 4vw, 44px)', fontWeight: '700', lineHeight: 1 }}>Why Choose <span className="text-gradient">Technoziant</span></h2></TextReveal>
         </div>
 

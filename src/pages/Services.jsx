@@ -79,7 +79,7 @@ export function Services() {
       <section className="section" style={{ borderTop: '1px solid var(--glass-border)' }}>
         <div className="container">
           <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-            <TextReveal><div style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '8px', fontFamily: "var(--font-code)" }}>tech_stack</div></TextReveal>
+            <TextReveal><div style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '8px', fontFamily: "var(--font-code)" }}>tech stack</div></TextReveal>
             <TextReveal delay={0.1}><h2 style={{ fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: '700', lineHeight: 1 }}>Technologies We <span className="text-gradient">Use</span></h2></TextReveal>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '8px' }}>
@@ -141,7 +141,7 @@ export function Services() {
       <section className="section" style={{ borderTop: '1px solid var(--glass-border)' }}>
         <div className="container">
           <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-            <TextReveal><div style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '8px', fontFamily: "var(--font-code)" }}>why_us</div></TextReveal>
+            <TextReveal><div style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '8px', fontFamily: "var(--font-code)" }}>why us</div></TextReveal>
             <TextReveal delay={0.1}><h2 style={{ fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: '700', lineHeight: 1 }}>Why Choose <span className="text-gradient">Technoziant</span></h2></TextReveal>
           </div>
 
@@ -189,7 +189,7 @@ export function Services() {
                 style={{ display: 'inline-block' }}>
                 <motion.div whileHover={{ scale: 1.05, boxShadow: '0 0 30px var(--accent)' }} whileTap={{ scale: 0.95 }}
                   style={{ padding: '12px 28px', borderRadius: '8px', fontSize: '12px', fontWeight: '600', color: '#fff', cursor: 'pointer', textAlign: 'center', fontFamily: "var(--font-code)", background: 'linear-gradient(135deg, #22c55e, #16a34a)' }}>
-                  {'>'} get_in_touch
+                  {'>'} get in touch
                 </motion.div>
               </Link>
             </div>

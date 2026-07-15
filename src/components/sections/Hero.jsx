@@ -82,7 +82,7 @@ export function Hero() {
                   style={{ display: 'inline-block' }}>
                   <motion.div whileHover={{ scale: 1.05, boxShadow: '0 0 30px var(--accent)' }} whileTap={{ scale: 0.95 }}
                     className="liquid-glass-strong" style={{ padding: '14px 32px', color: 'var(--text)', borderRadius: '8px', fontSize: '14px', fontWeight: '600', cursor: 'pointer', textAlign: 'center', fontFamily: "var(--font-code)" }}>
-                    {'>'} view_work
+                    {'>'} view work
                   </motion.div>
                 </Link>
                 <Link to="/services" onMouseEnter={() => setCursorType('hover')} onMouseLeave={() => setCursorType('default')}
@@ -117,7 +117,7 @@ export function Hero() {
             {/* Right - Client Carousel */}
             <motion.div initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.6, duration: 0.8 }}
               className="liquid-glass" style={{ padding: '24px', borderRadius: '16px' }}>
-              <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: "var(--font-code)", marginBottom: '16px' }}>{'// trusted_by'}</div>
+              <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: "var(--font-code)", marginBottom: '16px' }}>{'// trusted by'}</div>
               
               <AnimatePresence mode="wait">
                 <motion.div key={clientIndex}
@@ -145,7 +145,7 @@ export function Hero() {
 
               {/* Tech stack preview */}
               <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '1px solid var(--glass-border)' }}>
-                <div style={{ fontSize: '9px', color: 'var(--text-muted)', fontFamily: "var(--font-code)", marginBottom: '10px' }}>{'// tech_stack'}</div>
+                <div style={{ fontSize: '9px', color: 'var(--text-muted)', fontFamily: "var(--font-code)", marginBottom: '10px' }}>{'// tech stack'}</div>
                 <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
                   {['React', 'Next.js', 'Node.js', 'Flutter', 'AWS', 'TypeScript'].map((tech, i) => (
                     <motion.span key={i} initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 1 + i * 0.1 }}

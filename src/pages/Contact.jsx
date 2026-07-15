@@ -100,7 +100,7 @@ export function Contact() {
   return (
     <main style={{ paddingTop: '100px', minHeight: '100vh' }}>
       <section className="container" style={{ marginBottom: '32px' }}>
-        <TextReveal><div style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '8px', fontFamily: "var(--font-code)" }}>get_in_touch</div></TextReveal>
+        <TextReveal><div style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '8px', fontFamily: "var(--font-code)" }}>get in touch</div></TextReveal>
         <TextReveal delay={0.1}><h1 style={{ fontSize: 'clamp(36px, 7vw, 80px)', fontWeight: '700', lineHeight: 0.95, marginBottom: '12px' }}>Let's create<br /><span className="text-gradient">something amazing</span></h1></TextReveal>
         <TextReveal delay={0.2}><p style={{ fontSize: '14px', lineHeight: 1.7, color: 'var(--text-muted)', maxWidth: '420px' }}>Choose your preferred way to connect. We're available across multiple platforms.</p></TextReveal>
       </section>
@@ -137,7 +137,7 @@ export function Contact() {
                 ) : (
                   <motion.button type="submit" whileHover={{ scale: 1.02, boxShadow: '0 0 20px var(--accent)' }} whileTap={{ scale: 0.98 }}
                     style={{ padding: '12px 28px', borderRadius: '8px', fontSize: '12px', fontWeight: '600', color: '#fff', width: '100%', background: 'linear-gradient(135deg, #22c55e, #16a34a)', fontFamily: "var(--font-code)" }}>
-                    {'>'} send_message
+                    {'>'} send message
                   </motion.button>
                 )}
               </form>

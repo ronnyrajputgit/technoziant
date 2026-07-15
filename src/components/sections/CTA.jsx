@@ -9,7 +9,7 @@ export function CTA() {
     <section style={{ position: 'relative', overflow: 'hidden', padding: 'clamp(40px, 6vw, 80px) 0' }}>
       <div className="container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', position: 'relative', zIndex: 1 }}>
         <TextReveal>
-          <div style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '8px', fontFamily: "var(--font-code)" }}>ready_to_start</div>
+          <div style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '8px', fontFamily: "var(--font-code)" }}>ready to start</div>
         </TextReveal>
         <div style={{ overflow: 'hidden', marginBottom: '4px' }}>
           <motion.h2 initial={{ y: '110%' }} whileInView={{ y: 0 }} viewport={{ once: true }}
@@ -28,14 +28,14 @@ export function CTA() {
             style={{ display: 'inline-block' }}>
             <motion.div whileHover={{ scale: 1.05, boxShadow: '0 0 30px var(--accent)' }} whileTap={{ scale: 0.95 }}
               style={{ padding: '12px 28px', borderRadius: '8px', fontSize: '13px', fontWeight: '600', color: '#fff', cursor: 'pointer', textAlign: 'center', fontFamily: "var(--font-code)", background: 'linear-gradient(135deg, #22c55e, #16a34a)' }}>
-              {'>'} get_in_touch
+              {'>'} get in touch
             </motion.div>
           </Link>
           <Link to="/work" onMouseEnter={() => setCursorType('hover')} onMouseLeave={() => setCursorType('default')}
             style={{ display: 'inline-block' }}>
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
               className="liquid-glass" style={{ padding: '12px 28px', borderRadius: '8px', fontSize: '13px', fontWeight: '500', color: 'var(--text)', cursor: 'pointer', textAlign: 'center', fontFamily: "var(--font-code)" }}>
-              {'>'} view_work
+              {'>'} view work
             </motion.div>
           </Link>
         </motion.div>
