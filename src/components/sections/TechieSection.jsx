@@ -145,13 +145,6 @@ export function TechieSection() {
             <p style={{ fontSize: '14px', lineHeight: 1.8, color: 'var(--text-muted)', maxWidth: '420px', marginBottom: '28px' }}>
               Every project follows our battle-tested pipeline — from discovery to deployment. We write clean, scalable code that powers exceptional digital products.
             </p>
-            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-              {['React/Next.js', 'Node.js', 'TypeScript', 'Cloud Native'].map(t => (
-                <span key={t} className="liquid-glass" style={{ padding: '6px 14px', borderRadius: '100px', fontSize: '11px', color: 'var(--accent)', fontWeight: '500' }}>
-                  {t}
-                </span>
-              ))}
-            </div>
           </div>
 
           <div className="liquid-glass" style={{
