@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react'
+import { jwtDecode } from 'jwt-decode'
 import { api } from '../utils/api'
 
 const AppContext = createContext()
@@ -15,12 +16,20 @@ export function AppProvider({ children }) {
   }, [theme])
 
   useEffect(() => {
-    const token = localStorage.getItem('blog_token')
-    if (token) {
-      api.me().then(u => setUser(u)).catch(() => localStorage.removeItem('blog_token')).finally(() => setAuthLoading(false))
-    } else {
-      setAuthLoading(false)
+    try {
+      const token = localStorage.getItem('blog_token')
+      if (token) {
+        const decoded = jwtDecode(token)
+        if (decoded.exp * 1000 > Date.now()) {
+          setUser({ id: decoded.id, email: decoded.email, role: decoded.role })
+        } else {
+          localStorage.removeItem('blog_token')
+        }
+      }
+    } catch {
+      localStorage.removeItem('blog_token')
     }
+    setAuthLoading(false)
   }, [])
 
   const login = async (email, password) => {
