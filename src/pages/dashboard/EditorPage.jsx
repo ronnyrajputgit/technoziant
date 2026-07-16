@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useApp } from '../../context/AppContext'
 import { api } from '../../utils/api'
 import { BlogEditor } from '../../components/editor/BlogEditor'
 
 export function EditorPage() {
   const { id } = useParams()
-  const { user } = useApp()
+  const { user, logout } = useApp()
   const navigate = useNavigate()
   const [blogData, setBlogData] = useState({})
   const [saving, setSaving] = useState(false)
@@ -26,34 +26,55 @@ export function EditorPage() {
   const handleSave = async (data) => {
     setSaving(true)
     try {
-      if (id) {
-        await api.updateBlog(id, data)
-      } else {
-        await api.createBlog(data)
-      }
+      if (id) await api.updateBlog(id, data)
+      else await api.createBlog(data)
       navigate('/dashboard')
-    } catch (err) {
-      alert('Error saving: ' + err.message)
-    } finally {
-      setSaving(false)
-    }
+    } catch (err) { alert('Error: ' + err.message) }
+    finally { setSaving(false) }
   }
 
-  if (loading) return <main style={{ paddingTop: '100px', textAlign: 'center' }}><p style={{ fontFamily: "var(--font-code)" }}>Loading editor...</p></main>
   if (!user) return null
 
   return (
-    <main style={{ paddingTop: '100px', minHeight: '100vh' }}>
-      <div className="container">
+    <div style={{ display: 'flex', minHeight: '100vh' }}>
+      <aside style={{ width: '240px', minWidth: '240px', background: 'var(--bg-2)', borderRight: '1px solid var(--glass-border)', height: '100vh', position: 'sticky', top: 0, overflow: 'auto', display: 'flex', flexDirection: 'column' }}>
+        <div style={{ padding: '20px 16px', borderBottom: '1px solid var(--glass-border)' }}>
+          <div style={{ fontSize: '16px', fontWeight: '700', fontFamily: 'var(--font-h)', marginBottom: '4px' }}>Editor</div>
+          <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>{id ? 'Edit Mode' : 'New Blog'}</div>
+        </div>
+        <nav style={{ flex: 1, padding: '12px 8px' }}>
+          {[
+            { to: '/dashboard', icon: '📊', label: 'Overview' },
+            { to: '/dashboard/editor', icon: '✏️', label: 'New Blog' },
+          ].map(link => (
+            <Link key={link.to} to={link.to}
+              style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 12px', borderRadius: '8px', fontSize: '13px', color: location.pathname === link.to ? '#22c55e' : 'var(--text)', textDecoration: 'none', marginBottom: '2px', background: location.pathname === link.to ? 'rgba(34,197,94,0.08)' : 'transparent', fontWeight: location.pathname === link.to ? '600' : '400' }}>
+              <span>{link.icon}</span><span>{link.label}</span>
+            </Link>
+          ))}
+        </nav>
+        <div style={{ padding: '12px 8px', borderTop: '1px solid var(--glass-border)' }}>
+          <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 12px', borderRadius: '8px', fontSize: '13px', color: 'var(--text-muted)', textDecoration: 'none', marginBottom: '2px' }}>
+            <span>🏠</span><span>Home</span>
+          </Link>
+          <button onClick={() => { logout(); navigate('/') }}
+            style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 12px', borderRadius: '8px', fontSize: '13px', color: '#ef4444', width: '100%', cursor: 'pointer', border: 'none', background: 'transparent', fontFamily: "var(--font-code)" }}>
+            <span>🚪</span><span>Logout</span>
+          </button>
+        </div>
+      </aside>
+      <main style={{ flex: 1, padding: '24px clamp(16px, 4vw, 40px)', overflow: 'auto' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
           <div>
             <div style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '4px', fontFamily: "var(--font-code)" }}>{id ? 'edit_blog' : 'new_blog'}</div>
             <h1 style={{ fontSize: '24px', fontWeight: '700' }}>{id ? 'Edit Blog' : 'Create New Blog'}</h1>
           </div>
-          <button onClick={() => navigate('/dashboard')} className="liquid-glass" style={{ padding: '8px 16px', borderRadius: '6px', fontSize: '11px', color: 'var(--text-muted)', cursor: 'pointer', fontFamily: "var(--font-code)" }}>← Back</button>
+          <Link to="/dashboard" style={{ padding: '8px 16px', borderRadius: '6px', border: '1px solid var(--glass-border)', fontSize: '11px', color: 'var(--text-muted)', textDecoration: 'none', fontFamily: "var(--font-code)" }}>← Back</Link>
         </div>
-        <BlogEditor initialContent={blogData} onSave={handleSave} saving={saving} />
-      </div>
-    </main>
+        {loading ? <p style={{ textAlign: 'center', fontFamily: "var(--font-code)", color: 'var(--text-muted)' }}>Loading...</p> : (
+          <BlogEditor initialContent={blogData} onSave={handleSave} saving={saving} />
+        )}
+      </main>
+    </div>
   )
 }

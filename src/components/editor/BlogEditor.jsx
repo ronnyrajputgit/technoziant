@@ -190,7 +190,7 @@ const ToolBar = ({ editor }) => {
         if (text) { editor.chain().focus().insertContent(text).setLink({ href: url }).run() }
         else { editor.chain().focus().setLink({ href: url }).run() }
       }} />
-      <div ref={ref} style={{ position: 'sticky', top: 0, zIndex: 50, background: 'var(--bg)', borderBottom: '1px solid var(--glass-border)' }}>
+      <div ref={ref} style={{ position: 'sticky', top: 0, zIndex: 100, background: 'var(--bg)', borderBottom: '1px solid var(--glass-border)' }}>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1px', padding: '6px 10px', alignItems: 'center' }}>
           <select onChange={e => { const v = e.target.value; if (v === 'p') editor.chain().focus().setParagraph().run(); else editor.chain().focus().toggleHeading({ level: parseInt(v) }).run(); e.target.value = '' }}
             style={{ padding: '4px 6px', borderRadius: '4px', border: '1px solid var(--glass-border)', background: 'transparent', color: 'var(--text)', fontSize: '10px', fontFamily: "var(--font-code)", cursor: 'pointer', marginRight: '4px' }}>
