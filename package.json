@@ -8,8 +8,8 @@
     "build": "vite build",
     "lint": "oxlint",
     "preview": "vite preview",
-    "server": "node server/index.js",
-    "start": "node server/index.js & vite --host"
+    "server": "node server/index.cjs",
+    "start": "node server/index.cjs & vite --host"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.7",

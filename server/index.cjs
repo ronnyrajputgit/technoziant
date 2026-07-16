@@ -1,9 +1,9 @@
 const express = require('express')
 const cors = require('cors')
 const path = require('path')
-const { initDB, pool } = require('./db')
-const authRoutes = require('./routes/auth')
-const blogRoutes = require('./routes/blogs')
+const { initDB, pool } = require('./db.cjs')
+const authRoutes = require('./routes/auth.cjs')
+const blogRoutes = require('./routes/blogs.cjs')
 
 const app = express()
 const PORT = process.env.PORT || 3001
