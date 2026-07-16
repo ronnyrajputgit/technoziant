@@ -8,7 +8,14 @@ const blogRoutes = require('./routes/blogs.cjs')
 const app = express()
 const PORT = process.env.PORT || 3001
 
-app.use(cors())
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:3001',
+  'https://www.technoziant.com',
+  'https://technoziant.com',
+  'https://technoziant-api.vercel.app'
+]
+app.use(cors({ origin: allowedOrigins, credentials: true }))
 app.use(express.json({ limit: '50mb' }))
 app.use(express.urlencoded({ extended: true, limit: '50mb' }))
 app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')))
