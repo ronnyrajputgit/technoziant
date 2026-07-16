@@ -116,8 +116,10 @@ function tiptapToHtml(json) {
       return `<figure style="margin:2em 0;text-align:center"><img src="${escapeHtml(src)}" alt="${escapeHtml(alt)}" style="max-width:100%;border-radius:12px" /><figcaption style="font-size:12px;color:var(--text-muted);margin-top:8px;font-style:italic">${escapeHtml(alt)}</figcaption></figure>`
     }
     case 'youtube': {
-      const src = json.attrs?.src || ''
-      return `<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;margin:2em 0;border-radius:12px"><iframe src="${escapeHtml(src)}" style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;border-radius:12px" allowfullscreen></iframe></div>`
+      let src = json.attrs?.src || ''
+      const ytMatch = src.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&?/]+)/)
+      if (ytMatch) src = `https://www.youtube.com/embed/${ytMatch[1]}`
+      return `<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;margin:2em 0;border-radius:12px;background:rgba(0,0,0,0.2)"><iframe src="${escapeHtml(src)}" style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;border-radius:12px" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen loading="lazy"></iframe></div>`
     }
     case 'table': return `<div style="overflow-x:auto;margin:1.5em 0"><table style="width:100%;border-collapse:collapse">${children}</table></div>`
     case 'tableRow': return `<tr>${children}</tr>`
