@@ -206,3 +206,9 @@ button { background: none; border: none; padding: 0; margin: 0; cursor: pointer;
 .blog-content td, .blog-content th { padding: 10px 14px; border: 1px solid var(--glass-border); }
 .blog-content th { font-weight: 600; background: rgba(255,255,255,0.03); }
 .blog-content iframe { width: 100%; border-radius: 12px; margin: 2em 0; }
+
+/* TipTap Dropcursor & Node Views */
+.ProseMirror-dropcursor { color: var(--accent) !important; }
+.ProseMirror-gapcursor { border-top: 1px solid var(--accent) !important; }
+.ProseMirror-selectednode { outline: 2px solid var(--accent) !important; outline-offset: 2px; border-radius: 4px; }
+.tiptap > .ProseMirror { min-height: 500px; }
