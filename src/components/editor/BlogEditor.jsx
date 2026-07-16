@@ -142,6 +142,8 @@ function LinkModal({ open, onClose, onInsert }) {
   )
 }
 
+function Divider() { return <div style={{ width: '1px', background: 'var(--glass-border)', margin: '0 3px', alignSelf: 'stretch' }} /> }
+
 const ToolBar = ({ editor }) => {
   const [showInsert, setShowInsert] = useState(false)
   const [showColor, setShowColor] = useState(false)

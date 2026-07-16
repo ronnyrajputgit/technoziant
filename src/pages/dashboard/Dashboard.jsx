@@ -94,7 +94,7 @@ export function Dashboard() {
         <div style={{ padding: '0 clamp(16px, 4vw, 32px)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '28px', flexWrap: 'wrap', gap: '12px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <button onClick={() => setSidebarOpen(!sidebarOpen)} style={{ padding: '8px', borderRadius: '8px', border: '1px solid var(--glass-border)', background: 'transparent', color: 'var(--text)', cursor: 'pointer', fontSize: '16px' }}>☰</button>
+              <button onClick={() => setSidebarOpen(!sidebarOpen)} style={{ padding: '8px', borderRadius: '8px', border: '1px solid var(--glass-border)', background: 'transparent', color: 'var(--text)', cursor: 'pointer', fontSize: '14px', transition: 'transform 0.3s', transform: sidebarOpen ? 'rotate(0deg)' : 'rotate(180deg)' }}>◀</button>
               <div>
                 <div style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '4px', fontFamily: "var(--font-code)" }}>overview</div>
                 <h1 style={{ fontSize: 'clamp(22px, 4vw, 32px)', fontWeight: '700' }}>Welcome, {user.name}</h1>
