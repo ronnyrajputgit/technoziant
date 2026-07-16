@@ -10,9 +10,13 @@ import { FAQ } from '../../pages/FAQ'
 import { Careers } from '../../pages/Careers'
 import { Leaders } from '../../pages/Leaders'
 import { Blog } from '../../pages/Blog'
+import { BlogPost } from '../../pages/BlogPost'
 import { ServiceDetail } from '../../pages/ServiceDetail'
 import { SolutionDetail } from '../../pages/SolutionDetail'
 import { ProcessDetail } from '../../pages/ProcessDetail'
+import { Login } from '../../pages/Login'
+import { Dashboard } from '../../pages/dashboard/Dashboard'
+import { EditorPage } from '../../pages/dashboard/EditorPage'
 
 export function Routes() {
   const location = useLocation()
@@ -32,6 +36,11 @@ export function Routes() {
       <Route path="/faq" element={<FAQ />} />
       <Route path="/careers" element={<Careers />} />
       <Route path="/blog" element={<Blog />} />
+      <Route path="/blog/:slug" element={<BlogPost />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/dashboard" element={<Dashboard />} />
+      <Route path="/dashboard/editor" element={<EditorPage />} />
+      <Route path="/dashboard/editor/:id" element={<EditorPage />} />
       <Route path="*" element={<Home />} />
     </RouterRoutes>
   )
