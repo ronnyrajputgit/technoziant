@@ -63,15 +63,8 @@ export function EditorPage() {
           </button>
         </div>
       </aside>
-      <main style={{ flex: 1, padding: '24px clamp(16px, 4vw, 40px)', overflow: 'auto' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-          <div>
-            <div style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '4px', fontFamily: "var(--font-code)" }}>{id ? 'edit_blog' : 'new_blog'}</div>
-            <h1 style={{ fontSize: '24px', fontWeight: '700' }}>{id ? 'Edit Blog' : 'Create New Blog'}</h1>
-          </div>
-          <Link to="/dashboard" style={{ padding: '8px 16px', borderRadius: '6px', border: '1px solid var(--glass-border)', fontSize: '11px', color: 'var(--text-muted)', textDecoration: 'none', fontFamily: "var(--font-code)" }}>← Back</Link>
-        </div>
-        {loading ? <p style={{ textAlign: 'center', fontFamily: "var(--font-code)", color: 'var(--text-muted)' }}>Loading...</p> : (
+      <main style={{ flex: 1, overflow: 'auto' }}>
+        {loading ? <p style={{ textAlign: 'center', fontFamily: "var(--font-code)", color: 'var(--text-muted)', paddingTop: '40px' }}>Loading...</p> : (
           <BlogEditor initialContent={blogData} onSave={handleSave} saving={saving} />
         )}
       </main>
