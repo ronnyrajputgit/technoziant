@@ -142,6 +142,15 @@ function LinkModal({ open, onClose, onInsert }) {
   )
 }
 
+function ToolbarButton({ active, onClick, label, title, disabled }) {
+  return (
+    <button onClick={onClick} disabled={disabled} title={title}
+      style={{ padding: '5px 8px', borderRadius: '4px', border: 'none', fontSize: '11px', fontWeight: active ? '700' : '400', cursor: disabled ? 'not-allowed' : 'pointer', background: active ? 'rgba(34,197,94,0.15)' : 'transparent', color: active ? '#22c55e' : 'var(--text-muted)', fontFamily: "var(--font-code)", opacity: disabled ? 0.3 : 1, whiteSpace: 'nowrap', lineHeight: 1.2 }}>
+      {label}
+    </button>
+  )
+}
+
 function Divider() { return <div style={{ width: '1px', background: 'var(--glass-border)', margin: '0 3px', alignSelf: 'stretch' }} /> }
 
 const ToolBar = ({ editor }) => {
@@ -260,7 +269,6 @@ export function BlogEditor({ initialContent = {}, onSave, saving }) {
   const [showPreview, setShowPreview] = useState(false)
   const [lastSaved, setLastSaved] = useState(null)
   const [coverModal, setCoverModal] = useState(false)
-  const coverFileRef = useRef(null)
 
   const editor = useEditor({
     extensions: [
@@ -289,13 +297,6 @@ export function BlogEditor({ initialContent = {}, onSave, saving }) {
       if (initialContent.content) editor.commands.setContent(initialContent.content)
     }
   }, [initialContent.id, initialContent.title, initialContent.excerpt, initialContent.cover_image, initialContent.tags, initialContent.content, initialContent.category, editor])
-
-  const handleCoverUpload = (file) => {
-    if (!file) return
-    const reader = new FileReader()
-    reader.onload = () => setCoverImage(reader.result)
-    reader.readAsDataURL(file)
-  }
 
   const handleSave = useCallback((published) => {
     if (!title.trim()) { alert('Title is required'); return }
