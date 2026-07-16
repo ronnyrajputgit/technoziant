@@ -1,6 +1,6 @@
 const API_BASE = window.location.hostname === 'localhost'
   ? 'http://localhost:3001/api'
-  : 'https://technoziant-api.vercel.app/api'
+  : '/api'
 
 async function apiFetch(path, options = {}) {
   const token = localStorage.getItem('blog_token')
