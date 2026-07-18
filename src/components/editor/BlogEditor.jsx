@@ -13,7 +13,7 @@ import { Color } from '@tiptap/extension-color'
 import FontFamily from '@tiptap/extension-font-family'
 import Dropcursor from '@tiptap/extension-dropcursor'
 import Gapcursor from '@tiptap/extension-gapcursor'
-import { CardBlock, ColumnsBlock, ResizableImage, Callout, Spacer } from './CustomExtensions'
+import { CardBlock, ColumnsBlock, ResizableImage, ResizableVideo, Callout, Spacer } from './CustomExtensions'
 import { useState, useCallback, useEffect, useRef } from 'react'
 import FormatBoldIcon from '@mui/icons-material/FormatBold'
 import FormatItalicIcon from '@mui/icons-material/FormatItalic'
@@ -187,6 +187,8 @@ export function BlogEditor({ initialContent = {}, onSave, saving }) {
   const [showHeadings, setShowHeadings] = useState(false)
   const toolbarRef = useRef(null)
 
+  const [, forceUpdate] = useState(0)
+
   const editor = useEditor({
     extensions: [
       StarterKit.configure({ heading: { levels: [1, 2, 3, 4] } }),
@@ -196,10 +198,11 @@ export function BlogEditor({ initialContent = {}, onSave, saving }) {
       Underline, Highlight, Link.configure({ openOnClick: false }),
       Youtube, Blockquote, TextStyle, Color, FontFamily,
       Dropcursor.configure({ color: '#22c55e', width: 2 }), Gapcursor,
-      CardBlock, ColumnsBlock, ResizableImage, Callout, Spacer
+      CardBlock, ColumnsBlock, ResizableImage, ResizableVideo, Callout, Spacer
     ],
     content: initialContent.content || '',
-    editorProps: { attributes: { style: 'min-height: 600px; padding: 32px; outline: none; font-size: 16px; line-height: 1.8;' } }
+    editorProps: { attributes: { style: 'min-height: 600px; padding: 32px; outline: none; font-size: 16px; line-height: 1.8;' } },
+    onTransaction: () => forceUpdate(n => n + 1)
   })
 
   useEffect(() => {
@@ -254,7 +257,15 @@ export function BlogEditor({ initialContent = {}, onSave, saving }) {
   return (
     <div style={{ position: 'relative' }}>
       <MediaModal open={coverModal} onClose={() => setCoverModal(false)} onInsert={(d) => { setCoverImage(d.src); setCoverModal(false) }} type="image" />
-      <MediaModal open={mediaModal.open} onClose={() => setMediaModal({ ...mediaModal, open: false })} onInsert={(d) => { d.type === 'video' ? editor.commands.setYoutubeVideo({ src: d.src }) : editor.chain().focus().insertContent({ type: 'resizableImage', attrs: { src: d.src, alt: d.alt } }).run() }} type={mediaModal.type} />
+      <MediaModal open={mediaModal.open} onClose={() => setMediaModal({ ...mediaModal, open: false })} onInsert={(d) => {
+        if (d.type === 'video') {
+          const yt = d.src.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&?/]+)/)
+          const src = yt ? `https://www.youtube.com/embed/${yt[1]}` : d.src
+          editor.chain().focus().insertContent({ type: 'resizableVideo', attrs: { src } }).run()
+        } else {
+          editor.chain().focus().insertContent({ type: 'resizableImage', attrs: { src: d.src, alt: d.alt } }).run()
+        }
+      }} type={mediaModal.type} />
       <LinkModal open={linkModal} onClose={() => setLinkModal(false)} onInsert={(url, text) => { text ? editor.chain().focus().insertContent(text).setLink({ href: url }).run() : editor.chain().focus().setLink({ href: url }).run() }} />
 
       {/* TOOLBAR */}

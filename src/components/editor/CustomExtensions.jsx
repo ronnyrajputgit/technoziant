@@ -1,7 +1,7 @@
 import { Node, mergeAttributes } from '@tiptap/core'
 import { ReactNodeViewRenderer } from '@tiptap/react'
 import { NodeViewWrapper } from '@tiptap/react'
-import { useState, useRef, useCallback } from 'react'
+import { useState, useRef, useCallback, useEffect } from 'react'
 
 function CardBlockComponent({ node, updateAttributes, deleteNode }) {
   const [editing, setEditing] = useState(false)
@@ -111,6 +111,8 @@ function ResizableImageComponent({ node, updateAttributes, deleteNode }) {
   const startX = useRef(0)
   const startW = useRef(0)
 
+  useEffect(() => { updateAttributes({ width }) }, [width])
+
   const onMouseDown = useCallback((e) => {
     e.preventDefault()
     startX.current = e.clientX
@@ -123,11 +125,10 @@ function ResizableImageComponent({ node, updateAttributes, deleteNode }) {
     const onMouseUp = () => {
       document.removeEventListener('mousemove', onMouseMove)
       document.removeEventListener('mouseup', onMouseUp)
-      updateAttributes({ width: width })
     }
     document.addEventListener('mousemove', onMouseMove)
     document.addEventListener('mouseup', onMouseUp)
-  }, [width, updateAttributes])
+  }, [])
 
   return (
     <NodeViewWrapper>
@@ -139,7 +140,17 @@ function ResizableImageComponent({ node, updateAttributes, deleteNode }) {
           <button onClick={() => setResizable(!resizable)} style={{ padding: '2px 8px', fontSize: '9px', borderRadius: '4px', border: '1px solid var(--glass-border)', background: resizable ? 'rgba(59,130,246,0.2)' : 'transparent', color: resizable ? '#3b82f6' : 'var(--text-muted)', cursor: 'pointer', fontFamily: "var(--font-code)" }}>Resize</button>
           <button onClick={() => deleteNode()} style={{ padding: '2px 8px', fontSize: '9px', borderRadius: '4px', border: '1px solid rgba(239,68,68,0.3)', background: 'transparent', color: '#ef4444', cursor: 'pointer', fontFamily: "var(--font-code)" }}>✕</button>
         </div>
-        <img ref={imgRef} src={node.attrs.src} alt={node.attrs.alt || ''} style={{ width, maxWidth: '100%', borderRadius: '12px', cursor: resizable ? 'ew-resize' : 'default', userSelect: 'none' }} onMouseDown={resizable ? onMouseDown : undefined} />
+        <div style={{ position: 'relative', display: 'inline-block', width }}>
+          <img ref={imgRef} src={node.attrs.src} alt={node.attrs.alt || ''} style={{ width: '100%', borderRadius: '12px', cursor: resizable ? 'ew-resize' : 'default', userSelect: 'none', display: 'block' }} onMouseDown={resizable ? onMouseDown : undefined} />
+          {resizable && (
+            <>
+              <div style={{ position: 'absolute', top: 0, bottom: 0, right: 0, width: '8px', cursor: 'ew-resize', background: 'rgba(59,130,246,0.5)', borderRadius: '0 12px 12px 0', opacity: 0 }} onMouseDown={onMouseDown} />
+              <div style={{ position: 'absolute', top: '50%', right: '-12px', transform: 'translateY(-50%)', width: '8px', height: '32px', background: '#3b82f6', borderRadius: '4px', cursor: 'ew-resize', display: 'flex', alignItems: 'center', justifyContent: 'center' }} onMouseDown={onMouseDown}>
+                <div style={{ width: '2px', height: '16px', background: '#fff', borderRadius: '1px' }} />
+              </div>
+            </>
+          )}
+        </div>
         {node.attrs.caption !== false && (
           <input type="text" value={node.attrs.alt || ''} onChange={e => updateAttributes({ alt: e.target.value })} placeholder="Image caption..." style={{ width: '100%', textAlign: 'center', border: 'none', background: 'transparent', color: 'var(--text-muted)', fontSize: '12px', fontStyle: 'italic', marginTop: '8px', outline: 'none' }} />
         )}
@@ -167,6 +178,83 @@ export const ResizableImage = Node.create({
   renderHTML({ HTMLAttributes }) { return ['img', mergeAttributes(HTMLAttributes, { 'data-resizable': '' })] },
 
   addNodeView() { return ReactNodeViewRenderer(ResizableImageComponent) }
+})
+
+function ResizableVideoComponent({ node, updateAttributes, deleteNode }) {
+  const [resizable, setResizable] = useState(false)
+  const [width, setWidth] = useState(node.attrs.width || '100%')
+  const [align, setAlign] = useState(node.attrs.align || 'center')
+  const containerRef = useRef(null)
+  const startX = useRef(0)
+  const startW = useRef(0)
+
+  useEffect(() => { updateAttributes({ width }) }, [width])
+
+  const onMouseDown = useCallback((e) => {
+    e.preventDefault()
+    startX.current = e.clientX
+    startW.current = containerRef.current?.offsetWidth || 640
+    const onMouseMove = (e) => {
+      const diff = e.clientX - startX.current
+      const newW = Math.max(200, startW.current + diff)
+      setWidth(newW + 'px')
+    }
+    const onMouseUp = () => {
+      document.removeEventListener('mousemove', onMouseMove)
+      document.removeEventListener('mouseup', onMouseUp)
+    }
+    document.addEventListener('mousemove', onMouseMove)
+    document.addEventListener('mouseup', onMouseUp)
+  }, [])
+
+  const isYoutube = node.attrs.src?.includes('youtube') || node.attrs.src?.includes('youtu.be')
+
+  return (
+    <NodeViewWrapper>
+      <div style={{ margin: '1.5em 0', textAlign: align, position: 'relative' }} contentEditable={false}>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '4px', marginBottom: '4px' }}>
+          {['left', 'center', 'right'].map(a => (
+            <button key={a} onClick={() => { setAlign(a); updateAttributes({ align: a }) }} style={{ padding: '2px 8px', fontSize: '9px', borderRadius: '4px', border: '1px solid var(--glass-border)', background: align === a ? 'rgba(34,197,94,0.2)' : 'transparent', color: align === a ? '#22c55e' : 'var(--text-muted)', cursor: 'pointer', fontFamily: "var(--font-code)" }}>{a[0].toUpperCase()}</button>
+          ))}
+          <button onClick={() => setResizable(!resizable)} style={{ padding: '2px 8px', fontSize: '9px', borderRadius: '4px', border: '1px solid var(--glass-border)', background: resizable ? 'rgba(59,130,246,0.2)' : 'transparent', color: resizable ? '#3b82f6' : 'var(--text-muted)', cursor: 'pointer', fontFamily: "var(--font-code)" }}>Resize</button>
+          <button onClick={() => deleteNode()} style={{ padding: '2px 8px', fontSize: '9px', borderRadius: '4px', border: '1px solid rgba(239,68,68,0.3)', background: 'transparent', color: '#ef4444', cursor: 'pointer', fontFamily: "var(--font-code)" }}>✕</button>
+        </div>
+        <div ref={containerRef} style={{ position: 'relative', display: 'inline-block', width, maxWidth: '100%' }}>
+          {isYoutube ? (
+            <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden', borderRadius: '12px' }}>
+              <iframe src={node.attrs.src} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none', borderRadius: '12px' }} allowFullScreen />
+            </div>
+          ) : (
+            <video src={node.attrs.src} controls style={{ width: '100%', borderRadius: '12px', display: 'block' }} />
+          )}
+          {resizable && (
+            <div style={{ position: 'absolute', top: '50%', right: '-12px', transform: 'translateY(-50%)', width: '8px', height: '32px', background: '#3b82f6', borderRadius: '4px', cursor: 'ew-resize', display: 'flex', alignItems: 'center', justifyContent: 'center' }} onMouseDown={onMouseDown}>
+              <div style={{ width: '2px', height: '16px', background: '#fff', borderRadius: '1px' }} />
+            </div>
+          )}
+        </div>
+      </div>
+    </NodeViewWrapper>
+  )
+}
+
+export const ResizableVideo = Node.create({
+  name: 'resizableVideo',
+  group: 'block',
+  atom: true,
+
+  addAttributes() {
+    return {
+      src: { default: '' },
+      width: { default: '100%' },
+      align: { default: 'center' }
+    }
+  },
+
+  parseHTML() { return [{ tag: 'div[data-resizable-video]' }] },
+  renderHTML({ HTMLAttributes }) { return ['div', mergeAttributes(HTMLAttributes, { 'data-resizable-video': '' })] },
+
+  addNodeView() { return ReactNodeViewRenderer(ResizableVideoComponent) }
 })
 
 function CalloutComponent({ node, updateAttributes, deleteNode }) {
