@@ -161,10 +161,11 @@ async function ensureDB() {
     )`)
     await client.query(`CREATE TABLE IF NOT EXISTS blogs (
       id SERIAL PRIMARY KEY, title VARCHAR(500) NOT NULL, slug VARCHAR(500) UNIQUE NOT NULL,
-      content JSONB NOT NULL DEFAULT '{}', excerpt TEXT DEFAULT '', cover_image VARCHAR(1000) DEFAULT '',
+      content JSONB NOT NULL DEFAULT '{}', excerpt TEXT DEFAULT '', cover_image TEXT DEFAULT '',
       author_id INTEGER REFERENCES users(id), published BOOLEAN DEFAULT false, tags TEXT[] DEFAULT '{}',
       category VARCHAR(100) DEFAULT '', created_at TIMESTAMP DEFAULT NOW(), updated_at TIMESTAMP DEFAULT NOW()
     )`)
+    await client.query("DO $$ BEGIN ALTER TABLE blogs ALTER COLUMN cover_image TYPE TEXT; EXCEPTION WHEN others THEN null; END $$")
     const exists = await client.query('SELECT id FROM users WHERE email = $1', ['admin@technoziant.com'])
     if (!exists.rows.length) {
       const hash = await bcrypt.hash('admin123', 10)
