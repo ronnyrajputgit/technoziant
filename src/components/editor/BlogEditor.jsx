@@ -321,7 +321,7 @@ export function BlogEditor({ initialContent = {}, onSave, saving }) {
     const emptyCell = { type: 'text', content: '', src: '', alt: '', align: 'center', bgColor: 'rgba(255,255,255,0.03)', radius: '8px', padding: '16px' }
     switch (type) {
       case 'grid': editor.chain().focus().insertContent({ type: 'gridBlock', attrs: { cols: 2, cells: [emptyCell, emptyCell] } }).run(); break
-      case 'card': editor.chain().focus().insertContent({ type: 'cardBlock', content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Card content...' }] }] }).run(); break
+      case 'card': editor.chain().focus().insertContent({ type: 'cardBlock', attrs: { cells: [{ type: 'text', content: '', src: '', alt: '', align: 'center', bgColor: 'transparent', radius: '8px' }] } }).run(); break
       case 'columns2': editor.chain().focus().insertContent({ type: 'columnsBlock', attrs: { cols: 2 }, content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Column 1' }] }, { type: 'paragraph', content: [{ type: 'text', text: 'Column 2' }] }] }).run(); break
       case 'columns3': editor.chain().focus().insertContent({ type: 'columnsBlock', attrs: { cols: 3 }, content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Col 1' }] }, { type: 'paragraph', content: [{ type: 'text', text: 'Col 2' }] }, { type: 'paragraph', content: [{ type: 'text', text: 'Col 3' }] }] }).run(); break
       case 'callout': editor.chain().focus().insertContent({ type: 'callout', attrs: { type: 'info' }, content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Important information...' }] }] }).run(); break
