@@ -190,55 +190,125 @@ function TableToolbar({ editor }) {
   const mergeCells = () => editor.chain().focus().mergeCells().run()
   const splitCell = () => editor.chain().focus().splitCell().run()
 
-  const TBtn = ({ onClick, children, color }) => (
-    <button onClick={onClick} style={{ padding: '4px 10px', borderRadius: '6px', border: '1px solid var(--glass-border)', background: 'transparent', color: color || 'var(--text)', fontSize: '11px', cursor: 'pointer', fontFamily: "var(--font-code)", display: 'flex', alignItems: 'center', gap: '4px', transition: 'all 0.15s' }}
-      onMouseOver={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.08)' }}
-      onMouseOut={e => { e.currentTarget.style.background = 'transparent' }}>
+  const TBtn = ({ onClick, children, color, tip, active }) => (
+    <button title={tip} onClick={onClick} style={{ padding: '4px 10px', borderRadius: '6px', border: `1px solid ${active ? (color || '#22c55e') : 'var(--glass-border)'}`, background: active ? `${color || '#22c55e'}22` : 'transparent', color: active ? (color || '#22c55e') : (color || 'var(--text)'), fontSize: '11px', cursor: 'pointer', fontFamily: "var(--font-code)", display: 'flex', alignItems: 'center', gap: '4px', transition: 'all 0.15s' }}
+      onMouseOver={e => { if (!active) e.currentTarget.style.background = 'rgba(255,255,255,0.08)' }}
+      onMouseOut={e => { if (!active) e.currentTarget.style.background = 'transparent' }}>
       {children}
     </button>
   )
 
   const setCellBg = (color) => { editor.chain().focus().setCellAttribute('backgroundColor', color).run() }
-  const setCellRadius = (radius) => { editor.chain().focus().setCellAttribute('borderRadius', radius).run() }
+  const setHeaderBg = (color) => {
+    editor.chain().focus().command(({ tr }) => {
+      const { selection } = tr
+      const pos = selection.$anchor
+      for (let depth = pos.depth; depth >= 0; depth--) {
+        const node = pos.node(depth)
+        if (node?.type?.name === 'table') {
+          node.forEach((child, offset) => {
+            if (child.type?.name === 'tableRow') {
+              child.forEach((cell, cellOffset) => {
+                if (cell.type?.name === 'tableHeader') {
+                  const cellPos = pos.start(depth) + offset + 1 + cellOffset + 1
+                  tr.setNodeMarkup(cellPos, undefined, { ...cell.attrs, backgroundColor: color })
+                }
+              })
+            }
+          })
+          return true
+        }
+      }
+      return false
+    }).run()
+  }
+
+  const cellColors = [
+    { color: 'transparent', label: 'None' },
+    { color: 'rgba(34,197,94,0.15)', label: 'Green' },
+    { color: 'rgba(59,130,246,0.15)', label: 'Blue' },
+    { color: 'rgba(168,85,247,0.15)', label: 'Purple' },
+    { color: 'rgba(245,158,11,0.15)', label: 'Amber' },
+    { color: 'rgba(239,68,68,0.15)', label: 'Red' },
+    { color: 'rgba(6,182,212,0.15)', label: 'Cyan' },
+    { color: 'rgba(236,72,153,0.15)', label: 'Pink' },
+  ]
+
+  const headerColors = [
+    { color: 'rgba(34,197,94,0.2)', label: 'Green' },
+    { color: 'rgba(59,130,246,0.2)', label: 'Blue' },
+    { color: 'rgba(168,85,247,0.2)', label: 'Purple' },
+    { color: 'rgba(245,158,11,0.2)', label: 'Amber' },
+    { color: 'rgba(239,68,68,0.2)', label: 'Red' },
+    { color: 'rgba(6,182,212,0.2)', label: 'Cyan' },
+    { color: 'rgba(236,72,153,0.2)', label: 'Pink' },
+    { color: 'rgba(255,255,255,0.05)', label: 'Light' },
+  ]
+
+  const applyTableRadius = (r) => {
+    document.querySelectorAll('.tiptap table').forEach(t => {
+      t.style.borderRadius = r
+      t.style.overflow = 'hidden'
+      t.style.border = '1px solid var(--glass-border)'
+    })
+    const cells = document.querySelectorAll('.tiptap th, .tiptap td')
+    cells.forEach(c => {
+      c.style.borderRadius = '0'
+      c.style.border = '1px solid var(--glass-border)'
+    })
+    if (cells.length > 0) {
+      const table = cells[0].closest('table')
+      if (table) {
+        const firstRow = table.querySelector('tr')
+        const lastRow = table.querySelector('tr:last-child')
+        if (firstRow) {
+          const firstCell = firstRow.querySelector('th, td')
+          const lastCell = firstRow.querySelector('th:last-child, td:last-child')
+          if (firstCell) firstCell.style.borderTopLeftRadius = r
+          if (lastCell) lastCell.style.borderTopRightRadius = r
+        }
+        if (lastRow && lastRow !== firstRow) {
+          const firstCell = lastRow.querySelector('th, td')
+          const lastCell = lastRow.querySelector('th:last-child, td:last-child')
+          if (firstCell) firstCell.style.borderBottomLeftRadius = r
+          if (lastCell) lastCell.style.borderBottomRightRadius = r
+        }
+      }
+    }
+  }
 
   return (
-    <div style={{ position: 'sticky', top: '90px', zIndex: 50, display: 'flex', gap: '4px', padding: '6px 12px', marginBottom: '8px', borderRadius: '10px', background: 'var(--bg)', border: '1px solid var(--glass-border)', boxShadow: '0 4px 16px rgba(0,0,0,0.3)', alignItems: 'center', flexWrap: 'wrap' }}>
+    <div style={{ position: 'sticky', top: '90px', zIndex: 50, display: 'flex', gap: '4px', padding: '8px 12px', marginBottom: '8px', borderRadius: '10px', background: 'var(--bg)', border: '1px solid var(--glass-border)', boxShadow: '0 4px 16px rgba(0,0,0,0.3)', alignItems: 'center', flexWrap: 'wrap' }}>
       <span style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: "var(--font-code)", marginRight: '4px' }}>TABLE</span>
-      <TBtn onClick={addRow}><AddCircleOutlineIcon sx={{ fontSize: 14, color: '#22c55e' }} /> Row</TBtn>
-      <TBtn onClick={addCol}><AddCircleOutlineIcon sx={{ fontSize: 14, color: '#3b82f6' }} /> Col</TBtn>
+      <TBtn tip="Add row below" onClick={addRow}><AddCircleOutlineIcon sx={{ fontSize: 14, color: '#22c55e' }} /> Row</TBtn>
+      <TBtn tip="Add column right" onClick={addCol}><AddCircleOutlineIcon sx={{ fontSize: 14, color: '#3b82f6' }} /> Col</TBtn>
       <div style={{ width: '1px', height: '20px', background: 'var(--glass-border)', margin: '0 4px' }} />
-      <TBtn onClick={delRow}><RemoveCircleOutlineIcon sx={{ fontSize: 14, color: '#f59e0b' }} /> Row</TBtn>
-      <TBtn onClick={delCol}><RemoveCircleOutlineIcon sx={{ fontSize: 14, color: '#f59e0b' }} /> Col</TBtn>
+      <TBtn tip="Delete row" onClick={delRow}><RemoveCircleOutlineIcon sx={{ fontSize: 14, color: '#f59e0b' }} /> Row</TBtn>
+      <TBtn tip="Delete column" onClick={delCol}><RemoveCircleOutlineIcon sx={{ fontSize: 14, color: '#f59e0b' }} /> Col</TBtn>
       <div style={{ width: '1px', height: '20px', background: 'var(--glass-border)', margin: '0 4px' }} />
-      <TBtn onClick={mergeCells}>Merge</TBtn>
-      <TBtn onClick={splitCell}>Split</TBtn>
+      <TBtn tip="Merge selected cells" onClick={mergeCells}>Merge</TBtn>
+      <TBtn tip="Split cell" onClick={splitCell}>Split</TBtn>
+
       <div style={{ width: '1px', height: '20px', background: 'var(--glass-border)', margin: '0 4px' }} />
-      <span style={{ fontSize: '9px', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>Cell BG:</span>
-      {['transparent', 'rgba(34,197,94,0.15)', 'rgba(59,130,246,0.15)', 'rgba(168,85,247,0.15)', 'rgba(245,158,11,0.15)', 'rgba(239,68,68,0.15)'].map((c, i) => (
-        <button key={i} onClick={() => setCellBg(c)} style={{ width: '16px', height: '16px', borderRadius: '3px', border: '1px solid var(--glass-border)', background: c === 'transparent' ? 'var(--bg)' : c, cursor: 'pointer' }} />
+      <span style={{ fontSize: '9px', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>Cell:</span>
+      {cellColors.map((c, i) => (
+        <button key={i} title={c.label} onClick={() => setCellBg(c.color)} style={{ width: '16px', height: '16px', borderRadius: '3px', border: '1px solid var(--glass-border)', background: c.color === 'transparent' ? 'var(--bg)' : c.color, cursor: 'pointer' }} />
       ))}
+
+      <div style={{ width: '1px', height: '20px', background: 'var(--glass-border)', margin: '0 4px' }} />
+      <span style={{ fontSize: '9px', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>Header:</span>
+      {headerColors.map((c, i) => (
+        <button key={i} title={c.label} onClick={() => setHeaderBg(c.color)} style={{ width: '16px', height: '16px', borderRadius: '3px', border: '1px solid var(--glass-border)', background: c.color, cursor: 'pointer' }} />
+      ))}
+
       <div style={{ width: '1px', height: '20px', background: 'var(--glass-border)', margin: '0 4px' }} />
       <span style={{ fontSize: '9px', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>Radius:</span>
       {['0px', '6px', '10px', '16px'].map(r => (
-        <button key={r} onClick={() => {
-          const table = editor.chain().focus().command(({ tr }) => {
-            const { from } = tr.selection
-            const node = tr.doc.nodeAt(from)
-            if (node?.type?.name === 'table' || node?.type?.name === 'tableRow' || node?.type?.name === 'tableCell' || node?.type?.name === 'tableHeader') {
-              const tableNode = tr.selection.$anchor.node(-1) || tr.selection.$anchor.node(-2)
-            }
-            return true
-          }).run()
-          document.querySelectorAll('.tiptap table').forEach(t => t.style.borderRadius = r)
-          document.querySelectorAll('.tiptap th, .tiptap td').forEach((c, i, all) => {
-            c.style.borderRadius = '0'
-            if (i === 0) c.style.borderTopLeftRadius = r
-            if (i === all.length - 1) c.style.borderTopRightRadius = r
-          })
-        }} style={{ padding: '3px 6px', fontSize: '9px', borderRadius: '4px', border: '1px solid var(--glass-border)', background: 'transparent', color: 'var(--text-muted)', cursor: 'pointer', fontFamily: "var(--font-code)" }}>{r}</button>
+        <button key={r} title={`Table radius: ${r}`} onClick={() => applyTableRadius(r)} style={{ padding: '3px 6px', fontSize: '9px', borderRadius: '4px', border: '1px solid var(--glass-border)', background: 'transparent', color: 'var(--text-muted)', cursor: 'pointer', fontFamily: "var(--font-code)" }}>{r}</button>
       ))}
+
       <div style={{ width: '1px', height: '20px', background: 'var(--glass-border)', margin: '0 4px' }} />
-      <TBtn onClick={delTable} color="#ef4444">Delete Table</TBtn>
+      <TBtn tip="Delete table" onClick={delTable} color="#ef4444">Delete</TBtn>
     </div>
   )
 }
@@ -554,13 +624,14 @@ export function BlogEditor({ initialContent = {}, onSave, saving }) {
       </div>
 
       <style>{`
-        .tiptap table { width: 100%; border-collapse: collapse; margin: 1.5em 0; }
+        .tiptap table { width: 100%; border-collapse: separate; border-spacing: 0; margin: 1.5em 0; border: 1px solid var(--glass-border); border-radius: 8px; overflow: hidden; }
         .tiptap td, .tiptap th { border: 1px solid var(--glass-border); padding: 10px 14px; min-width: 80px; position: relative; }
         .tiptap th { background: rgba(255,255,255,0.05); font-weight: 600; text-align: left; }
         .tiptap td.selectedCell, .tiptap th.selectedCell { background: rgba(34,197,94,0.1); }
         .tiptap .column-resize-handle { position: absolute; right: -2px; top: 0; bottom: 0; width: 4px; background: #22c55e; cursor: col-resize; z-index: 10; }
         .tiptap .resize-cursor { cursor: col-resize !important; }
         .tiptap table .selectedCells { background: rgba(34,197,94,0.08); }
+        .tiptap td[style*="background"], .tiptap th[style*="background"] { border-radius: 0; }
       `}</style>
     </div>
   )
