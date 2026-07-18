@@ -36,6 +36,13 @@ const ResizeHandle = ({ onMouseDown }) => (
   </div>
 )
 
+const cellTypes = [
+  { type: 'text', icon: '📝', label: 'Text' },
+  { type: 'image', icon: '🖼️', label: 'Image' },
+  { type: 'video', icon: '🎬', label: 'Video' },
+  { type: 'card', icon: '🃏', label: 'Card' },
+]
+
 /* ═══════════════════════════════════════════════════════ */
 /*  GRID BLOCK — flexible grid with cells                 */
 /* ═══════════════════════════════════════════════════════ */
@@ -57,13 +64,6 @@ function GridBlockComponent({ node, updateAttributes, deleteNode }) {
     { label: '2:1:1', cols: 3, widths: ['2fr', '1fr', '1fr'] },
     { label: '1:1:2', cols: 3, widths: ['1fr', '1fr', '2fr'] },
     { label: '3:1', cols: 2, widths: ['3fr', '1fr'] },
-  ]
-
-  const cellTypes = [
-    { type: 'text', icon: '📝', label: 'Text' },
-    { type: 'image', icon: '🖼️', label: 'Image' },
-    { type: 'video', icon: '🎬', label: 'Video' },
-    { type: 'card', icon: '🃏', label: 'Card' },
   ]
 
   const setLayout = (layout) => {
@@ -287,7 +287,16 @@ export const GridBlock = Node.create({
 function CardBlockComponent({ node, updateAttributes, deleteNode }) {
   const [editing, setEditing] = useState(false)
   const containerRef = useRef(null)
+  const contentRef = useRef(null)
   const { width, onMouseDown } = useResizable(node.attrs.width, containerRef, updateAttributes, 200)
+
+  useEffect(() => {
+    if (contentRef.current && !contentRef.current.hasChildNodes()) {
+      const empty = document.createElement('p')
+      empty.textContent = ''
+      contentRef.current.appendChild(empty)
+    }
+  }, [])
 
   const colorPresets = [
     { label: 'Default', bg: 'rgba(255,255,255,0.03)', border: 'rgba(255,255,255,0.08)' },
@@ -333,7 +342,7 @@ function CardBlockComponent({ node, updateAttributes, deleteNode }) {
               ))}
             </div>
           )}
-          <div data-card-content style={{ padding: node.attrs.padding || '24px' }} />
+          <div ref={contentRef} data-card-content style={{ padding: node.attrs.padding || '24px' }} />
         </div>
         <ResizeHandle onMouseDown={onMouseDown} />
       </div>
