@@ -133,6 +133,28 @@ function tiptapToHtml(json) {
       const w = json.attrs?.width || '100%'
       return `<div style="margin:1.5em 0;width:${w};max-width:100%"><div style="padding:${pad};border-radius:${rad};background:${bg};border:1px solid ${border}">${children}</div></div>`
     }
+    case 'gridBlock': {
+      const cells = json.attrs?.cells || []
+      const cols = json.attrs?.cols || 2
+      const colWidths = json.attrs?.colWidths
+      const gap = json.attrs?.gap || '12px'
+      const w = json.attrs?.width || '100%'
+      const gridCols = colWidths ? colWidths.join(' ') : `repeat(${cols}, 1fr)`
+      const cellsHtml = cells.map(cell => {
+        const align = cell.align || 'center'
+        const bg = cell.bgColor || 'rgba(255,255,255,0.03)'
+        const rad = cell.radius || '8px'
+        const cellPad = cell.padding || '16px'
+        let inner = ''
+        if (cell.type === 'text') inner = cell.content || ''
+        else if (cell.type === 'image' && cell.src) inner = `<img src="${escapeHtml(cell.src)}" alt="${escapeHtml(cell.alt || '')}" style="width:100%;border-radius:${rad};display:block" />${cell.alt ? `<div style="font-size:11px;color:var(--text-muted);margin-top:6px;font-style:italic">${escapeHtml(cell.alt)}</div>` : ''}`
+        else if (cell.type === 'video' && cell.src) inner = `<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:${rad}"><iframe src="${escapeHtml(cell.src)}" style="position:absolute;top:0;left:0;width:100%;height:100%;border:none" allowfullscreen></iframe></div>`
+        else if (cell.type === 'card') inner = `<div style="background:${bg};border-radius:${rad};padding:${cellPad};border:1px solid var(--glass-border)">${cell.src ? `<img src="${escapeHtml(cell.src)}" alt="" style="width:100%;border-radius:8px;margin-bottom:8px" />` : ''}${cell.content || ''}</div>`
+        else inner = cell.content || ''
+        return `<div style="background:${bg};border-radius:${rad};padding:${cellPad};text-align:${align};min-height:60px">${inner}</div>`
+      }).join('')
+      return `<div style="margin:1.5em 0;width:${w};max-width:100%;display:grid;grid-template-columns:${gridCols};gap:${gap}">${cellsHtml}</div>`
+    }
     case 'columnsBlock': {
       const cols = json.attrs?.cols || 2
       const colWidths = json.attrs?.colWidths

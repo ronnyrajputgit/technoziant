@@ -14,7 +14,7 @@ import { Color } from '@tiptap/extension-color'
 import FontFamily from '@tiptap/extension-font-family'
 import Dropcursor from '@tiptap/extension-dropcursor'
 import Gapcursor from '@tiptap/extension-gapcursor'
-import { CardBlock, ColumnsBlock, ResizableImage, ResizableVideo, Callout, Spacer } from './CustomExtensions'
+import { CardBlock, ColumnsBlock, GridBlock, ResizableImage, ResizableVideo, Callout, Spacer } from './CustomExtensions'
 import { useState, useCallback, useEffect, useRef } from 'react'
 import FormatBoldIcon from '@mui/icons-material/FormatBold'
 import FormatItalicIcon from '@mui/icons-material/FormatItalic'
@@ -239,7 +239,7 @@ export function BlogEditor({ initialContent = {}, onSave, saving }) {
       TableRow,
       TableCell,
       TableHeader,
-      CardBlock, ColumnsBlock, ResizableImage, ResizableVideo, Callout, Spacer
+      CardBlock, ColumnsBlock, GridBlock, ResizableImage, ResizableVideo, Callout, Spacer
     ],
     content: initialContent.content || '',
     editorProps: { attributes: { style: 'min-height: 600px; padding: 32px; outline: none; font-size: 16px; line-height: 1.8;' } },
@@ -265,7 +265,9 @@ export function BlogEditor({ initialContent = {}, onSave, saving }) {
 
   const insertBlock = (type) => {
     if (!editor) return
+    const emptyCell = { type: 'text', content: '', src: '', alt: '', align: 'center', bgColor: 'rgba(255,255,255,0.03)', radius: '8px', padding: '16px' }
     switch (type) {
+      case 'grid': editor.chain().focus().insertContent({ type: 'gridBlock', attrs: { cols: 2, cells: [emptyCell, emptyCell] } }).run(); break
       case 'card': editor.chain().focus().insertContent({ type: 'cardBlock', content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Card content...' }] }] }).run(); break
       case 'columns2': editor.chain().focus().insertContent({ type: 'columnsBlock', attrs: { cols: 2 }, content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Column 1' }] }, { type: 'paragraph', content: [{ type: 'text', text: 'Column 2' }] }] }).run(); break
       case 'columns3': editor.chain().focus().insertContent({ type: 'columnsBlock', attrs: { cols: 3 }, content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Col 1' }] }, { type: 'paragraph', content: [{ type: 'text', text: 'Col 2' }] }, { type: 'paragraph', content: [{ type: 'text', text: 'Col 3' }] }] }).run(); break
@@ -397,6 +399,7 @@ export function BlogEditor({ initialContent = {}, onSave, saving }) {
           {[
             { icon: <AddPhotoAlternateIcon sx={{ fontSize: 16 }} />, label: 'Image', type: 'image', color: '#3b82f6' },
             { icon: <OndemandVideoIcon sx={{ fontSize: 16 }} />, label: 'Video', type: 'youtube', color: '#ef4444' },
+            { icon: <ViewModuleIcon sx={{ fontSize: 16 }} />, label: 'Grid', type: 'grid', color: '#06b6d4' },
             { icon: <InsertDriveFileIcon sx={{ fontSize: 16 }} />, label: 'Card', type: 'card', color: '#a855f7' },
             { icon: <ViewColumnIcon sx={{ fontSize: 16 }} />, label: '2 Col', type: 'columns2', color: '#f59e0b' },
             { icon: <DashboardIcon sx={{ fontSize: 16 }} />, label: '3 Col', type: 'columns3', color: '#f59e0b' },
