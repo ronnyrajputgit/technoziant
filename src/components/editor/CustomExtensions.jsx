@@ -99,19 +99,18 @@ function GridBlockComponent({ node, updateAttributes, deleteNode }) {
   const gridCols = node.attrs.colWidths ? node.attrs.colWidths.join(' ') : `repeat(${node.attrs.cols || 2}, 1fr)`
 
   return (
-    <NodeViewWrapper>
-      <div ref={containerRef} style={{ margin: '1.5em 0', position: 'relative', width }} contentEditable={false}>
-        <DragHandle />
-        <div style={{ borderRadius: '12px', overflow: 'hidden', border: '1px solid var(--glass-border)' }}>
-          {/* Header */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 12px', borderBottom: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.02)' }}>
-            <span style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>GRID</span>
-            <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
-              <button onClick={() => setEditing(!editing)} style={btn(editing)}>Layout</button>
-              <button onClick={addCell} style={btn(false, '#3b82f6')}>+ Cell</button>
-              <button onClick={() => deleteNode()} style={delBtn()}>✕</button>
-            </div>
+    <NodeViewWrapper as="div" style={{ margin: '1.5em 0', position: 'relative', width }}>
+      <DragHandle />
+      <div style={{ borderRadius: '12px', overflow: 'hidden', border: '1px solid var(--glass-border)' }}>
+        {/* Header */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 12px', borderBottom: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.02)' }}>
+          <span style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>GRID</span>
+          <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
+            <button onMouseDown={e => e.stopPropagation()} onClick={(e) => { e.stopPropagation(); setEditing(!editing) }} style={btn(editing)}>Layout</button>
+            <button onMouseDown={e => e.stopPropagation()} onClick={(e) => { e.stopPropagation(); addCell() }} style={btn(false, '#3b82f6')}>+ Cell</button>
+            <button onMouseDown={e => e.stopPropagation()} onClick={(e) => { e.stopPropagation(); deleteNode() }} style={delBtn()}>✕</button>
           </div>
+        </div>
 
           {/* Layout picker */}
           {editing && (
@@ -149,7 +148,6 @@ function GridBlockComponent({ node, updateAttributes, deleteNode }) {
           </div>
         </div>
         <ResizeHandle onMouseDown={onMouseDown} />
-      </div>
     </NodeViewWrapper>
   )
 }
@@ -199,12 +197,13 @@ function GridCell({ cell, index, isActive, onSelect, onUpdate, onRemove, onMoveL
       <div style={{ padding: cell.padding || '16px', textAlign: cell.align || 'center', minHeight: '60px' }}>
         {cell.type === 'text' && (
           <div contentEditable suppressContentEditableWarning
+            onClick={e => e.stopPropagation()}
             onBlur={e => onUpdate({ content: e.currentTarget.innerHTML })}
             dangerouslySetInnerHTML={{ __html: cell.content || '<span style="color:var(--text-muted);font-size:12px">Click to edit...</span>' }}
-            style={{ outline: 'none', fontSize: '14px', lineHeight: 1.6, color: 'var(--text)', minHeight: '20px', wordBreak: 'break-word' }} />
+            style={{ outline: 'none', fontSize: '14px', lineHeight: 1.6, color: 'var(--text)', minHeight: '20px', wordBreak: 'break-word', cursor: 'text' }} />
         )}
         {cell.type === 'image' && (
-          <div>
+          <div onClick={e => e.stopPropagation()}>
             {cell.src ? (
               <img src={cell.src} alt={cell.alt || ''} style={{ width: '100%', borderRadius: cell.radius || '8px', display: 'block' }} />
             ) : (
@@ -218,7 +217,7 @@ function GridCell({ cell, index, isActive, onSelect, onUpdate, onRemove, onMoveL
           </div>
         )}
         {cell.type === 'video' && (
-          <div>
+          <div onClick={e => e.stopPropagation()}>
             {cell.src ? (
               <div style={{ position: 'relative', paddingBottom: '56.25%', borderRadius: cell.radius || '8px', overflow: 'hidden' }}>
                 <iframe src={cell.src} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none' }} allowFullScreen />
@@ -233,7 +232,7 @@ function GridCell({ cell, index, isActive, onSelect, onUpdate, onRemove, onMoveL
           </div>
         )}
         {cell.type === 'card' && (
-          <div style={{ background: cell.bgColor || 'rgba(255,255,255,0.05)', borderRadius: cell.radius || '12px', padding: cell.padding || '16px', border: '1px solid var(--glass-border)', minHeight: '60px', textAlign: cell.align || 'center' }}>
+          <div onClick={e => e.stopPropagation()} style={{ background: cell.bgColor || 'rgba(255,255,255,0.05)', borderRadius: cell.radius || '12px', padding: cell.padding || '16px', border: '1px solid var(--glass-border)', minHeight: '60px', textAlign: cell.align || 'center' }}>
             {cell.src ? (
               <img src={cell.src} alt={cell.alt || ''} style={{ width: '100%', borderRadius: '8px', marginBottom: '8px', display: 'block' }} />
             ) : (
@@ -246,9 +245,10 @@ function GridCell({ cell, index, isActive, onSelect, onUpdate, onRemove, onMoveL
               </div>
             )}
             <div contentEditable suppressContentEditableWarning
+              onClick={e => e.stopPropagation()}
               onBlur={e => onUpdate({ content: e.currentTarget.innerHTML })}
               dangerouslySetInnerHTML={{ __html: cell.content || '<span style="color:var(--text-muted);font-size:12px">Card content...</span>' }}
-              style={{ outline: 'none', fontSize: '13px', lineHeight: 1.5, color: 'var(--text)', minHeight: '16px', wordBreak: 'break-word' }} />
+              style={{ outline: 'none', fontSize: '13px', lineHeight: 1.5, color: 'var(--text)', minHeight: '16px', wordBreak: 'break-word', cursor: 'text' }} />
           </div>
         )}
       </div>
