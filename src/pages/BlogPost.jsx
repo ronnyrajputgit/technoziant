@@ -36,7 +36,9 @@ export function BlogPost() {
 
         {blog.cover_image && (
           <div style={{ marginBottom: '40px', borderRadius: blog.cover_radius || '16px', overflow: 'hidden', border: '1px solid var(--glass-border)' }}>
-            <img src={blog.cover_image} alt={blog.title} style={{ width: '100%', height: `${blog.cover_height || 400}px`, objectFit: blog.cover_fit || 'cover', objectPosition: `${blog.cover_pos?.x || 50}% ${blog.cover_pos?.y || 50}%`, filter: `brightness(${blog.cover_filter?.brightness || 100}%) contrast(${blog.cover_filter?.contrast || 100}%) blur(${blog.cover_filter?.blur || 0}px) saturate(${blog.cover_filter?.saturate || 100}%)`, display: 'block' }} />
+            <div style={{ height: `${blog.cover_height || 400}px`, overflow: 'hidden', position: 'relative' }}>
+              <img src={blog.cover_image} alt={blog.title} style={{ width: (blog.cover_fit || 'cover') === 'contain' || (blog.cover_fit || 'cover') === 'none' || (blog.cover_fit || 'cover') === 'scale-down' ? 'auto' : '100%', height: (blog.cover_fit || 'cover') === 'contain' || (blog.cover_fit || 'cover') === 'none' || (blog.cover_fit || 'cover') === 'scale-down' ? 'auto' : '100%', maxWidth: '100%', maxHeight: '100%', objectFit: blog.cover_fit || 'cover', objectPosition: `${blog.cover_pos?.x || 50}% ${blog.cover_pos?.y || 50}%`, filter: `brightness(${blog.cover_filter?.brightness || 100}%) contrast(${blog.cover_filter?.contrast || 100}%) blur(${blog.cover_filter?.blur || 0}px) saturate(${blog.cover_filter?.saturate || 100}%)`, transform: `scale(${(blog.cover_zoom || 100) / 100})`, transformOrigin: `${blog.cover_pos?.x || 50}% ${blog.cover_pos?.y || 50}%`, display: 'block' }} />
+            </div>
           </div>
         )}
 

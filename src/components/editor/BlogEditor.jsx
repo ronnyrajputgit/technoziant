@@ -501,7 +501,7 @@ export function BlogEditor({ initialContent = {}, onSave, saving }) {
                 document.addEventListener('mousemove', onMove)
                 document.addEventListener('mouseup', onUp)
               }}>
-              <img src={coverImage} alt="Cover" style={{ width: '100%', height: `${coverZoom}%`, objectFit: coverFit, objectPosition: `${coverPos.x}% ${coverPos.y}%`, display: 'block', filter: `brightness(${coverFilter.brightness}%) contrast(${coverFilter.contrast}%) blur(${coverFilter.blur}px) saturate(${coverFilter.saturate}%)`, transition: 'none' }} draggable={false} />
+              <img src={coverImage} alt="Cover" style={{ width: coverFit === 'contain' || coverFit === 'none' || coverFit === 'scale-down' ? 'auto' : '100%', height: coverFit === 'contain' || coverFit === 'none' || coverFit === 'scale-down' ? 'auto' : '100%', maxWidth: '100%', maxHeight: '100%', objectFit: coverFit, objectPosition: `${coverPos.x}% ${coverPos.y}%`, display: 'block', filter: `brightness(${coverFilter.brightness}%) contrast(${coverFilter.contrast}%) blur(${coverFilter.blur}px) saturate(${coverFilter.saturate}%)`, transform: `scale(${coverZoom / 100})`, transformOrigin: `${coverPos.x}% ${coverPos.y}%`, transition: 'transform 0.1s' }} draggable={false} />
             </div>
             <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(transparent, rgba(0,0,0,0.8))', padding: '40px 12px 10px' }}>
               {/* Row 1: Fit + Height */}
