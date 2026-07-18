@@ -96,12 +96,11 @@ export function Hero() {
 
               {/* Stats */}
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.1 }}
-                style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
+                style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
                 {[
                   { n: '150+', l: 'Projects', color: '#22c55e' },
                   { n: '50+', l: 'Clients', color: '#3b82f6' },
-                  { n: '12+', l: 'Awards', color: '#a855f7' },
-                  { n: '99%', l: 'Satisfaction', color: '#f59e0b' }
+                  { n: '12+', l: 'Awards', color: '#a855f7' }
                 ].map((s, i) => (
                   <motion.div key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.2 + i * 0.1 }}
                     className="liquid-glass" style={{ padding: '14px 10px', borderRadius: '8px', textAlign: 'center' }}>
