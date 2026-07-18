@@ -36,7 +36,7 @@ export function BlogPost() {
 
         {blog.cover_image && (
           <div style={{ marginBottom: '40px', borderRadius: '16px', overflow: 'hidden', border: '1px solid var(--glass-border)' }}>
-            <img src={blog.cover_image} alt={blog.title} style={{ width: '100%', maxHeight: '480px', objectFit: 'cover', display: 'block' }} />
+            <img src={blog.cover_image} alt={blog.title} style={{ width: '100%', height: '400px', objectFit: 'cover', objectPosition: `${blog.cover_pos?.x || 50}% ${blog.cover_pos?.y || 50}%`, display: 'block' }} />
           </div>
         )}
 
