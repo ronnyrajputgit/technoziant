@@ -349,6 +349,10 @@ export function BlogEditor({ initialContent = {}, onSave, saving }) {
 
         {/* Row 2: Insert blocks + actions */}
         <div style={{ display: 'flex', gap: '4px', padding: '6px 12px', borderTop: '1px solid var(--glass-border)', alignItems: 'center', flexWrap: 'wrap' }}>
+          <ToolButton active={false} onClick={() => setLinkModal(true)} tooltip="Insert Link">
+            <LinkIcon sx={{ fontSize: 18 }} />
+          </ToolButton>
+          <Sep />
           {[
             { icon: <AddPhotoAlternateIcon sx={{ fontSize: 16 }} />, label: 'Image', type: 'image', color: '#3b82f6' },
             { icon: <OndemandVideoIcon sx={{ fontSize: 16 }} />, label: 'Video', type: 'youtube', color: '#ef4444' },
@@ -369,12 +373,6 @@ export function BlogEditor({ initialContent = {}, onSave, saving }) {
           ))}
           <div style={{ marginLeft: 'auto', display: 'flex', gap: '4px', alignItems: 'center' }}>
             {lastSaved && <span style={{ fontSize: '10px', color: '#22c55e', fontFamily: "var(--font-code)", marginRight: '8px', display: 'flex', alignItems: 'center', gap: '4px' }}><SaveIcon sx={{ fontSize: 12 }} /> Saved {lastSaved.toLocaleTimeString()}</span>}
-            <ToolButton active={false} onClick={() => setLinkModal(true)} tooltip="Insert Link">
-              <LinkIcon sx={{ fontSize: 18 }} />
-            </ToolButton>
-            <ToolButton active={false} onClick={() => setMediaModal({ open: true, type: 'image' })} tooltip="Insert Image">
-              <ImageIcon sx={{ fontSize: 18 }} />
-            </ToolButton>
             <button onClick={() => setShowPreview(!showPreview)} style={{ padding: '5px 12px', borderRadius: '6px', border: '1px solid var(--glass-border)', background: showPreview ? 'rgba(34,197,94,0.15)' : 'transparent', color: showPreview ? '#22c55e' : 'var(--text-muted)', fontSize: '12px', cursor: 'pointer', fontFamily: "var(--font-code)", display: 'flex', alignItems: 'center', gap: '4px', transition: 'all 0.15s' }}>
               {showPreview ? <EditIcon sx={{ fontSize: 14 }} /> : <VisibilityIcon sx={{ fontSize: 14 }} />} {showPreview ? 'Edit' : 'Preview'}
             </button>
@@ -392,23 +390,37 @@ export function BlogEditor({ initialContent = {}, onSave, saving }) {
       {/* EDITOR CONTENT */}
       <div style={{ paddingTop: '100px', maxWidth: '900px', margin: '0 auto', padding: '100px clamp(16px, 4vw, 40px) 100px' }}>
         <input type="text" value={title} onChange={e => setTitle(e.target.value)} placeholder="Blog title..."
-          style={{ width: '100%', padding: '12px 0', border: 'none', background: 'transparent', color: 'var(--text)', fontSize: 'clamp(28px, 5vw, 42px)', fontWeight: '700', outline: 'none', fontFamily: 'var(--font-h)', marginBottom: '16px' }} />
+          style={{ width: '100%', padding: '12px 0', border: 'none', background: 'transparent', color: 'var(--text)', fontSize: 'clamp(28px, 5vw, 42px)', fontWeight: '700', outline: 'none', fontFamily: 'var(--font-h)', marginBottom: '20px' }} />
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
-          <div style={{ position: 'relative' }}>
-            <input type="text" value={coverImage} onChange={e => setCoverImage(e.target.value)} placeholder="Cover image URL..."
-              style={{ width: '100%', padding: '10px 44px 10px 14px', borderRadius: '10px', border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.03)', color: 'var(--text)', fontSize: '13px', outline: 'none', fontFamily: "var(--font-code)", boxSizing: 'border-box' }} />
-            <button onClick={() => setCoverModal(true)} style={{ position: 'absolute', right: '8px', top: '50%', transform: 'translateY(-50%)', padding: '4px', borderRadius: '6px', border: 'none', background: 'transparent', color: 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
-              <CloudUploadIcon sx={{ fontSize: 18 }} />
-            </button>
+        <div className="liquid-glass" style={{ borderRadius: '14px', padding: '20px', marginBottom: '20px', border: '1px solid var(--glass-border)' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
+            <div>
+              <label style={{ display: 'block', fontSize: '11px', fontWeight: '600', color: 'var(--text-muted)', fontFamily: "var(--font-code)", marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Cover Image</label>
+              <div style={{ position: 'relative' }}>
+                <input type="text" value={coverImage} onChange={e => setCoverImage(e.target.value)} placeholder="Paste image URL..."
+                  style={{ width: '100%', padding: '10px 44px 10px 14px', borderRadius: '10px', border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.03)', color: 'var(--text)', fontSize: '13px', outline: 'none', fontFamily: "var(--font-code)", boxSizing: 'border-box' }} />
+                <button onClick={() => setCoverModal(true)} style={{ position: 'absolute', right: '8px', top: '50%', transform: 'translateY(-50%)', padding: '4px', borderRadius: '6px', border: 'none', background: 'transparent', color: 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
+                  <CloudUploadIcon sx={{ fontSize: 18 }} />
+                </button>
+              </div>
+            </div>
+            <div>
+              <label style={{ display: 'block', fontSize: '11px', fontWeight: '600', color: 'var(--text-muted)', fontFamily: "var(--font-code)", marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Category</label>
+              <input type="text" value={category} onChange={e => setCategory(e.target.value)} placeholder="e.g. Technology, Design..."
+                style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.03)', color: 'var(--text)', fontSize: '13px', outline: 'none', fontFamily: "var(--font-code)", boxSizing: 'border-box' }} />
+            </div>
           </div>
-          <input type="text" value={category} onChange={e => setCategory(e.target.value)} placeholder="Category"
-            style={{ padding: '10px 14px', borderRadius: '10px', border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.03)', color: 'var(--text)', fontSize: '13px', outline: 'none', fontFamily: "var(--font-code)", boxSizing: 'border-box' }} />
+          <div style={{ marginBottom: '16px' }}>
+            <label style={{ display: 'block', fontSize: '11px', fontWeight: '600', color: 'var(--text-muted)', fontFamily: "var(--font-code)", marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Tags</label>
+            <input type="text" value={tags} onChange={e => setTags(e.target.value)} placeholder="react, nextjs, javascript..."
+              style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.03)', color: 'var(--text)', fontSize: '13px', outline: 'none', fontFamily: "var(--font-code)", boxSizing: 'border-box' }} />
+          </div>
+          <div>
+            <label style={{ display: 'block', fontSize: '11px', fontWeight: '600', color: 'var(--text-muted)', fontFamily: "var(--font-code)", marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Excerpt</label>
+            <textarea value={excerpt} onChange={e => setExcerpt(e.target.value)} placeholder="Short description for SEO and preview..." rows={2}
+              style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.03)', color: 'var(--text)', fontSize: '13px', outline: 'none', resize: 'vertical', fontFamily: "var(--font-code)", boxSizing: 'border-box' }} />
+          </div>
         </div>
-        <input type="text" value={tags} onChange={e => setTags(e.target.value)} placeholder="Tags (comma separated)"
-          style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.03)', color: 'var(--text)', fontSize: '13px', outline: 'none', fontFamily: "var(--font-code)", marginBottom: '10px', boxSizing: 'border-box' }} />
-        <textarea value={excerpt} onChange={e => setExcerpt(e.target.value)} placeholder="Excerpt / summary..." rows={2}
-          style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.03)', color: 'var(--text)', fontSize: '13px', outline: 'none', resize: 'vertical', fontFamily: "var(--font-code)", marginBottom: '16px', boxSizing: 'border-box' }} />
 
         {coverImage && (
           <div style={{ marginBottom: '20px', borderRadius: '14px', overflow: 'hidden', maxHeight: '260px', position: 'relative', border: '1px solid var(--glass-border)' }}>
