@@ -8,6 +8,7 @@ import Highlight from '@tiptap/extension-highlight'
 import Link from '@tiptap/extension-link'
 import Youtube from '@tiptap/extension-youtube'
 import Blockquote from '@tiptap/extension-blockquote'
+import { Table, TableRow, TableCell, TableHeader } from '@tiptap/extension-table'
 import { TextStyle } from '@tiptap/extension-text-style'
 import { Color } from '@tiptap/extension-color'
 import FontFamily from '@tiptap/extension-font-family'
@@ -39,6 +40,7 @@ import HorizontalRuleIcon from '@mui/icons-material/HorizontalRule'
 import TableChartIcon from '@mui/icons-material/TableChart'
 import CodeIcon from '@mui/icons-material/Code'
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutlineOutlined'
+import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutlineOutlined'
 import LinkIcon from '@mui/icons-material/Link'
 import VisibilityIcon from '@mui/icons-material/Visibility'
 import EditIcon from '@mui/icons-material/Edit'
@@ -171,6 +173,41 @@ function LinkModal({ open, onClose, onInsert }) {
   )
 }
 
+function TableToolbar({ editor }) {
+  if (!editor || !editor.isActive('table')) return null
+  const addCol = () => editor.chain().focus().addColumnAfter().run()
+  const addRow = () => editor.chain().focus().addRowAfter().run()
+  const delCol = () => editor.chain().focus().deleteColumn().run()
+  const delRow = () => editor.chain().focus().deleteRow().run()
+  const delTable = () => editor.chain().focus().deleteTable().run()
+  const mergeCells = () => editor.chain().focus().mergeCells().run()
+  const splitCell = () => editor.chain().focus().splitCell().run()
+
+  const TBtn = ({ onClick, children, color }) => (
+    <button onClick={onClick} style={{ padding: '4px 10px', borderRadius: '6px', border: '1px solid var(--glass-border)', background: 'transparent', color: color || 'var(--text)', fontSize: '11px', cursor: 'pointer', fontFamily: "var(--font-code)", display: 'flex', alignItems: 'center', gap: '4px', transition: 'all 0.15s' }}
+      onMouseOver={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.08)' }}
+      onMouseOut={e => { e.currentTarget.style.background = 'transparent' }}>
+      {children}
+    </button>
+  )
+
+  return (
+    <div style={{ position: 'sticky', top: '90px', zIndex: 50, display: 'flex', gap: '4px', padding: '6px 12px', marginBottom: '8px', borderRadius: '10px', background: 'var(--bg)', border: '1px solid var(--glass-border)', boxShadow: '0 4px 16px rgba(0,0,0,0.3)', alignItems: 'center', flexWrap: 'wrap' }}>
+      <span style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: "var(--font-code)", marginRight: '4px' }}>TABLE</span>
+      <TBtn onClick={addRow}><AddCircleOutlineIcon sx={{ fontSize: 14, color: '#22c55e' }} /> Row</TBtn>
+      <TBtn onClick={addCol}><AddCircleOutlineIcon sx={{ fontSize: 14, color: '#3b82f6' }} /> Col</TBtn>
+      <div style={{ width: '1px', height: '20px', background: 'var(--glass-border)', margin: '0 4px' }} />
+      <TBtn onClick={delRow}><RemoveCircleOutlineIcon sx={{ fontSize: 14, color: '#f59e0b' }} /> Row</TBtn>
+      <TBtn onClick={delCol}><RemoveCircleOutlineIcon sx={{ fontSize: 14, color: '#f59e0b' }} /> Col</TBtn>
+      <div style={{ width: '1px', height: '20px', background: 'var(--glass-border)', margin: '0 4px' }} />
+      <TBtn onClick={mergeCells}>Merge</TBtn>
+      <TBtn onClick={splitCell}>Split</TBtn>
+      <div style={{ width: '1px', height: '20px', background: 'var(--glass-border)', margin: '0 4px' }} />
+      <TBtn onClick={delTable} color="#ef4444">Delete Table</TBtn>
+    </div>
+  )
+}
+
 export function BlogEditor({ initialContent = {}, onSave, saving }) {
   const [title, setTitle] = useState('')
   const [excerpt, setExcerpt] = useState('')
@@ -198,6 +235,10 @@ export function BlogEditor({ initialContent = {}, onSave, saving }) {
       Underline, Highlight, Link.configure({ openOnClick: false }),
       Youtube, Blockquote, TextStyle, Color, FontFamily,
       Dropcursor.configure({ color: '#22c55e', width: 2 }), Gapcursor,
+      Table.configure({ resizable: true }),
+      TableRow,
+      TableCell,
+      TableHeader,
       CardBlock, ColumnsBlock, ResizableImage, ResizableVideo, Callout, Spacer
     ],
     content: initialContent.content || '',
@@ -437,11 +478,24 @@ export function BlogEditor({ initialContent = {}, onSave, saving }) {
         {showPreview ? (
           <div className="blog-content" dangerouslySetInnerHTML={{ __html: editor.getHTML() }} />
         ) : (
-          <div className="liquid-glass" style={{ borderRadius: '14px', overflow: 'hidden', border: '1px solid var(--glass-border)' }}>
-            <EditorContent editor={editor} />
-          </div>
+          <>
+            <TableToolbar editor={editor} />
+            <div className="liquid-glass" style={{ borderRadius: '14px', overflow: 'hidden', border: '1px solid var(--glass-border)' }}>
+              <EditorContent editor={editor} />
+            </div>
+          </>
         )}
       </div>
+
+      <style>{`
+        .tiptap table { width: 100%; border-collapse: collapse; margin: 1.5em 0; }
+        .tiptap td, .tiptap th { border: 1px solid var(--glass-border); padding: 10px 14px; min-width: 80px; position: relative; }
+        .tiptap th { background: rgba(255,255,255,0.05); font-weight: 600; text-align: left; }
+        .tiptap td.selectedCell, .tiptap th.selectedCell { background: rgba(34,197,94,0.1); }
+        .tiptap .column-resize-handle { position: absolute; right: -2px; top: 0; bottom: 0; width: 4px; background: #22c55e; cursor: col-resize; z-index: 10; }
+        .tiptap .resize-cursor { cursor: col-resize !important; }
+        .tiptap table .selectedCells { background: rgba(34,197,94,0.08); }
+      `}</style>
     </div>
   )
 }
