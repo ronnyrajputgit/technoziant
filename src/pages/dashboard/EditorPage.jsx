@@ -4,6 +4,49 @@ import { useApp } from '../../context/AppContext'
 import { api } from '../../utils/api'
 import { BlogEditor } from '../../components/editor/BlogEditor'
 
+function ErrorDialog({ error, onClose }) {
+  if (!error) return null
+  return (
+    <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }} onClick={onClose}>
+      <div className="liquid-glass" style={{ width: '100%', maxWidth: '420px', borderRadius: '16px', overflow: 'hidden', boxShadow: '0 25px 60px rgba(0,0,0,0.5)' }} onClick={e => e.stopPropagation()}>
+        <div style={{ padding: '20px 24px', borderBottom: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(239,68,68,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px', flexShrink: 0 }}>⚠️</div>
+          <div>
+            <div style={{ fontSize: '15px', fontWeight: '600', color: 'var(--text)' }}>Save Failed</div>
+            <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontFamily: "var(--font-code)", marginTop: '2px' }}>Something went wrong</div>
+          </div>
+        </div>
+        <div style={{ padding: '16px 24px' }}>
+          <div style={{ padding: '12px 16px', borderRadius: '10px', background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', marginBottom: '16px' }}>
+            <div style={{ fontSize: '12px', color: '#ef4444', fontFamily: "var(--font-code)", wordBreak: 'break-word' }}>{error}</div>
+          </div>
+          <button onClick={onClose} style={{ width: '100%', padding: '12px', borderRadius: '10px', border: 'none', background: 'linear-gradient(135deg, #22c55e, #16a34a)', color: '#fff', fontSize: '14px', fontWeight: '600', cursor: 'pointer', fontFamily: "var(--font-code)" }}>Got it</button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function SuccessDialog({ message, onClose }) {
+  if (!message) return null
+  return (
+    <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }} onClick={onClose}>
+      <div className="liquid-glass" style={{ width: '100%', maxWidth: '420px', borderRadius: '16px', overflow: 'hidden', boxShadow: '0 25px 60px rgba(0,0,0,0.5)' }} onClick={e => e.stopPropagation()}>
+        <div style={{ padding: '20px 24px', borderBottom: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(34,197,94,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px', flexShrink: 0 }}>✅</div>
+          <div>
+            <div style={{ fontSize: '15px', fontWeight: '600', color: 'var(--text)' }}>Success</div>
+            <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontFamily: "var(--font-code)", marginTop: '2px' }}>{message}</div>
+          </div>
+        </div>
+        <div style={{ padding: '16px 24px' }}>
+          <button onClick={onClose} style={{ width: '100%', padding: '12px', borderRadius: '10px', border: 'none', background: 'linear-gradient(135deg, #22c55e, #16a34a)', color: '#fff', fontSize: '14px', fontWeight: '600', cursor: 'pointer', fontFamily: "var(--font-code)" }}>OK</button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export function EditorPage() {
   const { id } = useParams()
   const { user, logout } = useApp()
@@ -11,6 +54,8 @@ export function EditorPage() {
   const [blogData, setBlogData] = useState({})
   const [saving, setSaving] = useState(false)
   const [loading, setLoading] = useState(!!id)
+  const [error, setError] = useState(null)
+  const [success, setSuccess] = useState(null)
 
   useEffect(() => {
     if (!user) { navigate('/login'); return }
@@ -28,8 +73,23 @@ export function EditorPage() {
     try {
       if (id) await api.updateBlog(id, data)
       else await api.createBlog(data)
-      navigate('/dashboard')
-    } catch (err) { alert('Error: ' + err.message) }
+      if (data.published) {
+        navigate('/dashboard')
+      } else {
+        setSuccess('Draft saved successfully!')
+      }
+    } catch (err) {
+      const msg = err.message || 'Something went wrong'
+      if (msg.includes('Request Entity Too Large') || msg.includes('too large')) {
+        setError('Content is too large. Try reducing image sizes or removing some media.')
+      } else if (msg.includes('JSON')) {
+        setError('Invalid data format. Please try again.')
+      } else if (msg.includes('fetch') || msg.includes('network')) {
+        setError('Network error. Please check your connection and try again.')
+      } else {
+        setError(msg)
+      }
+    }
     finally { setSaving(false) }
   }
 
@@ -37,6 +97,8 @@ export function EditorPage() {
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh' }}>
+      <ErrorDialog error={error} onClose={() => setError(null)} />
+      <SuccessDialog message={success} onClose={() => setSuccess(null)} />
       <aside style={{ width: '240px', minWidth: '240px', background: 'var(--bg-2)', borderRight: '1px solid var(--glass-border)', height: '100vh', position: 'sticky', top: 0, overflow: 'auto', display: 'flex', flexDirection: 'column' }}>
         <div style={{ padding: '20px 16px', borderBottom: '1px solid var(--glass-border)' }}>
           <div style={{ fontSize: '16px', fontWeight: '700', fontFamily: 'var(--font-h)', marginBottom: '4px' }}>Editor</div>
