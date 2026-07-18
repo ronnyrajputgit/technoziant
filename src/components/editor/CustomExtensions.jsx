@@ -125,6 +125,7 @@ function GridCell({ cell, index, isActive, onSelect, onUpdate, onRemove, onMoveL
     { type: 'text', icon: '📝', label: 'Text' },
     { type: 'image', icon: '🖼️', label: 'Image' },
     { type: 'video', icon: '🎬', label: 'Video' },
+    { type: 'card', icon: '🃏', label: 'Card' },
   ]
 
   return (
@@ -186,6 +187,22 @@ function GridCell({ cell, index, isActive, onSelect, onUpdate, onRemove, onMoveL
                   style={{ width: '100%', padding: '6px 10px', borderRadius: '6px', border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.05)', color: 'var(--text)', fontSize: '11px', outline: 'none', boxSizing: 'border-box' }} />
               </div>
             )}
+          </div>
+        )}
+        {cell.type === 'card' && (
+          <div onClick={e => e.stopPropagation()} style={{ width: '100%', background: 'rgba(255,255,255,0.05)', borderRadius: '12px', padding: '16px', border: '1px solid var(--glass-border)' }}>
+            {cell.src ? (
+              <img src={cell.src} alt="" style={{ width: '100%', borderRadius: '8px', marginBottom: '8px', display: 'block' }} />
+            ) : (
+              <div style={{ padding: '10px', border: '1px dashed var(--glass-border)', borderRadius: '6px', marginBottom: '8px', textAlign: 'center', cursor: 'pointer' }} onClick={() => { const url = prompt('Image URL:'); if (url) onUpdate({ src: url }) }}>
+                <span style={{ fontSize: '18px' }}>➕</span>
+                <div style={{ fontSize: '10px', color: 'var(--text-muted)', marginTop: '2px' }}>Add image</div>
+              </div>
+            )}
+            <textarea value={cell.content || ''} onChange={e => onUpdate({ content: e.target.value })}
+              placeholder="Card content..."
+              rows={2}
+              style={{ width: '100%', background: 'transparent', border: 'none', outline: 'none', color: 'var(--text)', fontSize: '13px', lineHeight: 1.5, resize: 'vertical', fontFamily: 'inherit', textAlign: 'center' }} />
           </div>
         )}
       </div>
