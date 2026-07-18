@@ -787,3 +787,105 @@ export const Spacer = Node.create({
   renderHTML() { return ['div', { 'data-spacer': '' }] },
   addNodeView() { return ReactNodeViewRenderer(SpacerComponent) }
 })
+
+/* ═══════════════════════════════════════════════════════ */
+/*  TABLE WRAPPER — inline controls for table             */
+/* ═══════════════════════════════════════════════════════ */
+export function TableControlsInline({ editor }) {
+  const [pos, setPos] = useState(null)
+  const [tableEl, setTableEl] = useState(null)
+
+  useEffect(() => {
+    if (!editor) return
+    const check = () => {
+      const { state } = editor
+      const { $from } = state.selection
+      for (let d = $from.depth; d >= 0; d--) {
+        if ($from.node(d)?.type?.name === 'table') {
+          const p = editor.view.domAtPos($from.start(d))
+          const el = p.node?.nodeType === 1 ? p.node : p.node?.parentElement
+          const table = el?.closest?.('table') || el?.querySelector?.('table')
+          if (table) {
+            const rect = table.getBoundingClientRect()
+            const editorRect = editor.view.dom.getBoundingClientRect()
+            setPos({ top: rect.top - editorRect.top - 36, left: 0, width: rect.width })
+            setTableEl(table)
+            return
+          }
+        }
+      }
+      setPos(null)
+      setTableEl(null)
+    }
+    editor.on('selectionUpdate', check)
+    editor.on('transaction', check)
+    check()
+    return () => { editor.off('selectionUpdate', check); editor.off('transaction', check) }
+  }, [editor])
+
+  if (!pos || !tableEl) return null
+
+  const TBtn = ({ onClick, children, color, tip }) => (
+    <button title={tip} onMouseDown={e => e.preventDefault()} onClick={(e) => { e.preventDefault(); e.stopPropagation(); onClick() }} style={{ padding: '3px 8px', borderRadius: '4px', border: '1px solid var(--glass-border)', background: 'transparent', color: color || 'var(--text)', fontSize: '10px', cursor: 'pointer', fontFamily: "var(--font-code)", display: 'flex', alignItems: 'center', gap: '3px', transition: 'all 0.15s' }}
+      onMouseOver={e => e.currentTarget.style.background = 'rgba(255,255,255,0.08)'} onMouseOut={e => e.currentTarget.style.background = 'transparent'}>
+      {children}
+    </button>
+  )
+
+  const setBg = (color) => {
+    const sel = window.getSelection()
+    if (!sel.rangeCount) return
+    const range = sel.getRangeAt(0)
+    tableEl.querySelectorAll('td, th').forEach(cell => {
+      const cr = cell.getBoundingClientRect()
+      const sr = range.getBoundingClientRect()
+      if (cr.left < sr.right && cr.right > sr.left && cr.top < sr.bottom && cr.bottom > sr.top) {
+        cell.style.backgroundColor = color === 'transparent' ? '' : color
+      }
+    })
+  }
+
+  const setHeaderBg = (color) => { tableEl.querySelectorAll('th').forEach(th => { th.style.backgroundColor = color }) }
+
+  const setRadius = (r) => {
+    tableEl.style.borderRadius = r
+    tableEl.style.overflow = 'hidden'
+    tableEl.querySelectorAll('th, td').forEach(c => c.style.borderRadius = '0')
+    const rows = tableEl.querySelectorAll('tr')
+    if (rows.length > 0) {
+      const f = rows[0], l = rows[rows.length - 1]
+      const fc = f.querySelector('th, td'), lc = f.querySelector('th:last-child, td:last-child')
+      if (fc) fc.style.borderTopLeftRadius = r
+      if (lc) lc.style.borderTopRightRadius = r
+      if (l !== f) {
+        const fc2 = l.querySelector('th, td'), lc2 = l.querySelector('th:last-child, td:last-child')
+        if (fc2) fc2.style.borderBottomLeftRadius = r
+        if (lc2) lc2.style.borderBottomRightRadius = r
+      }
+    }
+  }
+
+  const cellC = ['transparent', '#dcfce7', '#dbeafe', '#ede9fe', '#fef3c7', '#fee2e2', '#cffafe', '#fce7f3']
+  const headerC = ['#bbf7d0', '#93c5fd', '#c4b5fd', '#fcd34d', '#fca5a5', '#67e8f9', '#f9a8d4', '#f1f5f9']
+
+  return (
+    <div style={{ position: 'absolute', top: pos.top, left: pos.left, width: pos.width, zIndex: 50, display: 'flex', gap: '3px', padding: '5px 8px', borderRadius: '8px 8px 0 0', background: 'rgba(34,197,94,0.08)', border: '1px solid var(--glass-border)', borderBottom: 'none', alignItems: 'center', flexWrap: 'wrap', backdropFilter: 'blur(8px)' }}>
+      <span style={{ fontSize: '8px', color: '#22c55e', fontFamily: "var(--font-code)", fontWeight: '600', marginRight: '2px' }}>TABLE</span>
+      <TBtn tip="Add row" onClick={() => editor.chain().focus().addRowAfter().run()}>+R</TBtn>
+      <TBtn tip="Add column" onClick={() => editor.chain().focus().addColumnAfter().run()}>+C</TBtn>
+      <TBtn tip="Delete row" onClick={() => editor.chain().focus().deleteRow().run()} color="#f59e0b">-R</TBtn>
+      <TBtn tip="Delete column" onClick={() => editor.chain().focus().deleteColumn().run()} color="#f59e0b">-C</TBtn>
+      <TBtn tip="Merge" onClick={() => editor.chain().focus().mergeCells().run()}>Merge</TBtn>
+      <TBtn tip="Split" onClick={() => { try { editor.chain().focus().splitCell().run() } catch(e) {} }}>Split</TBtn>
+      <div style={{ width: '1px', height: '14px', background: 'var(--glass-border)', margin: '0 2px' }} />
+      {cellC.map((c, i) => <button key={i} title={c} onMouseDown={e => e.preventDefault()} onClick={(e) => { e.preventDefault(); setBg(c) }} style={{ width: '12px', height: '12px', borderRadius: '2px', border: '1px solid var(--glass-border)', background: c === 'transparent' ? 'var(--bg)' : c, cursor: 'pointer' }} />)}
+      <input type="color" value="#fff" title="Custom cell color" onMouseDown={e => e.preventDefault()} onChange={e => setBg(e.target.value + '22')} style={{ width: '14px', height: '12px', border: '1px solid var(--glass-border)', borderRadius: '2px', cursor: 'pointer', padding: 0 }} />
+      <div style={{ width: '1px', height: '14px', background: 'var(--glass-border)', margin: '0 2px' }} />
+      {headerC.map((c, i) => <button key={i} title={c} onMouseDown={e => e.preventDefault()} onClick={(e) => { e.preventDefault(); setHeaderBg(c) }} style={{ width: '12px', height: '12px', borderRadius: '2px', border: '1px solid var(--glass-border)', background: c, cursor: 'pointer' }} />)}
+      <input type="color" value="#22c55e" title="Custom header color" onMouseDown={e => e.preventDefault()} onChange={e => setHeaderBg(e.target.value + '33')} style={{ width: '14px', height: '12px', border: '1px solid var(--glass-border)', borderRadius: '2px', cursor: 'pointer', padding: 0 }} />
+      <div style={{ width: '1px', height: '14px', background: 'var(--glass-border)', margin: '0 2px' }} />
+      {['0px', '6px', '10px', '16px'].map(r => <button key={r} title={`R:${r}`} onMouseDown={e => e.preventDefault()} onClick={(e) => { e.preventDefault(); setRadius(r) }} style={{ padding: '1px 4px', fontSize: '8px', borderRadius: '2px', border: '1px solid var(--glass-border)', background: 'transparent', color: 'var(--text-muted)', cursor: 'pointer', fontFamily: "var(--font-code)" }}>{r}</button>)}
+      <TBtn tip="Delete" onClick={() => editor.chain().focus().deleteTable().run()} color="#ef4444">✕</TBtn>
+    </div>
+  )
+}

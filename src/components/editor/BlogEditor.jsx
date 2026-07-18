@@ -14,7 +14,7 @@ import { Color } from '@tiptap/extension-color'
 import FontFamily from '@tiptap/extension-font-family'
 import Dropcursor from '@tiptap/extension-dropcursor'
 import Gapcursor from '@tiptap/extension-gapcursor'
-import { CardBlock, ColumnsBlock, GridBlock, ResizableImage, ResizableVideo, Callout, Spacer } from './CustomExtensions'
+import { CardBlock, ColumnsBlock, GridBlock, ResizableImage, ResizableVideo, Callout, Spacer, TableControlsInline } from './CustomExtensions'
 import { useState, useCallback, useEffect, useRef } from 'react'
 import { renderContent } from '../../utils/renderContent'
 import FormatBoldIcon from '@mui/icons-material/FormatBold'
@@ -176,117 +176,6 @@ function LinkModal({ open, onClose, onInsert }) {
           </button>
         </div>
       </div>
-    </div>
-  )
-}
-
-function TableToolbar({ editor }) {
-  if (!editor || !editor.isActive('table')) return null
-
-  const getTable = () => {
-    const { state } = editor
-    const { $from } = state.selection
-    for (let d = $from.depth; d >= 0; d--) {
-      const node = $from.node(d)
-      if (node?.type?.name === 'table') {
-        const pos = $from.start(d)
-        const dom = editor.view.domAtPos(pos)
-        const el = dom.node?.nodeType === 1 ? dom.node : dom.node?.parentElement
-        return el?.closest?.('table') || el?.querySelector?.('table') || null
-      }
-    }
-    return null
-  }
-
-  const TBtn = ({ onClick, children, color, tip }) => (
-    <button title={tip} onClick={(e) => { e.preventDefault(); e.stopPropagation(); onClick() }} style={{ padding: '3px 8px', borderRadius: '4px', border: '1px solid var(--glass-border)', background: 'transparent', color: color || 'var(--text)', fontSize: '10px', cursor: 'pointer', fontFamily: "var(--font-code)", display: 'flex', alignItems: 'center', gap: '3px', transition: 'all 0.15s' }}
-      onMouseOver={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.08)' }}
-      onMouseOut={e => { e.currentTarget.style.background = 'transparent' }}>
-      {children}
-    </button>
-  )
-
-  const setCellBg = (color) => {
-    const table = getTable()
-    if (!table) return
-    const sel = window.getSelection()
-    if (!sel.rangeCount) return
-    const range = sel.getRangeAt(0)
-    table.querySelectorAll('td, th').forEach(cell => {
-      const cr = cell.getBoundingClientRect()
-      const sr = range.getBoundingClientRect()
-      if (cr.left < sr.right && cr.right > sr.left && cr.top < sr.bottom && cr.bottom > sr.top) {
-        cell.style.backgroundColor = color === 'transparent' ? '' : color
-      }
-    })
-  }
-
-  const setAllHeaderBg = (color) => {
-    const table = getTable()
-    if (!table) return
-    table.querySelectorAll('th').forEach(th => { th.style.backgroundColor = color })
-  }
-
-  const addRow = () => editor.chain().focus().addRowAfter().run()
-  const addCol = () => editor.chain().focus().addColumnAfter().run()
-  const delRow = () => editor.chain().focus().deleteRow().run()
-  const delCol = () => editor.chain().focus().deleteColumn().run()
-  const delTable = () => editor.chain().focus().deleteTable().run()
-  const mergeCells = () => editor.chain().focus().mergeCells().run()
-  const splitCell = () => { try { editor.chain().focus().splitCell().run() } catch(e) {} }
-
-  const applyTableRadius = (r) => {
-    const table = getTable()
-    if (!table) return
-    table.style.borderRadius = r
-    table.style.overflow = 'hidden'
-    table.querySelectorAll('th, td').forEach(c => c.style.borderRadius = '0')
-    const rows = table.querySelectorAll('tr')
-    if (rows.length > 0) {
-      const first = rows[0], last = rows[rows.length - 1]
-      const fc1 = first.querySelector('th, td'), lc1 = first.querySelector('th:last-child, td:last-child')
-      if (fc1) fc1.style.borderTopLeftRadius = r
-      if (lc1) lc1.style.borderTopRightRadius = r
-      if (last !== first) {
-        const fc2 = last.querySelector('th, td'), lc2 = last.querySelector('th:last-child, td:last-child')
-        if (fc2) fc2.style.borderBottomLeftRadius = r
-        if (lc2) lc2.style.borderBottomRightRadius = r
-      }
-    }
-  }
-
-  const cellColors = ['transparent', '#dcfce7', '#dbeafe', '#ede9fe', '#fef3c7', '#fee2e2', '#cffafe', '#fce7f3', '#fef9c3', '#e0e7ff']
-  const headerColors = ['#bbf7d0', '#93c5fd', '#c4b5fd', '#fcd34d', '#fca5a5', '#67e8f9', '#f9a8d4', '#f1f5f9', '#fde68a', '#a5b4fc']
-
-  return (
-    <div style={{ display: 'flex', gap: '3px', padding: '6px 10px', marginBottom: '0', borderRadius: '8px 8px 0 0', background: 'rgba(34,197,94,0.05)', border: '1px solid var(--glass-border)', borderBottom: 'none', alignItems: 'center', flexWrap: 'wrap' }}>
-      <span style={{ fontSize: '9px', color: '#22c55e', fontFamily: "var(--font-code)", fontWeight: '600', marginRight: '4px' }}>TABLE</span>
-      <TBtn tip="Add row" onClick={addRow}>+Row</TBtn>
-      <TBtn tip="Add column" onClick={addCol}>+Col</TBtn>
-      <TBtn tip="Delete row" onClick={delRow} color="#f59e0b">-Row</TBtn>
-      <TBtn tip="Delete column" onClick={delCol} color="#f59e0b">-Col</TBtn>
-      <div style={{ width: '1px', height: '16px', background: 'var(--glass-border)', margin: '0 2px' }} />
-      <TBtn tip="Merge selected cells" onClick={mergeCells}>Merge</TBtn>
-      <TBtn tip="Split cell" onClick={splitCell}>Split</TBtn>
-      <div style={{ width: '1px', height: '16px', background: 'var(--glass-border)', margin: '0 2px' }} />
-      <span style={{ fontSize: '8px', color: 'var(--text-muted)' }}>Cell:</span>
-      {cellColors.map((c, i) => (
-        <button key={i} title={c === 'transparent' ? 'Clear' : c} onMouseDown={(e) => { e.preventDefault(); e.stopPropagation() }} onClick={(e) => { e.preventDefault(); e.stopPropagation(); setCellBg(c) }} style={{ width: '14px', height: '14px', borderRadius: '3px', border: '1px solid var(--glass-border)', background: c === 'transparent' ? 'var(--bg)' : c, cursor: 'pointer' }} />
-      ))}
-      <input type="color" value="#ffffff" title="Custom cell color" onMouseDown={e => e.stopPropagation()} onChange={e => setCellBg(e.target.value + '22')} style={{ width: '16px', height: '14px', border: '1px solid var(--glass-border)', borderRadius: '3px', cursor: 'pointer', padding: 0 }} />
-      <div style={{ width: '1px', height: '16px', background: 'var(--glass-border)', margin: '0 2px' }} />
-      <span style={{ fontSize: '8px', color: 'var(--text-muted)' }}>Header:</span>
-      {headerColors.map((c, i) => (
-        <button key={i} title={c} onMouseDown={e => e.stopPropagation()} onClick={(e) => { e.preventDefault(); e.stopPropagation(); setAllHeaderBg(c) }} style={{ width: '14px', height: '14px', borderRadius: '3px', border: '1px solid var(--glass-border)', background: c, cursor: 'pointer' }} />
-      ))}
-      <input type="color" value="#22c55e" title="Custom header color" onMouseDown={e => e.stopPropagation()} onChange={e => setAllHeaderBg(e.target.value + '33')} style={{ width: '16px', height: '14px', border: '1px solid var(--glass-border)', borderRadius: '3px', cursor: 'pointer', padding: 0 }} />
-      <div style={{ width: '1px', height: '16px', background: 'var(--glass-border)', margin: '0 2px' }} />
-      <span style={{ fontSize: '8px', color: 'var(--text-muted)' }}>R:</span>
-      {['0px', '6px', '10px', '16px'].map(r => (
-        <button key={r} title={`Radius: ${r}`} onMouseDown={e => e.stopPropagation()} onClick={(e) => { e.preventDefault(); e.stopPropagation(); applyTableRadius(r) }} style={{ padding: '2px 5px', fontSize: '8px', borderRadius: '3px', border: '1px solid var(--glass-border)', background: 'transparent', color: 'var(--text-muted)', cursor: 'pointer', fontFamily: "var(--font-code)" }}>{r}</button>
-      ))}
-      <div style={{ width: '1px', height: '16px', background: 'var(--glass-border)', margin: '0 2px' }} />
-      <TBtn tip="Delete table" onClick={delTable} color="#ef4444">✕</TBtn>
     </div>
   )
 }
@@ -628,11 +517,7 @@ export function BlogEditor({ initialContent = {}, onSave, saving }) {
           <div className="blog-content" dangerouslySetInnerHTML={{ __html: renderContent(editor.getJSON()) }} />
         ) : (
           <div className="liquid-glass" style={{ borderRadius: '14px', overflow: 'hidden', border: '1px solid var(--glass-border)', position: 'relative' }}>
-            {editor.isActive('table') && (
-              <div style={{ position: 'sticky', top: 0, zIndex: 10 }}>
-                <TableToolbar editor={editor} />
-              </div>
-            )}
+            <TableControlsInline editor={editor} />
             <EditorContent editor={editor} />
           </div>
         )}
