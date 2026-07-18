@@ -277,7 +277,25 @@ export function BlogEditor({ initialContent = {}, onSave, saving }) {
       CardBlock, ColumnsBlock, GridBlock, ResizableImage, ResizableVideo, Callout, Spacer
     ],
     content: initialContent.content || '',
-    editorProps: { attributes: { style: 'min-height: 600px; padding: 32px; outline: none; font-size: 16px; line-height: 1.8;' } },
+    editorProps: {
+      attributes: { style: 'min-height: 600px; padding: 32px; outline: none; font-size: 16px; line-height: 1.8;' },
+      handleKeyDown: (view, event) => {
+        if (event.key === 'Tab') {
+          event.preventDefault()
+          const { state, dispatch } = view
+          const { from, to } = state.selection
+          if (event.shiftKey) {
+            const lineStart = state.doc.textBetween(Math.max(0, from - 100), from).split('\n').pop().length
+            if (lineStart >= 2) {
+              dispatch(state.tr.delete(from - 2, from))
+            }
+          } else {
+            dispatch(state.tr.insertText('  ', from, to))
+          }
+          return true
+        }
+      }
+    },
     onTransaction: () => forceUpdate(n => n + 1)
   })
 
@@ -318,8 +336,10 @@ export function BlogEditor({ initialContent = {}, onSave, saving }) {
 
   const handleSave = useCallback((published) => {
     const newErrors = {}
-    if (!title.trim()) newErrors.title = 'Title is required'
-    if (!coverImage.trim()) newErrors.coverImage = 'Cover image is required'
+    if (published) {
+      if (!title.trim()) newErrors.title = 'Title is required'
+      if (!coverImage.trim()) newErrors.coverImage = 'Cover image is required'
+    }
     setErrors(newErrors)
     if (Object.keys(newErrors).length > 0) return
     onSave({ title: title.trim(), content: editor.getJSON(), excerpt: excerpt.trim(), cover_image: coverImage.trim(), category: category.trim(), tags: tags.split(',').map(t => t.trim()).filter(Boolean), published })
