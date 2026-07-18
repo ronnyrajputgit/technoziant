@@ -1,0 +1,181 @@
+export function renderContent(content) {
+  if (!content) return ''
+  if (typeof content === 'string') {
+    try { content = JSON.parse(content) } catch (e) { return content }
+  }
+  if (!content || !content.type) return ''
+  return tiptapToHtml(content)
+}
+
+function tiptapToHtml(json) {
+  if (!json || !json.type) return ''
+  if (json.type === 'text') {
+    let text = escapeHtml(json.text || '')
+    if (json.marks) {
+      for (const mark of json.marks) {
+        if (mark.type === 'bold') text = `<strong>${text}</strong>`
+        if (mark.type === 'italic') text = `<em>${text}</em>`
+        if (mark.type === 'underline') text = `<u>${text}</u>`
+        if (mark.type === 'strike') text = `<s>${text}</s>`
+        if (mark.type === 'code') text = `<code style="background:rgba(255,255,255,0.08);padding:2px 6px;border-radius:4px;font-size:0.9em">${text}</code>`
+        if (mark.type === 'highlight') text = `<mark style="background:rgba(34,197,94,0.3);padding:1px 4px;border-radius:2px">${text}</mark>`
+        if (mark.type === 'link') text = `<a href="${escapeHtml(mark.attrs?.href || '')}" target="_blank" rel="noopener" style="color:#3b82f6;text-decoration:underline">${text}</a>`
+        if (mark.type === 'textStyle') {
+          const style = []
+          if (mark.attrs?.color) style.push(`color:${mark.attrs.color}`)
+          if (mark.attrs?.fontFamily) style.push(`font-family:${mark.attrs.fontFamily}`)
+          if (style.length) text = `<span style="${style.join(';')}">${text}</span>`
+        }
+      }
+    }
+    return text
+  }
+
+  const children = (json.content || []).map(c => tiptapToHtml(c)).join('')
+  const textAlign = json.attrs?.textAlign ? `text-align:${json.attrs?.textAlign};` : ''
+
+  switch (json.type) {
+    case 'doc': return `<div style="font-size:17px;line-height:1.85;color:var(--text)">${children}</div>`
+    case 'paragraph': return `<p style="margin:0 0 1.2em;${textAlign}">${children || '<br>'}</p>`
+    case 'heading': {
+      const level = json.attrs?.level || 1
+      const sizes = { 1: 'clamp(28px, 4vw, 40px)', 2: 'clamp(22px, 3vw, 30px)', 3: 'clamp(18px, 2.5vw, 24px)', 4: '18px' }
+      const weights = { 1: '800', 2: '700', 3: '600', 4: '600' }
+      return `<h${level} style="font-size:${sizes[level]};font-weight:${weights[level]};margin:2em 0 0.8em;letter-spacing:-0.02em;line-height:1.2;font-family:var(--font-h);${textAlign}">${children}</h${level}>`
+    }
+    case 'bulletList': return `<ul style="margin:0 0 1.2em;padding-left:1.5em">${children}</ul>`
+    case 'orderedList': return `<ol style="margin:0 0 1.2em;padding-left:1.5em">${children}</ol>`
+    case 'listItem': return `<li style="margin-bottom:0.4em">${children}</li>`
+    case 'blockquote': return `<blockquote style="margin:1.5em 0;padding:16px 24px;border-left:3px solid #22c55e;background:rgba(34,197,94,0.05);border-radius:0 8px 8px 0;font-style:italic;color:var(--text-muted)">${children}</blockquote>`
+    case 'codeBlock': return `<pre style="margin:1.5em 0;padding:20px;border-radius:10px;background:rgba(0,0,0,0.3);overflow-x:auto;font-size:14px;line-height:1.6"><code>${children}</code></pre>`
+    case 'code': return `<code style="background:rgba(255,255,255,0.08);padding:2px 6px;border-radius:4px;font-size:0.9em">${children}</code>`
+    case 'hardBreak': return '<br>'
+    case 'horizontalRule': return '<hr style="border:none;border-top:1px solid var(--glass-border);margin:2em 0">'
+    case 'image': {
+      const src = json.attrs?.src || ''
+      const alt = json.attrs?.alt || ''
+      return `<figure style="margin:2em 0;text-align:center"><img src="${escapeHtml(src)}" alt="${escapeHtml(alt)}" style="max-width:100%;border-radius:12px" /><figcaption style="font-size:12px;color:var(--text-muted);margin-top:8px;font-style:italic">${escapeHtml(alt)}</figcaption></figure>`
+    }
+    case 'youtube': {
+      let src = json.attrs?.src || ''
+      const ytMatch = src.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&?/]+)/)
+      if (ytMatch) src = `https://www.youtube.com/embed/${ytMatch[1]}`
+      return `<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;margin:2em 0;border-radius:12px;background:rgba(0,0,0,0.2)"><iframe src="${escapeHtml(src)}" style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;border-radius:12px" allowfullscreen loading="lazy"></iframe></div>`
+    }
+    case 'table': return `<div style="overflow-x:auto;margin:1.5em 0;border-radius:12px;border:1px solid var(--glass-border)"><table style="width:100%;border-collapse:collapse">${children}</table></div>`
+    case 'tableRow': return `<tr>${children}</tr>`
+    case 'tableCell': return `<td style="padding:10px 14px;border:1px solid var(--glass-border)">${children}</td>`
+    case 'tableHeader': return `<th style="padding:10px 14px;border:1px solid var(--glass-border);font-weight:600;text-align:left;background:rgba(255,255,255,0.03)">${children}</th>`
+    case 'cardBlock': {
+      const bg = json.attrs?.bgColor || 'rgba(255,255,255,0.03)'
+      const border = json.attrs?.borderColor || 'var(--glass-border)'
+      const pad = json.attrs?.padding || '16px'
+      const rad = json.attrs?.radius || '12px'
+      const w = json.attrs?.width || '100%'
+      const cardCells = json.attrs?.cells || []
+      const cellsHtml = cardCells.map(cell => {
+        const align = cell.align || 'center'
+        const cellBg = cell.bgColor || 'transparent'
+        const cellRad = cell.radius || '6px'
+        const cellW = cell.width || '100%'
+        let inner = ''
+        if (cell.type === 'text') inner = cell.content || ''
+        else if (cell.type === 'image' && cell.src) inner = `<img src="${escapeHtml(cell.src)}" alt="${escapeHtml(cell.alt || '')}" style="width:${cellW};max-width:100%;border-radius:${cellRad};display:block" />${cell.alt ? `<div style="font-size:10px;color:var(--text-muted);margin-top:4px;font-style:italic">${escapeHtml(cell.alt)}</div>` : ''}`
+        else if (cell.type === 'video' && cell.src) {
+          const isBase64 = cell.src.startsWith('data:video')
+          const isYT = cell.src.includes('youtube') || cell.src.includes('youtu.be')
+          const getEmbed = (url) => { const m = url?.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&?/]+)/); return m ? `https://www.youtube.com/embed/${m[1]}` : url }
+          if (isBase64) inner = `<video src="${escapeHtml(cell.src)}" controls style="width:${cellW};max-width:100%;border-radius:${cellRad};display:block"></video>`
+          else if (isYT) inner = `<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:${cellRad}"><iframe src="${getEmbed(cell.src)}" style="position:absolute;top:0;left:0;width:100%;height:100%;border:none" allowfullscreen></iframe></div>`
+          else inner = `<video src="${escapeHtml(cell.src)}" controls style="width:${cellW};max-width:100%;border-radius:${cellRad};display:block"></video>`
+        }
+        return `<div style="background:${cellBg};border-radius:${cellRad};padding:8px;text-align:${align};min-height:50px">${inner}</div>`
+      }).join('')
+      return `<div style="margin:1.5em 0;width:${w};max-width:100%;padding:${pad};border-radius:${rad};background:${bg};border:1px solid ${border};display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px">${cellsHtml}</div>`
+    }
+    case 'gridBlock': {
+      const cells = json.attrs?.cells || []
+      const cols = json.attrs?.cols || 2
+      const colWidths = json.attrs?.colWidths
+      const gap = json.attrs?.gap || '12px'
+      const w = json.attrs?.width || '100%'
+      const gridCols = colWidths ? colWidths.join(' ') : `repeat(${cols}, 1fr)`
+      const cellsHtml = cells.map(cell => {
+        const align = cell.align || 'center'
+        const bg = cell.bgColor || 'rgba(255,255,255,0.03)'
+        const rad = cell.radius || '8px'
+        const cellPad = cell.padding || '16px'
+        let inner = ''
+        if (cell.type === 'text') inner = cell.content || ''
+        else if (cell.type === 'image' && cell.src) inner = `<img src="${escapeHtml(cell.src)}" alt="${escapeHtml(cell.alt || '')}" style="width:100%;border-radius:${rad};display:block" />${cell.alt ? `<div style="font-size:11px;color:var(--text-muted);margin-top:6px;font-style:italic">${escapeHtml(cell.alt)}</div>` : ''}`
+        else if (cell.type === 'video' && cell.src) {
+          const isBase64 = cell.src.startsWith('data:video')
+          const isYT = cell.src.includes('youtube') || cell.src.includes('youtu.be')
+          const getEmbed = (url) => { const m = url?.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&?/]+)/); return m ? `https://www.youtube.com/embed/${m[1]}` : url }
+          if (isBase64) inner = `<video src="${escapeHtml(cell.src)}" controls style="width:100%;border-radius:${rad};display:block"></video>`
+          else if (isYT) inner = `<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:${rad}"><iframe src="${getEmbed(cell.src)}" style="position:absolute;top:0;left:0;width:100%;height:100%;border:none" allowfullscreen></iframe></div>`
+          else inner = `<video src="${escapeHtml(cell.src)}" controls style="width:100%;border-radius:${rad};display:block"></video>`
+        }
+        else if (cell.type === 'card') inner = `<div style="background:${bg};border-radius:${rad};padding:${cellPad};border:1px solid var(--glass-border)">${cell.src ? `<img src="${escapeHtml(cell.src)}" alt="" style="width:100%;border-radius:8px;margin-bottom:8px" />` : ''}${cell.content || ''}</div>`
+        else inner = cell.content || ''
+        return `<div style="background:${bg};border-radius:${rad};padding:${cellPad};text-align:${align};min-height:60px">${inner}</div>`
+      }).join('')
+      return `<div style="margin:1.5em 0;width:${w};max-width:100%;display:grid;grid-template-columns:${gridCols};gap:${gap}">${cellsHtml}</div>`
+    }
+    case 'columnsBlock': {
+      const cols = json.attrs?.cols || 2
+      const colWidths = json.attrs?.colWidths
+      const gridCols = colWidths ? colWidths.join(' ') : `repeat(${cols}, 1fr)`
+      const w = json.attrs?.width || '100%'
+      return `<div style="margin:1.5em 0;width:${w};max-width:100%;display:grid;grid-template-columns:${gridCols};gap:12px">${children}</div>`
+    }
+    case 'resizableVideo': {
+      let src = json.attrs?.src || ''
+      const w = json.attrs?.width || '100%'
+      const align = json.attrs?.align || 'center'
+      const isBase64 = src.startsWith('data:video')
+      const isYT = src.includes('youtube') || src.includes('youtu.be')
+      const getEmbed = (url) => { const m = url?.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&?/]+)/); return m ? `https://www.youtube.com/embed/${m[1]}` : url }
+      if (isBase64) return `<div style="margin:1.5em 0;text-align:${align}"><video src="${escapeHtml(src)}" controls style="width:${w};max-width:100%;border-radius:12px;display:inline-block"></video></div>`
+      if (isYT) src = getEmbed(src)
+      return `<div style="margin:1.5em 0;text-align:${align}"><div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:12px;width:${w};max-width:100%;display:inline-block"><iframe src="${escapeHtml(src)}" style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;border-radius:12px" allowfullscreen loading="lazy"></iframe></div></div>`
+    }
+    case 'resizableImage': {
+      const src = json.attrs?.src || ''
+      const alt = json.attrs?.alt || ''
+      const w = json.attrs?.width || '100%'
+      const align = json.attrs?.align || 'center'
+      return `<div style="margin:1.5em 0;text-align:${align}"><img src="${escapeHtml(src)}" alt="${escapeHtml(alt)}" style="width:${w};max-width:100%;border-radius:12px" />${alt ? `<div style="font-size:12px;color:var(--text-muted);margin-top:8px;font-style:italic;text-align:center">${escapeHtml(alt)}</div>` : ''}</div>`
+    }
+    case 'callout': {
+      const calloutStyles = {
+        info:     { bg: 'rgba(59,130,246,0.08)', border: '#3b82f6', icon: '💡', label: 'Info' },
+        thinking: { bg: 'rgba(168,85,247,0.08)', border: '#a855f7', icon: '🤔', label: 'Thinking' },
+        note:     { bg: 'rgba(34,197,94,0.08)', border: '#22c55e', icon: '📝', label: 'Note' },
+        warning:  { bg: 'rgba(245,158,11,0.08)', border: '#f59e0b', icon: '⚠️', label: 'Warning' },
+        danger:   { bg: 'rgba(239,68,68,0.08)', border: '#ef4444', icon: '🚨', label: 'Danger' },
+        tip:      { bg: 'rgba(168,85,247,0.08)', border: '#a855f7', icon: '🎯', label: 'Tip' },
+        question: { bg: 'rgba(6,182,212,0.08)', border: '#06b6d4', icon: '❓', label: 'Question' },
+        success:  { bg: 'rgba(34,197,94,0.08)', border: '#22c55e', icon: '✅', label: 'Success' },
+        quote:    { bg: 'rgba(245,158,11,0.08)', border: '#f59e0b', icon: '💬', label: 'Quote' },
+        code:     { bg: 'rgba(236,72,153,0.08)', border: '#ec4899', icon: '💻', label: 'Code' },
+      }
+      const shapes = { square: '0px', rounded: '12px', pill: '50%', circle: '50%' }
+      const cs = calloutStyles[json.attrs?.type || 'info'] || calloutStyles.info
+      const shape = json.attrs?.shape || 'rounded'
+      const isCircle = shape === 'circle'
+      return `<div style="margin:1.5em 0;padding:16px 20px;border-radius:${shapes[shape]};background:${cs.bg};border:1px solid ${cs.border}33;${isCircle ? 'border-left:none;aspect-ratio:1;display:flex;align-items:center;justify-content:center;' : `border-left:3px solid ${cs.border};`}${isCircle ? 'text-align:center;' : ''}"><div style="display:flex;${isCircle ? 'flex-direction:column;' : 'align-items:flex-start;'}gap:10px;${isCircle ? 'text-align:center;width:80%;' : ''}"><span style="font-size:20px;line-height:1;${isCircle ? '' : 'flex-shrink:0;margin-top:2px'}">${cs.icon}</span><div><div style="font-size:12px;font-weight:600;color:${cs.border};font-family:var(--font-code);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.05em">${cs.label}</div>${children}</div></div></div>`
+    }
+    case 'spacer': return `<div style="height:32px"></div>`
+    default: return children
+  }
+}
+
+function escapeHtml(text) {
+  if (typeof document !== 'undefined') {
+    const div = document.createElement('div')
+    div.textContent = text
+    return div.innerHTML
+  }
+  return String(text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+}

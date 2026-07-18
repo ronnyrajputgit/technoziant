@@ -16,6 +16,7 @@ import Dropcursor from '@tiptap/extension-dropcursor'
 import Gapcursor from '@tiptap/extension-gapcursor'
 import { CardBlock, ColumnsBlock, GridBlock, ResizableImage, ResizableVideo, Callout, Spacer } from './CustomExtensions'
 import { useState, useCallback, useEffect, useRef } from 'react'
+import { renderContent } from '../../utils/renderContent'
 import FormatBoldIcon from '@mui/icons-material/FormatBold'
 import FormatItalicIcon from '@mui/icons-material/FormatItalic'
 import FormatUnderlinedIcon from '@mui/icons-material/FormatUnderlined'
@@ -541,7 +542,7 @@ export function BlogEditor({ initialContent = {}, onSave, saving }) {
         )}
 
         {showPreview ? (
-          <div className="blog-content" dangerouslySetInnerHTML={{ __html: editor.getHTML() }} />
+          <div className="blog-content" dangerouslySetInnerHTML={{ __html: renderContent(editor.getJSON()) }} />
         ) : (
           <>
             <TableToolbar editor={editor} />
