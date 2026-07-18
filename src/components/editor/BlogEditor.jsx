@@ -217,6 +217,26 @@ function TableToolbar({ editor }) {
         <button key={i} onClick={() => setCellBg(c)} style={{ width: '16px', height: '16px', borderRadius: '3px', border: '1px solid var(--glass-border)', background: c === 'transparent' ? 'var(--bg)' : c, cursor: 'pointer' }} />
       ))}
       <div style={{ width: '1px', height: '20px', background: 'var(--glass-border)', margin: '0 4px' }} />
+      <span style={{ fontSize: '9px', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>Radius:</span>
+      {['0px', '6px', '10px', '16px'].map(r => (
+        <button key={r} onClick={() => {
+          const table = editor.chain().focus().command(({ tr }) => {
+            const { from } = tr.selection
+            const node = tr.doc.nodeAt(from)
+            if (node?.type?.name === 'table' || node?.type?.name === 'tableRow' || node?.type?.name === 'tableCell' || node?.type?.name === 'tableHeader') {
+              const tableNode = tr.selection.$anchor.node(-1) || tr.selection.$anchor.node(-2)
+            }
+            return true
+          }).run()
+          document.querySelectorAll('.tiptap table').forEach(t => t.style.borderRadius = r)
+          document.querySelectorAll('.tiptap th, .tiptap td').forEach((c, i, all) => {
+            c.style.borderRadius = '0'
+            if (i === 0) c.style.borderTopLeftRadius = r
+            if (i === all.length - 1) c.style.borderTopRightRadius = r
+          })
+        }} style={{ padding: '3px 6px', fontSize: '9px', borderRadius: '4px', border: '1px solid var(--glass-border)', background: 'transparent', color: 'var(--text-muted)', cursor: 'pointer', fontFamily: "var(--font-code)" }}>{r}</button>
+      ))}
+      <div style={{ width: '1px', height: '20px', background: 'var(--glass-border)', margin: '0 4px' }} />
       <TBtn onClick={delTable} color="#ef4444">Delete Table</TBtn>
     </div>
   )
@@ -328,7 +348,10 @@ export function BlogEditor({ initialContent = {}, onSave, saving }) {
           editor.chain().focus().insertContent({ type: 'resizableImage', attrs: { src: d.src, alt: d.alt } }).run()
         }
       }} type={mediaModal.type} />
-      <LinkModal open={linkModal} onClose={() => setLinkModal(false)} onInsert={(url, text) => { text ? editor.chain().focus().insertContent(text).setLink({ href: url }).run() : editor.chain().focus().setLink({ href: url }).run() }} />
+      <LinkModal open={linkModal} onClose={() => setLinkModal(false)} onInsert={(url, text) => {
+        const linkText = text || url
+        editor.chain().focus().insertContent(`<a href="${url}" target="_blank" style="color:#3b82f6;text-decoration:underline">${linkText}</a>`).run()
+      }} />
 
       {/* TOOLBAR */}
       <div ref={toolbarRef} style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100, background: 'var(--bg)', borderBottom: '1px solid var(--glass-border)', boxShadow: '0 4px 20px rgba(0,0,0,0.3)' }}>

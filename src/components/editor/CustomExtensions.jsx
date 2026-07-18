@@ -121,9 +121,6 @@ function GridBlockComponent({ node, updateAttributes, deleteNode }) {
 }
 
 function GridCell({ cell, index, isActive, onSelect, onUpdate, onRemove, onMoveLeft, onMoveRight, totalCells }) {
-  const [editingContent, setEditingContent] = useState(false)
-  const cellRef = useRef(null)
-
   const cellTypeBtns = [
     { type: 'text', icon: '📝', label: 'Text' },
     { type: 'image', icon: '🖼️', label: 'Image' },
@@ -135,7 +132,7 @@ function GridCell({ cell, index, isActive, onSelect, onUpdate, onRemove, onMoveL
       {isActive && (
         <div style={{ display: 'flex', gap: '3px', padding: '4px 6px', borderBottom: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.03)', flexWrap: 'wrap', alignItems: 'center' }}>
           {cellTypeBtns.map(t => (
-            <button key={t.type} onMouseDown={e => e.stopPropagation()} onClick={e => { e.stopPropagation(); onUpdate({ type: t.type }); setEditingContent(false) }} style={btn(cell.type === t.type)}>{t.icon} {t.label}</button>
+            <button key={t.type} onMouseDown={e => e.stopPropagation()} onClick={e => { e.stopPropagation(); onUpdate({ type: t.type, content: '', src: '' }) }} style={btn(cell.type === t.type)}>{t.icon} {t.label}</button>
           ))}
           <div style={{ width: '1px', height: '16px', background: 'var(--glass-border)', margin: '0 3px' }} />
           {['left', 'center', 'right'].map(a => (
@@ -154,18 +151,11 @@ function GridCell({ cell, index, isActive, onSelect, onUpdate, onRemove, onMoveL
       )}
       <div style={{ padding: cell.padding || '16px', textAlign: cell.align || 'center', minHeight: '60px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
         {cell.type === 'text' && (
-          editingContent ? (
-            <div ref={cellRef} contentEditable suppressContentEditableWarning autoFocus
-              onClick={e => e.stopPropagation()}
-              onBlur={e => { onUpdate({ content: e.currentTarget.innerHTML }); setEditingContent(false) }}
-              dangerouslySetInnerHTML={{ __html: cell.content || '' }}
-              style={{ outline: 'none', fontSize: '14px', lineHeight: 1.6, color: 'var(--text)', minHeight: '20px', width: '100%', wordBreak: 'break-word', cursor: 'text' }}
-              onKeyDown={e => { if (e.key === 'Escape') { onUpdate({ content: e.currentTarget.innerHTML }); setEditingContent(false) } }} />
-          ) : (
-            <div onClick={e => { e.stopPropagation(); setEditingContent(true) }}
-              style={{ fontSize: '14px', lineHeight: 1.6, color: cell.content ? 'var(--text)' : 'var(--text-muted)', minHeight: '20px', width: '100%', wordBreak: 'break-word', cursor: 'text', textAlign: cell.align || 'center' }}
-              dangerouslySetInnerHTML={{ __html: cell.content || '<span style="opacity:0.5">Click to add text...</span>' }} />
-          )
+          <textarea value={cell.content || ''} onChange={e => onUpdate({ content: e.target.value })}
+            onMouseDown={e => e.stopPropagation()} onClick={e => e.stopPropagation()}
+            placeholder="Type here..."
+            rows={3}
+            style={{ width: '100%', background: 'transparent', border: 'none', outline: 'none', color: 'var(--text)', fontSize: '14px', lineHeight: 1.6, resize: 'vertical', fontFamily: 'inherit', textAlign: cell.align || 'center' }} />
         )}
         {cell.type === 'image' && (
           <div onClick={e => e.stopPropagation()} style={{ width: '100%' }}>
@@ -217,10 +207,7 @@ export const GridBlock = Node.create({
 function CardBlockComponent({ node, updateAttributes, deleteNode }) {
   const [editing, setEditing] = useState(false)
   const containerRef = useRef(null)
-  const contentRef = useRef(null)
   const { width, onMouseDown } = useResizable(node.attrs.width, containerRef, updateAttributes, 200)
-
-  useEffect(() => { if (contentRef.current && !contentRef.current.hasChildNodes()) { contentRef.current.appendChild(document.createElement('p')) } }, [])
 
   const presets = [
     { label: 'Default', bg: 'rgba(255,255,255,0.03)', border: '#ffffff14' },
@@ -260,7 +247,7 @@ function CardBlockComponent({ node, updateAttributes, deleteNode }) {
               {PADS.map(p => <button key={p} onClick={() => updateAttributes({ padding: p })} style={btn(node.attrs.padding === p)}>{p}</button>)}
             </div>
           )}
-          <div ref={contentRef} data-card-content style={{ padding: node.attrs.padding || '24px' }} />
+          <div data-card-content style={{ padding: node.attrs.padding || '24px' }} />
         </div>
         <ResizeHandle onMouseDown={onMouseDown} />
       </div>
