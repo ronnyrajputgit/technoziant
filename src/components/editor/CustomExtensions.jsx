@@ -150,26 +150,24 @@ function GridCell({ cell, index, isActive, onSelect, onUpdate, onRemove, onMoveL
 
   return (
     <div onClick={onSelect} style={{ borderRadius: cell.radius || '8px', overflow: 'hidden', border: `1px solid ${isActive ? '#22c55e' : 'var(--glass-border)'}`, background: cell.bgColor || 'var(--bg)', minHeight: '80px', cursor: 'pointer', transition: 'all 0.15s', position: 'relative' }}>
-      {isActive && (
-        <div style={{ display: 'flex', gap: '3px', padding: '4px 6px', borderBottom: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.03)', flexWrap: 'wrap', alignItems: 'center' }}>
-          {cellTypeBtns.map(t => (
-            <button key={t.type} onMouseDown={e => e.stopPropagation()} onClick={e => { e.stopPropagation(); onUpdate({ type: t.type, src: '', alt: '', content: '' }) }} style={btn(cell.type === t.type)}>{t.icon} {t.label}</button>
-          ))}
-          <div style={{ width: '1px', height: '16px', background: 'var(--glass-border)', margin: '0 3px' }} />
-          {['left', 'center', 'right'].map(a => (
-            <button key={a} onMouseDown={e => e.stopPropagation()} onClick={e => { e.stopPropagation(); onUpdate({ align: a }) }} style={btn(cell.align === a)}>{a[0].toUpperCase()}</button>
-          ))}
-          <div style={{ width: '1px', height: '16px', background: 'var(--glass-border)', margin: '0 3px' }} />
-          <ColorPicker value={cell.bgColor} onChange={(bg, border) => onUpdate({ bgColor: bg, borderColor: border })} />
-          <div style={{ width: '1px', height: '16px', background: 'var(--glass-border)', margin: '0 3px' }} />
-          <RadiusPicker value={cell.radius} onChange={r => onUpdate({ radius: r })} />
-          <div style={{ marginLeft: 'auto', display: 'flex', gap: '3px' }}>
-            <button onMouseDown={e => e.stopPropagation()} onClick={e => { e.stopPropagation(); onMoveLeft() }} disabled={index === 0} style={btn(false, '#f59e0b')}>◀</button>
-            <button onMouseDown={e => e.stopPropagation()} onClick={e => { e.stopPropagation(); onMoveRight() }} disabled={index === totalCells - 1} style={btn(false, '#f59e0b')}>▶</button>
-            <button onMouseDown={e => e.stopPropagation()} onClick={e => { e.stopPropagation(); onRemove() }} style={delBtn()}>✕</button>
-          </div>
+      <div style={{ display: 'flex', gap: '3px', padding: '4px 6px', borderBottom: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.03)', flexWrap: 'wrap', alignItems: 'center' }}>
+        {cellTypeBtns.map(t => (
+          <button key={t.type} onMouseDown={e => e.stopPropagation()} onClick={e => { e.stopPropagation(); onUpdate({ type: t.type, src: '', alt: '', content: '' }) }} style={btn(cell.type === t.type)}>{t.icon} {t.label}</button>
+        ))}
+        <div style={{ width: '1px', height: '16px', background: 'var(--glass-border)', margin: '0 3px' }} />
+        {['left', 'center', 'right'].map(a => (
+          <button key={a} onMouseDown={e => e.stopPropagation()} onClick={e => { e.stopPropagation(); onUpdate({ align: a }) }} style={btn(cell.align === a)}>{a[0].toUpperCase()}</button>
+        ))}
+        <div style={{ width: '1px', height: '16px', background: 'var(--glass-border)', margin: '0 3px' }} />
+        <ColorPicker value={cell.bgColor} onChange={(bg, border) => onUpdate({ bgColor: bg, borderColor: border })} />
+        <div style={{ width: '1px', height: '16px', background: 'var(--glass-border)', margin: '0 3px' }} />
+        <RadiusPicker value={cell.radius} onChange={r => onUpdate({ radius: r })} />
+        <div style={{ marginLeft: 'auto', display: 'flex', gap: '3px' }}>
+          <button onMouseDown={e => e.stopPropagation()} onClick={e => { e.stopPropagation(); onMoveLeft() }} disabled={index === 0} style={btn(false, '#f59e0b')}>◀</button>
+          <button onMouseDown={e => e.stopPropagation()} onClick={e => { e.stopPropagation(); onMoveRight() }} disabled={index === totalCells - 1} style={btn(false, '#f59e0b')}>▶</button>
+          <button onMouseDown={e => e.stopPropagation()} onClick={e => { e.stopPropagation(); onRemove() }} style={delBtn()}>✕</button>
         </div>
-      )}
+      </div>
       <div style={{ padding: cell.padding || '16px', textAlign: cell.align || 'center', minHeight: '60px' }}>
         {cell.type === 'text' && (
           <textarea value={cell.content || ''} onChange={e => onUpdate({ content: e.target.value })}
