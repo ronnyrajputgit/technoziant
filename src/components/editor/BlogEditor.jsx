@@ -378,6 +378,13 @@ export function BlogEditor({ initialContent = {}, onSave, saving }) {
             <button onClick={() => setShowPreview(!showPreview)} style={{ padding: '5px 12px', borderRadius: '6px', border: '1px solid var(--glass-border)', background: showPreview ? 'rgba(34,197,94,0.15)' : 'transparent', color: showPreview ? '#22c55e' : 'var(--text-muted)', fontSize: '12px', cursor: 'pointer', fontFamily: "var(--font-code)", display: 'flex', alignItems: 'center', gap: '4px', transition: 'all 0.15s' }}>
               {showPreview ? <EditIcon sx={{ fontSize: 14 }} /> : <VisibilityIcon sx={{ fontSize: 14 }} />} {showPreview ? 'Edit' : 'Preview'}
             </button>
+            <Sep />
+            <button onClick={() => handleSave(false)} disabled={saving} style={{ padding: '5px 14px', borderRadius: '6px', border: '1px solid var(--glass-border)', background: 'transparent', color: 'var(--text)', fontSize: '12px', fontWeight: '500', cursor: saving ? 'not-allowed' : 'pointer', fontFamily: "var(--font-code)", display: 'flex', alignItems: 'center', gap: '4px', transition: 'all 0.15s', opacity: saving ? 0.5 : 1 }}>
+              <SaveIcon sx={{ fontSize: 14 }} /> {saving ? 'Saving...' : 'Draft'}
+            </button>
+            <button onClick={() => handleSave(true)} disabled={saving} style={{ padding: '5px 16px', borderRadius: '6px', border: 'none', background: 'linear-gradient(135deg, #22c55e, #16a34a)', color: '#fff', fontSize: '12px', fontWeight: '600', cursor: saving ? 'not-allowed' : 'pointer', fontFamily: "var(--font-code)", display: 'flex', alignItems: 'center', gap: '4px', transition: 'all 0.15s', boxShadow: '0 2px 8px rgba(34,197,94,0.3)', opacity: saving ? 0.5 : 1 }}>
+              <PublishIcon sx={{ fontSize: 14 }} /> {saving ? 'Publishing...' : 'Publish'}
+            </button>
           </div>
         </div>
       </div>
@@ -417,15 +424,6 @@ export function BlogEditor({ initialContent = {}, onSave, saving }) {
             <EditorContent editor={editor} />
           </div>
         )}
-
-        <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', marginTop: '28px' }}>
-          <button onClick={() => handleSave(false)} disabled={saving} className="liquid-glass" style={{ padding: '12px 28px', borderRadius: '10px', fontSize: '14px', fontWeight: '500', color: 'var(--text)', cursor: 'pointer', fontFamily: "var(--font-code)", display: 'flex', alignItems: 'center', gap: '8px', transition: 'all 0.2s' }}>
-            <SaveIcon sx={{ fontSize: 18 }} /> {saving ? 'Saving...' : 'Save Draft'}
-          </button>
-          <button onClick={() => handleSave(true)} disabled={saving} style={{ padding: '12px 32px', borderRadius: '10px', border: 'none', fontSize: '14px', fontWeight: '600', color: '#fff', cursor: 'pointer', background: 'linear-gradient(135deg, #22c55e, #16a34a)', fontFamily: "var(--font-code)", display: 'flex', alignItems: 'center', gap: '8px', transition: 'all 0.2s', boxShadow: '0 4px 15px rgba(34,197,94,0.3)' }}>
-            <PublishIcon sx={{ fontSize: 18 }} /> {saving ? 'Publishing...' : 'Publish'}
-          </button>
-        </div>
       </div>
     </div>
   )
