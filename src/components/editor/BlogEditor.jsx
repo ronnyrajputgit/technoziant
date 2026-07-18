@@ -554,11 +554,11 @@ export function BlogEditor({ initialContent = {}, onSave, saving }) {
               {showPreview ? <EditIcon sx={{ fontSize: 14 }} /> : <VisibilityIcon sx={{ fontSize: 14 }} />} {showPreview ? 'Edit' : 'Preview'}
             </button>
             <Sep />
-            <button onClick={() => handleSave(false)} disabled={saving} style={{ padding: '5px 14px', borderRadius: '6px', border: '1px solid var(--glass-border)', background: 'transparent', color: 'var(--text)', fontSize: '12px', fontWeight: '500', cursor: saving ? 'not-allowed' : 'pointer', fontFamily: "var(--font-code)", display: 'flex', alignItems: 'center', gap: '4px', transition: 'all 0.15s', opacity: saving ? 0.5 : 1 }}>
-              <SaveIcon sx={{ fontSize: 14 }} /> {saving ? 'Saving...' : 'Draft'}
+            <button onClick={() => handleSave(false)} disabled={saving} style={{ padding: '5px 14px', borderRadius: '6px', border: '1px solid var(--glass-border)', background: saving === 'draft' ? 'rgba(34,197,94,0.1)' : 'transparent', color: saving === 'draft' ? '#22c55e' : 'var(--text)', fontSize: '12px', fontWeight: '500', cursor: saving ? 'not-allowed' : 'pointer', fontFamily: "var(--font-code)", display: 'flex', alignItems: 'center', gap: '4px', transition: 'all 0.15s', opacity: saving && saving !== 'draft' ? 0.5 : 1 }}>
+              <SaveIcon sx={{ fontSize: 14 }} /> {saving === 'draft' ? 'Saving...' : 'Draft'}
             </button>
-            <button onClick={() => handleSave(true)} disabled={saving} style={{ padding: '5px 16px', borderRadius: '6px', border: 'none', background: 'linear-gradient(135deg, #22c55e, #16a34a)', color: '#fff', fontSize: '12px', fontWeight: '600', cursor: saving ? 'not-allowed' : 'pointer', fontFamily: "var(--font-code)", display: 'flex', alignItems: 'center', gap: '4px', transition: 'all 0.15s', boxShadow: '0 2px 8px rgba(34,197,94,0.3)', opacity: saving ? 0.5 : 1 }}>
-              <PublishIcon sx={{ fontSize: 14 }} /> {saving ? 'Publishing...' : 'Publish'}
+            <button onClick={() => handleSave(true)} disabled={!!saving} style={{ padding: '5px 16px', borderRadius: '6px', border: 'none', background: saving === 'publish' ? 'linear-gradient(135deg, #16a34a, #15803d)' : 'linear-gradient(135deg, #22c55e, #16a34a)', color: '#fff', fontSize: '12px', fontWeight: '600', cursor: saving ? 'not-allowed' : 'pointer', fontFamily: "var(--font-code)", display: 'flex', alignItems: 'center', gap: '4px', transition: 'all 0.15s', boxShadow: saving === 'publish' ? '0 4px 20px rgba(34,197,94,0.5)' : '0 2px 8px rgba(34,197,94,0.3)', opacity: saving && saving !== 'publish' ? 0.5 : 1 }}>
+              <PublishIcon sx={{ fontSize: 14 }} /> {saving === 'publish' ? 'Publishing...' : 'Publish'}
             </button>
           </div>
         </div>

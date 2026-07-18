@@ -52,7 +52,7 @@ export function EditorPage() {
   const { user, logout } = useApp()
   const navigate = useNavigate()
   const [blogData, setBlogData] = useState({})
-  const [saving, setSaving] = useState(false)
+  const [saving, setSaving] = useState(null)
   const [loading, setLoading] = useState(!!id)
   const [error, setError] = useState(null)
   const [success, setSuccess] = useState(null)
@@ -69,19 +69,11 @@ export function EditorPage() {
   }, [id, user, navigate])
 
   const handleSave = async (data) => {
-    setSaving(true)
+    const action = data.published ? 'publish' : 'draft'
+    setSaving(action)
     try {
-      const saveData = { ...data }
-      if (saveData.content && typeof saveData.content === 'object') {
-        const jsonStr = JSON.stringify(saveData.content)
-        if (jsonStr.length > 4000000) {
-          setError('Content is too large (over 4MB). Please reduce image sizes or remove some media.')
-          setSaving(false)
-          return
-        }
-      }
-      if (id) await api.updateBlog(id, saveData)
-      else await api.createBlog(saveData)
+      if (id) await api.updateBlog(id, data)
+      else await api.createBlog(data)
       if (data.published) {
         navigate('/dashboard')
       } else {
@@ -89,9 +81,7 @@ export function EditorPage() {
       }
     } catch (err) {
       const msg = err.message || 'Something went wrong'
-      if (msg.includes('too large') || msg.includes('entity') || msg.includes('PayloadTooLarge')) {
-        setError('Content is too large. Please reduce image sizes or remove some media.')
-      } else if (msg.includes('Failed to fetch') || msg.includes('network') || msg.includes('NetworkError')) {
+      if (msg.includes('Failed to fetch') || msg.includes('network') || msg.includes('NetworkError')) {
         setError('Network error. Please check your connection and try again.')
       } else if (msg.includes('401') || msg.includes('token') || msg.includes('Unauthorized')) {
         setError('Session expired. Please login again.')
@@ -99,7 +89,7 @@ export function EditorPage() {
         setError(msg)
       }
     }
-    finally { setSaving(false) }
+    finally { setSaving(null) }
   }
 
   if (!user) return null
