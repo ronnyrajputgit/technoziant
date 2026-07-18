@@ -128,20 +128,26 @@ function tiptapToHtml(json) {
     case 'cardBlock': {
       const bg = json.attrs?.bgColor || 'rgba(255,255,255,0.03)'
       const border = json.attrs?.borderColor || 'var(--glass-border)'
-      const pad = json.attrs?.padding || '24px'
+      const pad = json.attrs?.padding || '16px'
       const rad = json.attrs?.radius || '12px'
       const w = json.attrs?.width || '100%'
-      const cardSrc = json.attrs?.cardSrc || ''
-      const cardMediaType = json.attrs?.cardMediaType || ''
-      let mediaHtml = ''
-      if (cardSrc) {
-        const isYT = cardSrc.includes('youtube') || cardSrc.includes('youtu.be')
-        const getEmbed = (url) => { const m = url?.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&?/]+)/); return m ? `https://www.youtube.com/embed/${m[1]}` : url }
-        if (isYT) mediaHtml = `<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:8px;margin-bottom:12px"><iframe src="${getEmbed(cardSrc)}" style="position:absolute;top:0;left:0;width:100%;height:100%;border:none" allowfullscreen></iframe></div>`
-        else if (cardMediaType === 'video') mediaHtml = `<video src="${escapeHtml(cardSrc)}" controls style="width:100%;border-radius:8px;display:block;margin-bottom:12px"></video>`
-        else mediaHtml = `<img src="${escapeHtml(cardSrc)}" alt="" style="width:100%;border-radius:8px;display:block;margin-bottom:12px" />`
-      }
-      return `<div style="margin:1.5em 0;width:${w};max-width:100%"><div style="padding:${pad};border-radius:${rad};background:${bg};border:1px solid ${border}">${mediaHtml}${children}</div></div>`
+      const cardCells = json.attrs?.cells || []
+      const cellsHtml = cardCells.map(cell => {
+        const align = cell.align || 'center'
+        const cellBg = cell.bgColor || 'transparent'
+        const cellRad = cell.radius || '6px'
+        let inner = ''
+        if (cell.type === 'text') inner = cell.content || ''
+        else if (cell.type === 'image' && cell.src) inner = `<img src="${escapeHtml(cell.src)}" alt="${escapeHtml(cell.alt || '')}" style="width:100%;border-radius:${cellRad};display:block" />${cell.alt ? `<div style="font-size:10px;color:var(--text-muted);margin-top:4px;font-style:italic">${escapeHtml(cell.alt)}</div>` : ''}`
+        else if (cell.type === 'video' && cell.src) {
+          const isYT = cell.src.includes('youtube') || cell.src.includes('youtu.be')
+          const getEmbed = (url) => { const m = url?.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&?/]+)/); return m ? `https://www.youtube.com/embed/${m[1]}` : url }
+          if (isYT) inner = `<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:${cellRad}"><iframe src="${getEmbed(cell.src)}" style="position:absolute;top:0;left:0;width:100%;height:100%;border:none" allowfullscreen></iframe></div>`
+          else inner = `<video src="${escapeHtml(cell.src)}" controls style="width:100%;border-radius:${cellRad};display:block"></video>`
+        }
+        return `<div style="background:${cellBg};border-radius:${cellRad};padding:8px;text-align:${align};min-height:50px">${inner}</div>`
+      }).join('')
+      return `<div style="margin:1.5em 0;width:${w};max-width:100%;padding:${pad};border-radius:${rad};background:${bg};border:1px solid ${border};display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px">${cellsHtml}</div>`
     }
     case 'gridBlock': {
       const cells = json.attrs?.cells || []

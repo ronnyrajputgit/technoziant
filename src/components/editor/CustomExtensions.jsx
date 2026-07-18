@@ -322,34 +322,39 @@ export const GridBlock = Node.create({
 })
 
 /* ═══════════════════════════════════════════════════════ */
-/*  CARD BLOCK                                           */
+/*  CARD BLOCK — with grid-like cells                     */
 /* ═══════════════════════════════════════════════════════ */
 function CardBlockComponent({ node, updateAttributes, deleteNode }) {
   const [editing, setEditing] = useState(false)
-  const [mediaType, setMediaType] = useState(null)
+  const [activeCell, setActiveCell] = useState(null)
   const containerRef = useRef(null)
-  const fileRef = useRef(null)
   const { width, onMouseDown } = useResizable(node.attrs.width, containerRef, updateAttributes, 200)
+  const cells = node.attrs.cells || [{ type: 'text', content: '', src: '', alt: '', align: 'center', bgColor: 'transparent', radius: '8px' }]
 
-  const handleFile = (file) => {
-    if (!file) return
-    const reader = new FileReader()
-    reader.onload = () => { updateAttributes({ cardSrc: reader.result, cardMediaType: mediaType }); setMediaType(null) }
-    reader.readAsDataURL(file)
+  const addCell = () => {
+    updateAttributes({ cells: [...cells, { type: 'text', content: '', src: '', alt: '', align: 'center', bgColor: 'transparent', radius: '8px' }] })
+  }
+  const updateCell = (i, updates) => {
+    const current = node.attrs.cells || [{ type: 'text', content: '', src: '', alt: '', align: 'center', bgColor: 'transparent', radius: '8px' }]
+    const c = [...current]
+    c[i] = { ...c[i], ...updates }
+    updateAttributes({ cells: c })
+  }
+  const removeCell = (i) => {
+    const current = node.attrs.cells || []
+    if (current.length <= 1) return
+    updateAttributes({ cells: current.filter((_, j) => j !== i) })
   }
 
-  const isYouTube = node.attrs.cardSrc?.includes('youtube') || node.attrs.cardSrc?.includes('youtu.be')
-  const getEmbed = (url) => { const m = url?.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&?/]+)/); return m ? `https://www.youtube.com/embed/${m[1]}` : url }
-
   const presets = [
-    { label: 'Default', bg: 'rgba(255,255,255,0.03)', border: '#ffffff14' },
-    { label: 'Green', bg: 'rgba(34,197,94,0.08)', border: '#22c55e4d' },
-    { label: 'Blue', bg: 'rgba(59,130,246,0.08)', border: '#3b82f64d' },
-    { label: 'Purple', bg: 'rgba(168,85,247,0.08)', border: '#a855f74d' },
-    { label: 'Amber', bg: 'rgba(245,158,11,0.08)', border: '#f59e0b4d' },
-    { label: 'Red', bg: 'rgba(239,68,68,0.08)', border: '#ef44444d' },
-    { label: 'Cyan', bg: 'rgba(6,182,212,0.08)', border: '#06b6d44d' },
-    { label: 'Pink', bg: 'rgba(236,72,153,0.08)', border: '#ec48994d' },
+    { bg: 'rgba(255,255,255,0.03)', border: '#ffffff14' },
+    { bg: 'rgba(34,197,94,0.08)', border: '#22c55e4d' },
+    { bg: 'rgba(59,130,246,0.08)', border: '#3b82f64d' },
+    { bg: 'rgba(168,85,247,0.08)', border: '#a855f74d' },
+    { bg: 'rgba(245,158,11,0.08)', border: '#f59e0b4d' },
+    { bg: 'rgba(239,68,68,0.08)', border: '#ef44444d' },
+    { bg: 'rgba(6,182,212,0.08)', border: '#06b6d44d' },
+    { bg: 'rgba(236,72,153,0.08)', border: '#ec48994d' },
   ]
 
   return (
@@ -357,21 +362,20 @@ function CardBlockComponent({ node, updateAttributes, deleteNode }) {
       <div ref={containerRef} style={{ margin: '1.5em 0', position: 'relative', width }}>
         <DragHandle onMouseDown={onMouseDown} />
         <div style={{ borderRadius: node.attrs.radius || '12px', overflow: 'hidden', border: `1px solid ${node.attrs.borderColor || 'var(--glass-border)'}`, background: node.attrs.bgColor || 'rgba(255,255,255,0.03)' }}>
+          {/* Card Header */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 10px', borderBottom: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.02)' }}>
             <span style={{ fontSize: '9px', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>CARD</span>
             <div style={{ display: 'flex', gap: '3px', alignItems: 'center' }}>
-              <button title="Add Image" onMouseDown={e => e.stopPropagation()} onClick={e => { e.stopPropagation(); setMediaType('image'); fileRef.current?.click() }} style={{ padding: '2px 6px', fontSize: '10px', borderRadius: '4px', border: '1px solid var(--glass-border)', background: 'transparent', color: 'var(--text-muted)', cursor: 'pointer' }}>🖼️</button>
-              <button title="Add Video" onMouseDown={e => e.stopPropagation()} onClick={e => { e.stopPropagation(); setMediaType('video'); fileRef.current?.click() }} style={{ padding: '2px 6px', fontSize: '10px', borderRadius: '4px', border: '1px solid var(--glass-border)', background: 'transparent', color: 'var(--text-muted)', cursor: 'pointer' }}>🎬</button>
-              <input ref={fileRef} type="file" accept={mediaType === 'video' ? 'video/*' : 'image/*'} onChange={e => handleFile(e.target.files?.[0])} style={{ display: 'none' }} />
-              <button title="Add YouTube URL" onMouseDown={e => e.stopPropagation()} onClick={e => { e.stopPropagation(); const url = prompt('YouTube URL:'); if (url) updateAttributes({ cardSrc: url, cardMediaType: 'youtube' }) }} style={{ padding: '2px 6px', fontSize: '10px', borderRadius: '4px', border: '1px solid var(--glass-border)', background: 'transparent', color: 'var(--text-muted)', cursor: 'pointer' }}>📺</button>
-              <div style={{ width: '1px', height: '14px', background: 'var(--glass-border)', margin: '0 2px' }} />
+              <button title="Add Cell" onMouseDown={e => e.stopPropagation()} onClick={e => { e.stopPropagation(); addCell() }} style={{ padding: '2px 6px', fontSize: '10px', borderRadius: '4px', border: '1px solid var(--glass-border)', background: 'transparent', color: '#3b82f6', cursor: 'pointer' }}>+ Cell</button>
               <button title="Style" onMouseDown={e => e.stopPropagation()} onClick={e => { e.stopPropagation(); setEditing(!editing) }} style={{ padding: '2px 6px', fontSize: '10px', borderRadius: '4px', border: `1px solid ${editing ? '#22c55e' : 'var(--glass-border)'}`, background: editing ? 'rgba(34,197,94,0.15)' : 'transparent', color: editing ? '#22c55e' : 'var(--text-muted)', cursor: 'pointer' }}>🎨</button>
               <button title="Delete Card" onMouseDown={e => e.stopPropagation()} onClick={e => { e.stopPropagation(); deleteNode() }} style={{ padding: '2px 6px', fontSize: '10px', borderRadius: '4px', border: '1px solid rgba(239,68,68,0.3)', background: 'transparent', color: '#ef4444', cursor: 'pointer' }}>✕</button>
             </div>
           </div>
+
+          {/* Style Panel */}
           {editing && (
             <div style={{ padding: '6px 10px', borderBottom: '1px solid var(--glass-border)', display: 'flex', gap: '6px', flexWrap: 'wrap', alignItems: 'center' }}>
-              <span style={{ fontSize: '9px', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>Color:</span>
+              <span style={{ fontSize: '9px', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>BG:</span>
               {presets.map((c, i) => (
                 <button key={i} onClick={() => updateAttributes({ bgColor: c.bg, borderColor: c.border })} style={{ width: '14px', height: '14px', borderRadius: '3px', border: `2px solid ${node.attrs.bgColor === c.bg ? '#22c55e' : 'var(--glass-border)'}`, background: c.bg, cursor: 'pointer' }} />
               ))}
@@ -384,25 +388,15 @@ function CardBlockComponent({ node, updateAttributes, deleteNode }) {
               {PADS.map(p => <button key={p} onClick={() => updateAttributes({ padding: p })} style={{ padding: '2px 5px', fontSize: '9px', borderRadius: '3px', border: `1px solid ${node.attrs.padding === p ? '#22c55e' : 'var(--glass-border)'}`, background: node.attrs.padding === p ? 'rgba(34,197,94,0.15)' : 'transparent', color: node.attrs.padding === p ? '#22c55e' : 'var(--text-muted)', cursor: 'pointer', fontFamily: "var(--font-code)" }}>{p}</button>)}
             </div>
           )}
-          {node.attrs.cardSrc && (
-            <div style={{ padding: '8px 12px 0' }}>
-              <div style={{ position: 'relative' }}>
-                {node.attrs.cardMediaType === 'video' && node.attrs.cardSrc?.startsWith('data:video') ? (
-                  <video src={node.attrs.cardSrc} controls style={{ width: '100%', borderRadius: '8px', display: 'block' }} />
-                ) : isYouTube ? (
-                  <div style={{ position: 'relative', paddingBottom: '56.25%', borderRadius: '8px', overflow: 'hidden' }}>
-                    <iframe src={getEmbed(node.attrs.cardSrc)} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none' }} allowFullScreen />
-                  </div>
-                ) : node.attrs.cardMediaType === 'video' ? (
-                  <video src={node.attrs.cardSrc} controls style={{ width: '100%', borderRadius: '8px', display: 'block' }} />
-                ) : (
-                  <img src={node.attrs.cardSrc} alt="" style={{ width: '100%', borderRadius: '8px', display: 'block' }} />
-                )}
-                <button title="Remove media" onClick={() => updateAttributes({ cardSrc: '', cardMediaType: '' })} style={{ position: 'absolute', top: '4px', right: '4px', padding: '3px 8px', borderRadius: '4px', border: 'none', background: 'rgba(239,68,68,0.8)', color: '#fff', fontSize: '10px', cursor: 'pointer' }}>✕</button>
-              </div>
-            </div>
-          )}
-          <div data-card-content style={{ padding: node.attrs.padding || '24px' }} />
+
+          {/* Card Cells */}
+          <div style={{ padding: '8px', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '8px' }}>
+            {cells.map((cell, i) => (
+              <CardCell key={i} cell={cell} index={i} isActive={activeCell === i}
+                onSelect={() => setActiveCell(activeCell === i ? null : i)}
+                onUpdate={(u) => updateCell(i, u)} onRemove={() => removeCell(i)} totalCells={cells.length} />
+            ))}
+          </div>
         </div>
         <ResizeHandle onMouseDown={onMouseDown} />
       </div>
@@ -410,11 +404,121 @@ function CardBlockComponent({ node, updateAttributes, deleteNode }) {
   )
 }
 
+function CardCell({ cell, index, isActive, onSelect, onUpdate, onRemove, totalCells }) {
+  const CT = ({ tip, active, color, onClick, children }) => (
+    <button title={tip} onMouseDown={e => e.stopPropagation()} onClick={e => { e.stopPropagation(); onClick?.() }}
+      style={{ padding: '2px 4px', fontSize: '9px', borderRadius: '3px', border: `1px solid ${active ? (color || '#22c55e') : 'var(--glass-border)'}`, background: active ? `${color || '#22c55e'}22` : 'transparent', color: active ? (color || '#22c55e') : 'var(--text-muted)', cursor: 'pointer', lineHeight: 1 }}>{children}</button>
+  )
+
+  return (
+    <div onClick={onSelect} style={{ borderRadius: cell.radius || '6px', overflow: 'hidden', border: `1px solid ${isActive ? '#22c55e' : 'var(--glass-border)'}`, background: cell.bgColor || 'transparent', minHeight: '60px', transition: 'all 0.15s' }}>
+      {/* Cell Toolbar */}
+      <div style={{ display: 'flex', gap: '2px', padding: '3px 4px', borderBottom: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.03)', flexWrap: 'wrap', alignItems: 'center' }}>
+        <CT tip="Text" active={cell.type === 'text'} onClick={() => onUpdate({ type: 'text', src: '', alt: '', content: '' })}>📝</CT>
+        <CT tip="Image" active={cell.type === 'image'} onClick={() => onUpdate({ type: 'image', src: '', alt: '', content: '' })}>🖼️</CT>
+        <CT tip="Video" active={cell.type === 'video'} onClick={() => onUpdate({ type: 'video', src: '', alt: '', content: '' })}>🎬</CT>
+        <div style={{ width: '1px', height: '12px', background: 'var(--glass-border)', margin: '0 2px' }} />
+        <CT tip="Left" active={cell.align === 'left'} onClick={() => onUpdate({ align: 'left' })}>◀</CT>
+        <CT tip="Center" active={cell.align === 'center'} onClick={() => onUpdate({ align: 'center' })}>●</CT>
+        <CT tip="Right" active={cell.align === 'right'} onClick={() => onUpdate({ align: 'right' })}>▶</CT>
+        <div style={{ width: '1px', height: '12px', background: 'var(--glass-border)', margin: '0 2px' }} />
+        <ColorPicker value={cell.bgColor} onChange={(bg, border) => onUpdate({ bgColor: bg, borderColor: border })} />
+        <div style={{ width: '1px', height: '12px', background: 'var(--glass-border)', margin: '0 2px' }} />
+        <RadiusPicker value={cell.radius} onChange={r => onUpdate({ radius: r })} />
+        <div style={{ marginLeft: 'auto' }}>
+          <CT tip="Delete" color="#ef4444" onClick={onRemove}>✕</CT>
+        </div>
+      </div>
+      {/* Cell Content */}
+      <div style={{ padding: '8px', textAlign: cell.align || 'center', minHeight: '50px' }}>
+        {cell.type === 'text' && (
+          <textarea value={cell.content || ''} onChange={e => onUpdate({ content: e.target.value })}
+            onMouseDown={e => e.stopPropagation()} onClick={e => e.stopPropagation()}
+            placeholder="Type here..." rows={2}
+            style={{ width: '100%', background: 'transparent', border: 'none', outline: 'none', color: 'var(--text)', fontSize: '13px', lineHeight: 1.5, resize: 'vertical', fontFamily: 'inherit', textAlign: cell.align || 'center', boxSizing: 'border-box' }} />
+        )}
+        {cell.type === 'image' && <CardCellImage cell={cell} onUpdate={onUpdate} />}
+        {cell.type === 'video' && <CardCellVideo cell={cell} onUpdate={onUpdate} />}
+      </div>
+    </div>
+  )
+}
+
+function CardCellImage({ cell, onUpdate }) {
+  const ref = useRef(null)
+  if (cell.src) {
+    return (
+      <div style={{ width: '100%' }}>
+        <img src={cell.src} alt={cell.alt || ''} style={{ width: '100%', borderRadius: cell.radius || '6px', display: 'block' }} />
+        <div style={{ display: 'flex', gap: '3px', marginTop: '4px', alignItems: 'center' }}>
+          <input type="text" value={cell.alt || ''} onChange={e => onUpdate({ alt: e.target.value })} placeholder="Caption..." style={{ flex: 1, border: '1px solid var(--glass-border)', background: 'transparent', color: 'var(--text-muted)', fontSize: '10px', outline: 'none', borderRadius: '3px', padding: '3px 6px', boxSizing: 'border-box' }} />
+          <button onClick={() => onUpdate({ src: '', alt: '' })} style={{ padding: '3px 6px', borderRadius: '3px', border: '1px solid rgba(239,68,68,0.3)', background: 'transparent', color: '#ef4444', fontSize: '9px', cursor: 'pointer' }}>✕</button>
+        </div>
+      </div>
+    )
+  }
+  return (
+    <div style={{ width: '100%' }}>
+      <input ref={ref} type="file" accept="image/*" onChange={e => { const f = e.target.files?.[0]; if (f) { const r = new FileReader(); r.onload = () => onUpdate({ src: r.result }); r.readAsDataURL(f) } }} style={{ display: 'none' }} />
+      <div onClick={() => ref.current?.click()} style={{ padding: '12px', border: '1px dashed var(--glass-border)', borderRadius: '6px', textAlign: 'center', cursor: 'pointer' }}>
+        <div style={{ fontSize: '18px' }}>📤</div>
+        <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Upload or URL</div>
+      </div>
+      <input type="text" value={cell.src || ''} onChange={e => onUpdate({ src: e.target.value })} placeholder="Image URL..."
+        style={{ width: '100%', padding: '4px 8px', borderRadius: '4px', border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.05)', color: 'var(--text)', fontSize: '10px', outline: 'none', boxSizing: 'border-box', marginTop: '6px' }} />
+    </div>
+  )
+}
+
+function CardCellVideo({ cell, onUpdate }) {
+  const ref = useRef(null)
+  const [urlInput, setUrlInput] = useState('')
+  const isYT = cell.src?.includes('youtube') || cell.src?.includes('youtu.be')
+  const getEmbed = (url) => { const m = url?.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&?/]+)/); return m ? `https://www.youtube.com/embed/${m[1]}` : url }
+  const isBase64 = cell.src?.startsWith('data:video')
+
+  if (cell.src) {
+    return (
+      <div style={{ width: '100%' }}>
+        {isBase64 ? (
+          <video src={cell.src} controls style={{ width: '100%', borderRadius: '6px', display: 'block' }} />
+        ) : isYT ? (
+          <div style={{ position: 'relative', paddingBottom: '56.25%', borderRadius: '6px', overflow: 'hidden' }}>
+            <iframe src={getEmbed(cell.src)} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none' }} allowFullScreen />
+          </div>
+        ) : (
+          <video src={cell.src} controls style={{ width: '100%', borderRadius: '6px', display: 'block' }} />
+        )}
+        <div style={{ textAlign: 'center', marginTop: '4px' }}>
+          <button onClick={() => onUpdate({ src: '' })} style={{ padding: '3px 8px', borderRadius: '3px', border: '1px solid rgba(239,68,68,0.3)', background: 'transparent', color: '#ef4444', fontSize: '9px', cursor: 'pointer' }}>✕ Remove</button>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div style={{ width: '100%' }}>
+      <input ref={ref} type="file" accept="video/*" onChange={e => { const f = e.target.files?.[0]; if (f) { const r = new FileReader(); r.onload = () => onUpdate({ src: r.result }); r.readAsDataURL(f) } }} style={{ display: 'none' }} />
+      <div onClick={() => ref.current?.click()} style={{ padding: '12px', border: '1px dashed var(--glass-border)', borderRadius: '6px', textAlign: 'center', cursor: 'pointer' }}>
+        <div style={{ fontSize: '18px' }}>🎬</div>
+        <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Upload or URL</div>
+      </div>
+      <div style={{ display: 'flex', gap: '4px', marginTop: '6px' }}>
+        <input type="text" value={urlInput} onChange={e => setUrlInput(e.target.value)} placeholder="YouTube URL..."
+          onKeyDown={e => { if (e.key === 'Enter' && urlInput.trim()) { e.preventDefault(); onUpdate({ src: urlInput.trim() }); setUrlInput('') } }}
+          style={{ flex: 1, padding: '4px 8px', borderRadius: '4px', border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.05)', color: 'var(--text)', fontSize: '10px', outline: 'none', boxSizing: 'border-box' }} />
+        <button onClick={() => { if (urlInput.trim()) { onUpdate({ src: urlInput.trim() }); setUrlInput('') } }} disabled={!urlInput.trim()}
+          style={{ padding: '4px 8px', borderRadius: '4px', border: 'none', background: urlInput.trim() ? '#22c55e' : 'var(--glass)', color: urlInput.trim() ? '#fff' : 'var(--text-muted)', fontSize: '10px', cursor: urlInput.trim() ? 'pointer' : 'not-allowed', fontFamily: "var(--font-code)" }}>Add</button>
+      </div>
+    </div>
+  )
+}
+
 export const CardBlock = Node.create({
-  name: 'cardBlock', group: 'block', content: 'block+', defining: true,
-  addAttributes() { return { bgColor: { default: 'rgba(255,255,255,0.03)' }, borderColor: { default: 'var(--glass-border)' }, customColor: { default: '#0f1424' }, padding: { default: '24px' }, radius: { default: '12px' }, width: { default: '100%' }, cardSrc: { default: '' }, cardMediaType: { default: '' } } },
+  name: 'cardBlock', group: 'block', atom: true,
+  addAttributes() { return { bgColor: { default: 'rgba(255,255,255,0.03)' }, borderColor: { default: 'var(--glass-border)' }, customColor: { default: '#0f1424' }, padding: { default: '16px' }, radius: { default: '12px' }, width: { default: '100%' }, cells: { default: [{ type: 'text', content: '', src: '', alt: '', align: 'center', bgColor: 'transparent', radius: '8px' }] } } },
   parseHTML() { return [{ tag: 'div[data-card-block]' }] },
-  renderHTML({ HTMLAttributes }) { return ['div', mergeAttributes(HTMLAttributes, { 'data-card-block': '' }), 0] },
+  renderHTML({ HTMLAttributes }) { return ['div', mergeAttributes(HTMLAttributes, { 'data-card-block': '' })] },
   addNodeView() { return ReactNodeViewRenderer(CardBlockComponent) }
 })
 
