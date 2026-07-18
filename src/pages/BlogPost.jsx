@@ -127,13 +127,18 @@ function tiptapToHtml(json) {
     case 'tableHeader': return `<th style="padding:10px 14px;border:1px solid var(--glass-border);font-weight:600;text-align:left;background:rgba(255,255,255,0.03)">${children}</th>`
     case 'cardBlock': {
       const bg = json.attrs?.bgColor || 'rgba(255,255,255,0.03)'
+      const border = json.attrs?.borderColor || 'var(--glass-border)'
       const pad = json.attrs?.padding || '24px'
       const rad = json.attrs?.radius || '12px'
-      return `<div style="margin:1.5em 0;padding:${pad};border-radius:${rad};background:${bg};border:1px solid var(--glass-border)">${children}</div>`
+      const w = json.attrs?.width || '100%'
+      return `<div style="margin:1.5em 0;width:${w};max-width:100%"><div style="padding:${pad};border-radius:${rad};background:${bg};border:1px solid ${border}">${children}</div></div>`
     }
     case 'columnsBlock': {
       const cols = json.attrs?.cols || 2
-      return `<div style="margin:1.5em 0;display:grid;grid-template-columns:repeat(${cols},1fr);gap:12px">${children}</div>`
+      const colWidths = json.attrs?.colWidths
+      const gridCols = colWidths ? colWidths.join(' ') : `repeat(${cols}, 1fr)`
+      const w = json.attrs?.width || '100%'
+      return `<div style="margin:1.5em 0;width:${w};max-width:100%;display:grid;grid-template-columns:${gridCols};gap:12px">${children}</div>`
     }
     case 'resizableVideo': {
       let src = json.attrs?.src || ''
@@ -151,9 +156,20 @@ function tiptapToHtml(json) {
       return `<div style="margin:1.5em 0;text-align:${align}"><img src="${escapeHtml(src)}" alt="${escapeHtml(alt)}" style="width:${w};max-width:100%;border-radius:12px" />${alt ? `<div style="font-size:12px;color:var(--text-muted);margin-top:8px;font-style:italic;text-align:center">${escapeHtml(alt)}</div>` : ''}</div>`
     }
     case 'callout': {
-      const calloutStyles = { info: { bg: 'rgba(59,130,246,0.08)', border: '#3b82f6', icon: '💡' }, warning: { bg: 'rgba(245,158,11,0.08)', border: '#f59e0b', icon: '⚠️' }, success: { bg: 'rgba(34,197,94,0.08)', border: '#22c55e', icon: '✅' }, danger: { bg: 'rgba(239,68,68,0.08)', border: '#ef4444', icon: '🚨' }, tip: { bg: 'rgba(168,85,247,0.08)', border: '#a855f7', icon: '🎯' } }
+      const calloutStyles = {
+        info:     { bg: 'rgba(59,130,246,0.08)', border: '#3b82f6', icon: '💡', label: 'Info' },
+        thinking: { bg: 'rgba(168,85,247,0.08)', border: '#a855f7', icon: '🤔', label: 'Thinking' },
+        note:     { bg: 'rgba(34,197,94,0.08)', border: '#22c55e', icon: '📝', label: 'Note' },
+        warning:  { bg: 'rgba(245,158,11,0.08)', border: '#f59e0b', icon: '⚠️', label: 'Warning' },
+        danger:   { bg: 'rgba(239,68,68,0.08)', border: '#ef4444', icon: '🚨', label: 'Danger' },
+        tip:      { bg: 'rgba(168,85,247,0.08)', border: '#a855f7', icon: '🎯', label: 'Tip' },
+        question: { bg: 'rgba(6,182,212,0.08)', border: '#06b6d4', icon: '❓', label: 'Question' },
+        success:  { bg: 'rgba(34,197,94,0.08)', border: '#22c55e', icon: '✅', label: 'Success' },
+        quote:    { bg: 'rgba(245,158,11,0.08)', border: '#f59e0b', icon: '💬', label: 'Quote' },
+        code:     { bg: 'rgba(236,72,153,0.08)', border: '#ec4899', icon: '💻', label: 'Code' },
+      }
       const cs = calloutStyles[json.attrs?.type || 'info'] || calloutStyles.info
-      return `<div style="margin:1.5em 0;padding:16px 20px;border-radius:12px;background:${cs.bg};border-left:3px solid ${cs.border}"><span style="margin-right:8px">${cs.icon}</span>${children}</div>`
+      return `<div style="margin:1.5em 0;padding:16px 20px;border-radius:12px;background:${cs.bg};border:1px solid ${cs.border}33;border-left:3px solid ${cs.border}"><div style="display:flex;align-items:flex-start;gap:10px"><span style="font-size:20px;line-height:1;flex-shrink:0;margin-top:2px">${cs.icon}</span><div><div style="font-size:12px;font-weight:600;color:${cs.border};font-family:var(--font-code);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.05em">${cs.label}</div>${children}</div></div></div>`
     }
     case 'spacer': return `<div style="height:32px"></div>`
     default: return children
