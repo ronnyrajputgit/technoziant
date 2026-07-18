@@ -140,6 +140,60 @@ function GridBlockComponent({ node, updateAttributes, deleteNode }) {
   )
 }
 
+function getYouTubeEmbed(url) {
+  if (!url) return ''
+  const m = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&?/]+)/)
+  return m ? `https://www.youtube.com/embed/${m[1]}` : url
+}
+
+function VideoCell({ cell, onUpdate }) {
+  const fileRef = useRef(null)
+  const [dragging, setDragging] = useState(false)
+  const [urlInput, setUrlInput] = useState('')
+
+  const handleFile = (file) => {
+    if (!file || !file.type.startsWith('video/')) return
+    const reader = new FileReader()
+    reader.onload = () => { onUpdate({ src: reader.result }) }
+    reader.readAsDataURL(file)
+  }
+
+  const embedSrc = getYouTubeEmbed(cell.src)
+
+  if (embedSrc) {
+    return (
+      <div style={{ width: '100%' }}>
+        <div style={{ position: 'relative', paddingBottom: '56.25%', borderRadius: cell.radius || '8px', overflow: 'hidden' }}>
+          <iframe src={embedSrc} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none' }} allowFullScreen />
+        </div>
+        <div style={{ display: 'flex', gap: '4px', marginTop: '6px', justifyContent: 'center' }}>
+          <button onClick={() => onUpdate({ src: '' })} style={{ padding: '4px 8px', borderRadius: '4px', border: '1px solid rgba(239,68,68,0.3)', background: 'transparent', color: '#ef4444', fontSize: '9px', cursor: 'pointer', fontFamily: "var(--font-code)" }}>✕ Remove</button>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div style={{ width: '100%' }}>
+      <input ref={fileRef} type="file" accept="video/*" onChange={e => handleFile(e.target.files?.[0])} style={{ display: 'none' }} />
+      <div onDragOver={e => { e.preventDefault(); setDragging(true) }} onDragLeave={() => setDragging(false)} onDrop={e => { e.preventDefault(); setDragging(false); handleFile(e.dataTransfer.files?.[0]) }}
+        onClick={() => fileRef.current?.click()}
+        style={{ padding: '20px', border: `2px dashed ${dragging ? '#22c55e' : 'var(--glass-border)'}`, borderRadius: '8px', textAlign: 'center', cursor: 'pointer', background: dragging ? 'rgba(34,197,94,0.05)' : 'transparent', transition: 'all 0.2s' }}>
+        <div style={{ fontSize: '24px', marginBottom: '4px' }}>🎬</div>
+        <div style={{ fontSize: '11px', color: 'var(--text)', fontWeight: '500', marginBottom: '4px' }}>Click or drag to upload video</div>
+        <div style={{ fontSize: '9px', color: 'var(--text-muted)' }}>or paste YouTube URL below</div>
+      </div>
+      <div style={{ display: 'flex', gap: '4px', marginTop: '8px' }}>
+        <input type="text" value={urlInput} onChange={e => setUrlInput(e.target.value)} placeholder="https://youtube.com/watch?v=..."
+          onKeyDown={e => { if (e.key === 'Enter' && urlInput.trim()) { e.preventDefault(); onUpdate({ src: urlInput.trim() }); setUrlInput('') } }}
+          style={{ flex: 1, padding: '6px 10px', borderRadius: '6px', border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.05)', color: 'var(--text)', fontSize: '11px', outline: 'none', boxSizing: 'border-box' }} />
+        <button onClick={() => { if (urlInput.trim()) { onUpdate({ src: urlInput.trim() }); setUrlInput('') } }} disabled={!urlInput.trim()}
+          style={{ padding: '6px 12px', borderRadius: '6px', border: 'none', background: urlInput.trim() ? '#22c55e' : 'var(--glass)', color: urlInput.trim() ? '#fff' : 'var(--text-muted)', fontSize: '11px', fontWeight: '600', cursor: urlInput.trim() ? 'pointer' : 'not-allowed', fontFamily: "var(--font-code)" }}>Add</button>
+      </div>
+    </div>
+  )
+}
+
 function ImageCell({ cell, onUpdate }) {
   const fileRef = useRef(null)
   const [dragging, setDragging] = useState(false)
@@ -220,25 +274,7 @@ function GridCell({ cell, index, isActive, onSelect, onUpdate, onRemove, onMoveL
           <ImageCell cell={cell} onUpdate={onUpdate} />
         )}
         {cell.type === 'video' && (
-          <div onClick={e => e.stopPropagation()} style={{ width: '100%' }}>
-            {cell.src ? (
-              <div>
-                <div style={{ position: 'relative', paddingBottom: '56.25%', borderRadius: cell.radius || '8px', overflow: 'hidden' }}>
-                  <iframe src={cell.src} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none' }} allowFullScreen />
-                </div>
-                <div style={{ display: 'flex', gap: '4px', marginTop: '6px', justifyContent: 'center' }}>
-                  <button onClick={() => onUpdate({ src: '' })} style={{ padding: '4px 8px', borderRadius: '4px', border: '1px solid rgba(239,68,68,0.3)', background: 'transparent', color: '#ef4444', fontSize: '9px', cursor: 'pointer', fontFamily: "var(--font-code)" }}>Remove Video</button>
-                </div>
-              </div>
-            ) : (
-              <div style={{ padding: '20px', border: '2px dashed var(--glass-border)', borderRadius: '8px', textAlign: 'center' }}>
-                <div style={{ fontSize: '24px', marginBottom: '4px' }}>🎬</div>
-                <input type="text" value={cell.src || ''} onChange={e => onUpdate({ src: e.target.value })} placeholder="Paste YouTube URL and press Enter..."
-                  onKeyDown={e => e.key === 'Enter' && e.preventDefault()}
-                  style={{ width: '100%', padding: '6px 10px', borderRadius: '6px', border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.05)', color: 'var(--text)', fontSize: '11px', outline: 'none', boxSizing: 'border-box' }} />
-              </div>
-            )}
-          </div>
+          <VideoCell cell={cell} onUpdate={onUpdate} />
         )}
         {cell.type === 'card' && (
           <div onClick={e => e.stopPropagation()} style={{ width: '100%', background: 'rgba(255,255,255,0.05)', borderRadius: cell.radius || '12px', padding: '16px', border: '1px solid var(--glass-border)' }}>
