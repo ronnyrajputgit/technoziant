@@ -15,6 +15,45 @@ import Dropcursor from '@tiptap/extension-dropcursor'
 import Gapcursor from '@tiptap/extension-gapcursor'
 import { CardBlock, ColumnsBlock, ResizableImage, Callout, Spacer } from './CustomExtensions'
 import { useState, useCallback, useEffect, useRef } from 'react'
+import FormatBoldIcon from '@mui/icons-material/FormatBold'
+import FormatItalicIcon from '@mui/icons-material/FormatItalic'
+import FormatUnderlinedIcon from '@mui/icons-material/FormatUnderlined'
+import StrikethroughSIcon from '@mui/icons-material/StrikethroughS'
+import FormatColorTextIcon from '@mui/icons-material/FormatColorText'
+import FormatAlignLeftIcon from '@mui/icons-material/FormatAlignLeft'
+import FormatAlignCenterIcon from '@mui/icons-material/FormatAlignCenter'
+import FormatAlignRightIcon from '@mui/icons-material/FormatAlignRight'
+import FormatAlignJustifyIcon from '@mui/icons-material/FormatAlignJustify'
+import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted'
+import FormatListNumberedIcon from '@mui/icons-material/FormatListNumbered'
+import FormatQuoteIcon from '@mui/icons-material/FormatQuote'
+import UndoIcon from '@mui/icons-material/Undo'
+import RedoIcon from '@mui/icons-material/Redo'
+import ImageIcon from '@mui/icons-material/Image'
+import VideocamIcon from '@mui/icons-material/Videocam'
+import ViewColumnIcon from '@mui/icons-material/ViewColumn'
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile'
+import CallMissedOutgoingIcon from '@mui/icons-material/CallMissedOutgoing'
+import SpaceBarIcon from '@mui/icons-material/SpaceBar'
+import HorizontalRuleIcon from '@mui/icons-material/HorizontalRule'
+import TableChartIcon from '@mui/icons-material/TableChart'
+import CodeIcon from '@mui/icons-material/Code'
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline'
+import LinkIcon from '@mui/icons-material/Link'
+import VisibilityIcon from '@mui/icons-material/Visibility'
+import EditIcon from '@mui/icons-material/Edit'
+import SaveIcon from '@mui/icons-material/Save'
+import PublishIcon from '@mui/icons-material/Publish'
+import CloseIcon from '@mui/icons-material/Close'
+import CloudUploadIcon from '@mui/icons-material/CloudUpload'
+import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate'
+import OndemandVideoIcon from '@mui/icons-material/OndemandVideo'
+import DashboardIcon from '@mui/icons-material/Dashboard'
+import ViewAgendaIcon from '@mui/icons-material/ViewAgenda'
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
+import ViewModuleIcon from '@mui/icons-material/ViewModule'
+import TextFieldsIcon from '@mui/icons-material/TextFields'
+import FormatSizeIcon from '@mui/icons-material/FormatSize'
 
 function MediaModal({ open, onClose, onInsert, type }) {
   const [tab, setTab] = useState('url')
@@ -45,33 +84,49 @@ function MediaModal({ open, onClose, onInsert, type }) {
   }
 
   return (
-    <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 2000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }} onClick={e => e.target === e.currentTarget && onClose()}>
-      <div className="liquid-glass" style={{ width: '100%', maxWidth: '480px', borderRadius: '16px', overflow: 'hidden' }}>
-        <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--glass-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h3 style={{ fontSize: '15px', fontWeight: '600' }}>{type === 'video' ? 'Insert Video' : 'Insert Image'}</h3>
-          <button onClick={onClose} style={{ padding: '4px 10px', borderRadius: '6px', border: '1px solid var(--glass-border)', background: 'transparent', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '12px' }}>✕</button>
+    <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)', zIndex: 2000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }} onClick={e => e.target === e.currentTarget && onClose()}>
+      <div className="liquid-glass" style={{ width: '100%', maxWidth: '520px', borderRadius: '20px', overflow: 'hidden', boxShadow: '0 25px 60px rgba(0,0,0,0.5)' }}>
+        <div style={{ padding: '18px 24px', borderBottom: '1px solid var(--glass-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            {type === 'video' ? <OndemandVideoIcon sx={{ color: '#22c55e', fontSize: 20 }} /> : <AddPhotoAlternateIcon sx={{ color: '#22c55e', fontSize: 20 }} />}
+            <h3 style={{ fontSize: '16px', fontWeight: '600' }}>{type === 'video' ? 'Insert Video' : 'Insert Image'}</h3>
+          </div>
+          <button onClick={onClose} style={{ padding: '6px', borderRadius: '8px', border: '1px solid var(--glass-border)', background: 'transparent', color: 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center' }}><CloseIcon sx={{ fontSize: 16 }} /></button>
         </div>
         <div style={{ display: 'flex', borderBottom: '1px solid var(--glass-border)' }}>
-          <button onClick={() => setTab('url')} style={{ flex: 1, padding: '10px', fontSize: '12px', fontWeight: '500', cursor: 'pointer', border: 'none', borderBottom: tab === 'url' ? '2px solid #22c55e' : '2px solid transparent', background: 'transparent', color: tab === 'url' ? '#22c55e' : 'var(--text-muted)', fontFamily: "var(--font-code)" }}>URL</button>
-          <button onClick={() => setTab('upload')} style={{ flex: 1, padding: '10px', fontSize: '12px', fontWeight: '500', cursor: 'pointer', border: 'none', borderBottom: tab === 'upload' ? '2px solid #22c55e' : '2px solid transparent', background: 'transparent', color: tab === 'upload' ? '#22c55e' : 'var(--text-muted)', fontFamily: "var(--font-code)" }}>Upload</button>
+          <button onClick={() => setTab('url')} style={{ flex: 1, padding: '12px', fontSize: '13px', fontWeight: '500', cursor: 'pointer', border: 'none', borderBottom: tab === 'url' ? '2px solid #22c55e' : '2px solid transparent', background: 'transparent', color: tab === 'url' ? '#22c55e' : 'var(--text-muted)', fontFamily: "var(--font-code)", display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+            <LinkIcon sx={{ fontSize: 14 }} /> URL
+          </button>
+          <button onClick={() => setTab('upload')} style={{ flex: 1, padding: '12px', fontSize: '13px', fontWeight: '500', cursor: 'pointer', border: 'none', borderBottom: tab === 'upload' ? '2px solid #22c55e' : '2px solid transparent', background: 'transparent', color: tab === 'upload' ? '#22c55e' : 'var(--text-muted)', fontFamily: "var(--font-code)", display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+            <CloudUploadIcon sx={{ fontSize: 14 }} /> Upload
+          </button>
         </div>
-        <div style={{ padding: '20px' }}>
+        <div style={{ padding: '24px' }}>
           {tab === 'url' ? (
             <div>
-              <input type="text" value={url} onChange={e => setUrl(e.target.value)} autoFocus placeholder={type === 'video' ? 'YouTube URL...' : 'Image URL...'}
-                style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.03)', color: 'var(--text)', fontSize: '13px', outline: 'none', boxSizing: 'border-box', marginBottom: '10px' }} onKeyDown={e => e.key === 'Enter' && handleInsert()} />
-              <input type="text" value={alt} onChange={e => setAlt(e.target.value)} placeholder="Caption (optional)"
-                style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.03)', color: 'var(--text)', fontSize: '13px', outline: 'none', boxSizing: 'border-box', marginBottom: '16px' }} />
-              {url && type === 'image' && <div style={{ marginBottom: '16px', textAlign: 'center' }}><img src={url} alt="" style={{ maxWidth: '100%', maxHeight: '200px', borderRadius: '8px' }} onError={e => e.target.style.display = 'none'} /></div>}
-              {url && type === 'video' && url.includes('youtube') && <div style={{ marginBottom: '16px', borderRadius: '8px', overflow: 'hidden', aspectRatio: '16/9' }}><iframe src={url.includes('embed') ? url : `https://www.youtube.com/embed/${url.match(/v=([^&]+)/)?.[1] || ''}`} style={{ width: '100%', height: '100%', border: 'none' }} allowFullScreen /></div>}
-              <button onClick={handleInsert} disabled={!url.trim()} style={{ width: '100%', padding: '10px', borderRadius: '8px', border: 'none', background: url.trim() ? 'linear-gradient(135deg, #22c55e, #16a34a)' : 'var(--glass)', color: url.trim() ? '#fff' : 'var(--text-muted)', fontSize: '13px', fontWeight: '600', cursor: url.trim() ? 'pointer' : 'not-allowed', fontFamily: "var(--font-code)" }}>Insert</button>
+              <div style={{ marginBottom: '14px' }}>
+                <label style={{ fontSize: '12px', color: 'var(--text-muted)', fontFamily: "var(--font-code)", marginBottom: '6px', display: 'block' }}>Media URL</label>
+                <input type="text" value={url} onChange={e => setUrl(e.target.value)} autoFocus placeholder={type === 'video' ? 'https://youtube.com/watch?v=...' : 'https://example.com/image.jpg'}
+                  style={{ width: '100%', padding: '12px 16px', borderRadius: '10px', border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.03)', color: 'var(--text)', fontSize: '14px', outline: 'none', boxSizing: 'border-box', transition: 'border-color 0.2s' }} onKeyDown={e => e.key === 'Enter' && handleInsert()} />
+              </div>
+              <div style={{ marginBottom: '18px' }}>
+                <label style={{ fontSize: '12px', color: 'var(--text-muted)', fontFamily: "var(--font-code)", marginBottom: '6px', display: 'block' }}>Caption (Optional)</label>
+                <input type="text" value={alt} onChange={e => setAlt(e.target.value)} placeholder="Describe this media..."
+                  style={{ width: '100%', padding: '12px 16px', borderRadius: '10px', border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.03)', color: 'var(--text)', fontSize: '14px', outline: 'none', boxSizing: 'border-box', transition: 'border-color 0.2s' }} />
+              </div>
+              {url && type === 'image' && <div style={{ marginBottom: '18px', borderRadius: '12px', overflow: 'hidden', border: '1px solid var(--glass-border)' }}><img src={url} alt="" style={{ width: '100%', maxHeight: '220px', objectFit: 'cover', display: 'block' }} onError={e => e.target.style.display = 'none'} /></div>}
+              {url && type === 'video' && url.includes('youtube') && <div style={{ marginBottom: '18px', borderRadius: '12px', overflow: 'hidden', aspectRatio: '16/9', border: '1px solid var(--glass-border)' }}><iframe src={url.includes('embed') ? url : `https://www.youtube.com/embed/${url.match(/v=([^&]+)/)?.[1] || ''}`} style={{ width: '100%', height: '100%', border: 'none' }} allowFullScreen /></div>}
+              <button onClick={handleInsert} disabled={!url.trim()} style={{ width: '100%', padding: '12px', borderRadius: '10px', border: 'none', background: url.trim() ? 'linear-gradient(135deg, #22c55e, #16a34a)' : 'var(--glass)', color: url.trim() ? '#fff' : 'var(--text-muted)', fontSize: '14px', fontWeight: '600', cursor: url.trim() ? 'pointer' : 'not-allowed', fontFamily: "var(--font-code)", display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', transition: 'all 0.2s' }}>
+                <AddCircleOutlineIcon sx={{ fontSize: 18 }} /> Insert
+              </button>
             </div>
           ) : (
             <div onDragOver={e => { e.preventDefault(); setDragging(true) }} onDragLeave={() => setDragging(false)} onDrop={handleDrop} onClick={() => fileRef.current?.click()}
-              style={{ border: `2px dashed ${dragging ? '#22c55e' : 'var(--glass-border)'}`, borderRadius: '12px', padding: '40px 20px', textAlign: 'center', cursor: 'pointer', transition: 'all 0.2s', background: dragging ? 'rgba(34,197,94,0.05)' : 'transparent' }}>
+              style={{ border: `2px dashed ${dragging ? '#22c55e' : 'var(--glass-border)'}`, borderRadius: '16px', padding: '50px 20px', textAlign: 'center', cursor: 'pointer', transition: 'all 0.3s', background: dragging ? 'rgba(34,197,94,0.05)' : 'transparent' }}>
               <input ref={fileRef} type="file" accept={type === 'video' ? 'video/*' : 'image/*'} onChange={e => handleFile(e.target.files?.[0])} style={{ display: 'none' }} />
-              <div style={{ fontSize: '32px', marginBottom: '8px' }}>{type === 'video' ? '🎬' : '🖼'}</div>
-              <p style={{ fontSize: '13px', color: 'var(--text)', marginBottom: '4px' }}>Click or drag to upload</p>
+              <CloudUploadIcon sx={{ fontSize: 48, color: dragging ? '#22c55e' : 'var(--text-muted)', mb: 1 }} />
+              <p style={{ fontSize: '14px', color: 'var(--text)', marginBottom: '4px', fontWeight: '500' }}>Click or drag to upload</p>
+              <p style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Supports {type === 'video' ? 'MP4, WebM, OGG' : 'JPG, PNG, GIF, WebP'}</p>
             </div>
           )}
         </div>
@@ -86,19 +141,30 @@ function LinkModal({ open, onClose, onInsert }) {
   useEffect(() => { if (open) { setUrl(''); setText('') } }, [open])
   if (!open) return null
   return (
-    <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 2000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }} onClick={e => e.target === e.currentTarget && onClose()}>
-      <div className="liquid-glass" style={{ width: '100%', maxWidth: '400px', borderRadius: '16px', overflow: 'hidden' }}>
-        <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--glass-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h3 style={{ fontSize: '15px', fontWeight: '600' }}>Insert Link</h3>
-          <button onClick={onClose} style={{ padding: '4px 10px', borderRadius: '6px', border: '1px solid var(--glass-border)', background: 'transparent', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '12px' }}>✕</button>
+    <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)', zIndex: 2000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }} onClick={e => e.target === e.currentTarget && onClose()}>
+      <div className="liquid-glass" style={{ width: '100%', maxWidth: '440px', borderRadius: '20px', overflow: 'hidden', boxShadow: '0 25px 60px rgba(0,0,0,0.5)' }}>
+        <div style={{ padding: '18px 24px', borderBottom: '1px solid var(--glass-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <LinkIcon sx={{ color: '#22c55e', fontSize: 20 }} />
+            <h3 style={{ fontSize: '16px', fontWeight: '600' }}>Insert Link</h3>
+          </div>
+          <button onClick={onClose} style={{ padding: '6px', borderRadius: '8px', border: '1px solid var(--glass-border)', background: 'transparent', color: 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center' }}><CloseIcon sx={{ fontSize: 16 }} /></button>
         </div>
-        <div style={{ padding: '20px' }}>
-          <input type="text" value={url} onChange={e => setUrl(e.target.value)} autoFocus placeholder="https://example.com"
-            style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.03)', color: 'var(--text)', fontSize: '13px', outline: 'none', boxSizing: 'border-box', marginBottom: '10px' }} onKeyDown={e => e.key === 'Enter' && url.trim() && (onInsert(url.trim(), text), onClose())} />
-          <input type="text" value={text} onChange={e => setText(e.target.value)} placeholder="Link text (optional)"
-            style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.03)', color: 'var(--text)', fontSize: '13px', outline: 'none', boxSizing: 'border-box', marginBottom: '16px' }} />
+        <div style={{ padding: '24px' }}>
+          <div style={{ marginBottom: '14px' }}>
+            <label style={{ fontSize: '12px', color: 'var(--text-muted)', fontFamily: "var(--font-code)", marginBottom: '6px', display: 'block' }}>URL</label>
+            <input type="text" value={url} onChange={e => setUrl(e.target.value)} autoFocus placeholder="https://example.com"
+              style={{ width: '100%', padding: '12px 16px', borderRadius: '10px', border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.03)', color: 'var(--text)', fontSize: '14px', outline: 'none', boxSizing: 'border-box' }} onKeyDown={e => e.key === 'Enter' && url.trim() && (onInsert(url.trim(), text), onClose())} />
+          </div>
+          <div style={{ marginBottom: '18px' }}>
+            <label style={{ fontSize: '12px', color: 'var(--text-muted)', fontFamily: "var(--font-code)", marginBottom: '6px', display: 'block' }}>Link Text (Optional)</label>
+            <input type="text" value={text} onChange={e => setText(e.target.value)} placeholder="Display text..."
+              style={{ width: '100%', padding: '12px 16px', borderRadius: '10px', border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.03)', color: 'var(--text)', fontSize: '14px', outline: 'none', boxSizing: 'border-box' }} />
+          </div>
           <button onClick={() => { if (url.trim()) { onInsert(url.trim(), text); onClose() } }} disabled={!url.trim()}
-            style={{ width: '100%', padding: '10px', borderRadius: '8px', border: 'none', background: url.trim() ? 'linear-gradient(135deg, #22c55e, #16a34a)' : 'var(--glass)', color: url.trim() ? '#fff' : 'var(--text-muted)', fontSize: '13px', fontWeight: '600', cursor: url.trim() ? 'pointer' : 'not-allowed', fontFamily: "var(--font-code)" }}>Insert Link</button>
+            style={{ width: '100%', padding: '12px', borderRadius: '10px', border: 'none', background: url.trim() ? 'linear-gradient(135deg, #22c55e, #16a34a)' : 'var(--glass)', color: url.trim() ? '#fff' : 'var(--text-muted)', fontSize: '14px', fontWeight: '600', cursor: url.trim() ? 'pointer' : 'not-allowed', fontFamily: "var(--font-code)", display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+            <LinkIcon sx={{ fontSize: 18 }} /> Insert Link
+          </button>
         </div>
       </div>
     </div>
@@ -114,10 +180,11 @@ export function BlogEditor({ initialContent = {}, onSave, saving }) {
   const [showPreview, setShowPreview] = useState(false)
   const [lastSaved, setLastSaved] = useState(null)
   const [coverModal, setCoverModal] = useState(false)
-  const [showInsert, setShowInsert] = useState(false)
+  const [showInsert, setShowInsert] = useState(true)
   const [showColor, setShowColor] = useState(false)
   const [mediaModal, setMediaModal] = useState({ open: false, type: 'image' })
   const [linkModal, setLinkModal] = useState(false)
+  const [showHeadings, setShowHeadings] = useState(false)
   const toolbarRef = useRef(null)
 
   const editor = useEditor({
@@ -147,7 +214,7 @@ export function BlogEditor({ initialContent = {}, onSave, saving }) {
   }, [initialContent.id, initialContent.title, initialContent.excerpt, initialContent.cover_image, initialContent.tags, initialContent.content, initialContent.category, editor])
 
   useEffect(() => {
-    const handler = (e) => { if (toolbarRef.current && !toolbarRef.current.contains(e.target)) { setShowInsert(false); setShowColor(false) } }
+    const handler = (e) => { if (toolbarRef.current && !toolbarRef.current.contains(e.target)) { setShowColor(false); setShowHeadings(false) } }
     document.addEventListener('mousedown', handler)
     return () => document.removeEventListener('mousedown', handler)
   }, [])
@@ -166,7 +233,6 @@ export function BlogEditor({ initialContent = {}, onSave, saving }) {
       case 'table': editor.chain().focus().insertTable({ rows: 3, cols: 3 }).run(); break
       case 'codeblock': editor.chain().focus().toggleCodeBlock().run(); break
     }
-    setShowInsert(false)
   }
 
   const handleSave = useCallback((published) => {
@@ -177,124 +243,179 @@ export function BlogEditor({ initialContent = {}, onSave, saving }) {
 
   if (!editor) return null
 
+  const ToolButton = ({ active, onClick, children, tooltip }) => (
+    <button onClick={onClick} title={tooltip} style={{ padding: '6px', borderRadius: '6px', border: 'none', cursor: 'pointer', background: active ? 'rgba(34,197,94,0.15)' : 'transparent', color: active ? '#22c55e' : 'var(--text-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.15s' }}>
+      {children}
+    </button>
+  )
+
+  const Sep = () => <div style={{ width: '1px', background: 'var(--glass-border)', margin: '0 4px', alignSelf: 'stretch' }} />
+
   return (
     <div style={{ position: 'relative' }}>
       <MediaModal open={coverModal} onClose={() => setCoverModal(false)} onInsert={(d) => { setCoverImage(d.src); setCoverModal(false) }} type="image" />
       <MediaModal open={mediaModal.open} onClose={() => setMediaModal({ ...mediaModal, open: false })} onInsert={(d) => { d.type === 'video' ? editor.commands.setYoutubeVideo({ src: d.src }) : editor.chain().focus().insertContent({ type: 'resizableImage', attrs: { src: d.src, alt: d.alt } }).run() }} type={mediaModal.type} />
       <LinkModal open={linkModal} onClose={() => setLinkModal(false)} onInsert={(url, text) => { text ? editor.chain().focus().insertContent(text).setLink({ href: url }).run() : editor.chain().focus().setLink({ href: url }).run() }} />
 
-      {/* FIXED TOOLBAR AT TOP */}
-      <div ref={toolbarRef} style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100, background: 'var(--bg)', borderBottom: '1px solid var(--glass-border)', boxShadow: '0 2px 8px rgba(0,0,0,0.2)' }}>
+      {/* TOOLBAR */}
+      <div ref={toolbarRef} style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100, background: 'var(--bg)', borderBottom: '1px solid var(--glass-border)', boxShadow: '0 4px 20px rgba(0,0,0,0.3)' }}>
         {/* Row 1: Text formatting */}
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1px', padding: '4px 10px', alignItems: 'center' }}>
-          <select onChange={e => { const v = e.target.value; if (v === 'p') editor.chain().focus().setParagraph().run(); else editor.chain().focus().toggleHeading({ level: parseInt(v) }).run(); e.target.value = '' }}
-            style={{ padding: '3px 6px', borderRadius: '4px', border: '1px solid var(--glass-border)', background: 'transparent', color: 'var(--text)', fontSize: '10px', fontFamily: "var(--font-code)", cursor: 'pointer', marginRight: '4px' }}>
-            <option value="">Format</option><option value="p">Paragraph</option><option value="1">H1</option><option value="2">H2</option><option value="3">H3</option><option value="4">H4</option>
-          </select>
-          <select onChange={e => editor.chain().focus().setFontFamily(e.target.value).run()}
-            style={{ padding: '3px 6px', borderRadius: '4px', border: '1px solid var(--glass-border)', background: 'transparent', color: 'var(--text)', fontSize: '10px', fontFamily: "var(--font-code)", cursor: 'pointer' }}>
-            <option value="">Font</option><option value="Inter">Inter</option><option value="Georgia">Georgia</option><option value="Courier New">Courier</option><option value="Arial">Arial</option>
-          </select>
-          <TbSep />
-          <TbBtn active={editor.isActive('bold')} onClick={() => editor.chain().focus().toggleBold().run()} label="B" />
-          <TbBtn active={editor.isActive('italic')} onClick={() => editor.chain().focus().toggleItalic().run()} label="I" />
-          <TbBtn active={editor.isActive('underline')} onClick={() => editor.chain().focus().toggleUnderline().run()} label="U" />
-          <TbBtn active={editor.isActive('strike')} onClick={() => editor.chain().focus().toggleStrike().run()} label="S" />
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '2px', padding: '6px 12px', alignItems: 'center' }}>
           <div style={{ position: 'relative' }}>
-            <button onClick={() => setShowColor(!showColor)} style={{ padding: '4px 6px', borderRadius: '4px', border: 'none', fontSize: '11px', cursor: 'pointer', background: showColor ? 'rgba(168,85,247,0.15)' : 'transparent', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>🎨</button>
-            {showColor && (
-              <div style={{ position: 'absolute', top: '100%', left: 0, background: 'var(--bg)', border: '1px solid var(--glass-border)', borderRadius: '8px', padding: '8px', display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '4px', zIndex: 200, boxShadow: '0 8px 32px rgba(0,0,0,0.4)' }}>
-                {['#ef4444', '#f59e0b', '#22c55e', '#3b82f6', '#a855f7', '#ec4899', '#ffffff', '#94a3b8', '#64748b', '#000000'].map(c => (
-                  <button key={c} onClick={() => { editor.chain().focus().setColor(c).run(); setShowColor(false) }} style={{ width: '22px', height: '22px', borderRadius: '4px', border: '1px solid var(--glass-border)', background: c, cursor: 'pointer' }} />
+            <button onClick={() => setShowHeadings(!showHeadings)} style={{ padding: '6px 10px', borderRadius: '6px', border: '1px solid var(--glass-border)', background: showHeadings ? 'rgba(34,197,94,0.15)' : 'transparent', color: showHeadings ? '#22c55e' : 'var(--text-muted)', fontSize: '12px', fontFamily: "var(--font-code)", cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <FormatSizeIcon sx={{ fontSize: 16 }} /> Headings
+            </button>
+            {showHeadings && (
+              <div style={{ position: 'absolute', top: '100%', left: 0, background: 'var(--bg)', border: '1px solid var(--glass-border)', borderRadius: '10px', padding: '6px', zIndex: 200, boxShadow: '0 12px 40px rgba(0,0,0,0.4)', minWidth: '140px' }}>
+                {[['Paragraph', 'p'], ['Heading 1', '1'], ['Heading 2', '2'], ['Heading 3', '3'], ['Heading 4', '4']].map(([label, v]) => (
+                  <button key={v} onClick={() => { v === 'p' ? editor.chain().focus().setParagraph().run() : editor.chain().focus().toggleHeading({ level: parseInt(v) }).run(); setShowHeadings(false) }}
+                    style={{ display: 'block', width: '100%', padding: '8px 12px', borderRadius: '6px', border: 'none', background: 'transparent', color: 'var(--text)', fontSize: '13px', cursor: 'pointer', textAlign: 'left', fontFamily: "var(--font-code)" }}>{label}</button>
                 ))}
               </div>
             )}
           </div>
-          <TbSep />
-          <TbBtn active={editor.isActive({ textAlign: 'left' })} onClick={() => editor.chain().focus().setTextAlign('left').run()} label="⫷" />
-          <TbBtn active={editor.isActive({ textAlign: 'center' })} onClick={() => editor.chain().focus().setTextAlign('center').run()} label="≡" />
-          <TbBtn active={editor.isActive({ textAlign: 'right' })} onClick={() => editor.chain().focus().setTextAlign('right').run()} label="⫸" />
-          <TbBtn active={editor.isActive({ textAlign: 'justify' })} onClick={() => editor.chain().focus().setTextAlign('justify').run()} label="☰" />
-          <TbSep />
-          <TbBtn active={editor.isActive('bulletList')} onClick={() => editor.chain().focus().toggleBulletList().run()} label="•" />
-          <TbBtn active={editor.isActive('orderedList')} onClick={() => editor.chain().focus().toggleOrderedList().run()} label="1." />
-          <TbBtn active={editor.isActive('blockquote')} onClick={() => editor.chain().focus().toggleBlockquote().run()} label="❝" />
-          <TbSep />
-          <TbBtn active={false} onClick={() => editor.chain().focus().undo().run()} label="↩" />
-          <TbBtn active={false} onClick={() => editor.chain().focus().redo().run()} label="↪" />
+          <div style={{ position: 'relative' }}>
+            <button onClick={() => {}} style={{ padding: '6px 10px', borderRadius: '6px', border: '1px solid var(--glass-border)', background: 'transparent', color: 'var(--text-muted)', fontSize: '12px', fontFamily: "var(--font-code)", cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <TextFieldsIcon sx={{ fontSize: 16 }} /> Font
+            </button>
+          </div>
+          <Sep />
+          <ToolButton active={editor.isActive('bold')} onClick={() => editor.chain().focus().toggleBold().run()} tooltip="Bold (Ctrl+B)">
+            <FormatBoldIcon sx={{ fontSize: 18 }} />
+          </ToolButton>
+          <ToolButton active={editor.isActive('italic')} onClick={() => editor.chain().focus().toggleItalic().run()} tooltip="Italic (Ctrl+I)">
+            <FormatItalicIcon sx={{ fontSize: 18 }} />
+          </ToolButton>
+          <ToolButton active={editor.isActive('underline')} onClick={() => editor.chain().focus().toggleUnderline().run()} tooltip="Underline (Ctrl+U)">
+            <FormatUnderlinedIcon sx={{ fontSize: 18 }} />
+          </ToolButton>
+          <ToolButton active={editor.isActive('strike')} onClick={() => editor.chain().focus().toggleStrike().run()} tooltip="Strikethrough">
+            <StrikethroughSIcon sx={{ fontSize: 18 }} />
+          </ToolButton>
+          <div style={{ position: 'relative' }}>
+            <ToolButton active={showColor} onClick={() => setShowColor(!showColor)} tooltip="Text Color">
+              <FormatColorTextIcon sx={{ fontSize: 18 }} />
+            </ToolButton>
+            {showColor && (
+              <div style={{ position: 'absolute', top: '100%', left: 0, background: 'var(--bg)', border: '1px solid var(--glass-border)', borderRadius: '12px', padding: '10px', display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '6px', zIndex: 200, boxShadow: '0 12px 40px rgba(0,0,0,0.4)' }}>
+                {['#ef4444', '#f59e0b', '#22c55e', '#3b82f6', '#a855f7', '#ec4899', '#ffffff', '#94a3b8', '#64748b', '#000000'].map(c => (
+                  <button key={c} onClick={() => { editor.chain().focus().setColor(c).run(); setShowColor(false) }} style={{ width: '28px', height: '28px', borderRadius: '6px', border: '2px solid var(--glass-border)', background: c, cursor: 'pointer', transition: 'transform 0.15s' }} onMouseOver={e => e.target.style.transform = 'scale(1.15)'} onMouseOut={e => e.target.style.transform = 'scale(1)'} />
+                ))}
+              </div>
+            )}
+          </div>
+          <Sep />
+          <ToolButton active={editor.isActive({ textAlign: 'left' })} onClick={() => editor.chain().focus().setTextAlign('left').run()} tooltip="Align Left">
+            <FormatAlignLeftIcon sx={{ fontSize: 18 }} />
+          </ToolButton>
+          <ToolButton active={editor.isActive({ textAlign: 'center' })} onClick={() => editor.chain().focus().setTextAlign('center').run()} tooltip="Align Center">
+            <FormatAlignCenterIcon sx={{ fontSize: 18 }} />
+          </ToolButton>
+          <ToolButton active={editor.isActive({ textAlign: 'right' })} onClick={() => editor.chain().focus().setTextAlign('right').run()} tooltip="Align Right">
+            <FormatAlignRightIcon sx={{ fontSize: 18 }} />
+          </ToolButton>
+          <ToolButton active={editor.isActive({ textAlign: 'justify' })} onClick={() => editor.chain().focus().setTextAlign('justify').run()} tooltip="Justify">
+            <FormatAlignJustifyIcon sx={{ fontSize: 18 }} />
+          </ToolButton>
+          <Sep />
+          <ToolButton active={editor.isActive('bulletList')} onClick={() => editor.chain().focus().toggleBulletList().run()} tooltip="Bullet List">
+            <FormatListBulletedIcon sx={{ fontSize: 18 }} />
+          </ToolButton>
+          <ToolButton active={editor.isActive('orderedList')} onClick={() => editor.chain().focus().toggleOrderedList().run()} tooltip="Numbered List">
+            <FormatListNumberedIcon sx={{ fontSize: 18 }} />
+          </ToolButton>
+          <ToolButton active={editor.isActive('blockquote')} onClick={() => editor.chain().focus().toggleBlockquote().run()} tooltip="Blockquote">
+            <FormatQuoteIcon sx={{ fontSize: 18 }} />
+          </ToolButton>
+          <Sep />
+          <ToolButton active={false} onClick={() => editor.chain().focus().undo().run()} tooltip="Undo (Ctrl+Z)">
+            <UndoIcon sx={{ fontSize: 18 }} />
+          </ToolButton>
+          <ToolButton active={false} onClick={() => editor.chain().focus().redo().run()} tooltip="Redo (Ctrl+Shift+Z)">
+            <RedoIcon sx={{ fontSize: 18 }} />
+          </ToolButton>
         </div>
-        {/* Row 2: Insert */}
-        <div style={{ display: 'flex', gap: '4px', padding: '3px 10px', borderTop: '1px solid var(--glass-border)', alignItems: 'center', flexWrap: 'wrap' }}>
-          <button onClick={() => setShowInsert(!showInsert)} style={{ padding: '3px 10px', borderRadius: '4px', border: '1px solid var(--glass-border)', background: showInsert ? 'rgba(34,197,94,0.15)' : 'transparent', color: showInsert ? '#22c55e' : 'var(--text-muted)', fontSize: '10px', fontWeight: '600', cursor: 'pointer', fontFamily: "var(--font-code)" }}>+ Insert</button>
-          {showInsert && (
-            <div style={{ display: 'flex', gap: '3px', flexWrap: 'wrap' }}>
-              {[['🖼 Image', 'image'], ['📹 Video', 'youtube'], ['🃏 Card', 'card'], ['2️⃣ 2Col', 'columns2'], ['3️⃣ 3Col', 'columns3'], ['💡 Callout', 'callout'], ['📏 Spacer', 'spacer'], ['— Line', 'hr'], ['📊 Table', 'table'], ['</> Code', 'codeblock']].map(([label, type]) => (
-                <button key={type} onClick={() => insertBlock(type)} style={{ padding: '3px 8px', borderRadius: '4px', border: '1px solid var(--glass-border)', background: 'transparent', color: 'var(--text)', fontSize: '9px', cursor: 'pointer', fontFamily: "var(--font-code)" }}>{label}</button>
-              ))}
-            </div>
-          )}
+
+        {/* Row 2: Insert blocks + actions */}
+        <div style={{ display: 'flex', gap: '4px', padding: '6px 12px', borderTop: '1px solid var(--glass-border)', alignItems: 'center', flexWrap: 'wrap' }}>
+          {[
+            { icon: <AddPhotoAlternateIcon sx={{ fontSize: 16 }} />, label: 'Image', type: 'image', color: '#3b82f6' },
+            { icon: <OndemandVideoIcon sx={{ fontSize: 16 }} />, label: 'Video', type: 'youtube', color: '#ef4444' },
+            { icon: <InsertDriveFileIcon sx={{ fontSize: 16 }} />, label: 'Card', type: 'card', color: '#a855f7' },
+            { icon: <ViewColumnIcon sx={{ fontSize: 16 }} />, label: '2 Col', type: 'columns2', color: '#f59e0b' },
+            { icon: <DashboardIcon sx={{ fontSize: 16 }} />, label: '3 Col', type: 'columns3', color: '#f59e0b' },
+            { icon: <InfoOutlinedIcon sx={{ fontSize: 16 }} />, label: 'Callout', type: 'callout', color: '#22c55e' },
+            { icon: <SpaceBarIcon sx={{ fontSize: 16 }} />, label: 'Spacer', type: 'spacer', color: '#94a3b8' },
+            { icon: <HorizontalRuleIcon sx={{ fontSize: 16 }} />, label: 'Line', type: 'hr', color: '#64748b' },
+            { icon: <TableChartIcon sx={{ fontSize: 16 }} />, label: 'Table', type: 'table', color: '#06b6d4' },
+            { icon: <CodeIcon sx={{ fontSize: 16 }} />, label: 'Code', type: 'codeblock', color: '#ec4899' }
+          ].map(({ icon, label, type, color }) => (
+            <button key={type} onClick={() => insertBlock(type)} style={{ padding: '5px 10px', borderRadius: '6px', border: '1px solid var(--glass-border)', background: 'transparent', color: 'var(--text)', fontSize: '11px', cursor: 'pointer', fontFamily: "var(--font-code)", display: 'flex', alignItems: 'center', gap: '4px', transition: 'all 0.15s' }}
+              onMouseOver={e => { e.currentTarget.style.background = `${color}15`; e.currentTarget.style.borderColor = color }}
+              onMouseOut={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = 'var(--glass-border)' }}>
+              <span style={{ color }}>{icon}</span> {label}
+            </button>
+          ))}
           <div style={{ marginLeft: 'auto', display: 'flex', gap: '4px', alignItems: 'center' }}>
-            {lastSaved && <span style={{ fontSize: '9px', color: '#22c55e', fontFamily: "var(--font-code)", marginRight: '8px' }}>Saved {lastSaved.toLocaleTimeString()}</span>}
-            <button onClick={() => setLinkModal(true)} style={{ padding: '3px 8px', borderRadius: '4px', border: '1px solid var(--glass-border)', background: 'transparent', color: 'var(--text-muted)', fontSize: '10px', cursor: 'pointer', fontFamily: "var(--font-code)" }}>🔗</button>
-            <button onClick={() => setMediaModal({ open: true, type: 'image' })} style={{ padding: '3px 8px', borderRadius: '4px', border: '1px solid var(--glass-border)', background: 'transparent', color: 'var(--text-muted)', fontSize: '10px', cursor: 'pointer', fontFamily: "var(--font-code)" }}>🖼</button>
-            <button onClick={() => setShowPreview(!showPreview)} style={{ padding: '3px 10px', borderRadius: '4px', border: '1px solid var(--glass-border)', background: showPreview ? 'rgba(34,197,94,0.15)' : 'transparent', color: showPreview ? '#22c55e' : 'var(--text-muted)', fontSize: '10px', cursor: 'pointer', fontFamily: "var(--font-code)" }}>{showPreview ? 'Edit' : 'Preview'}</button>
+            {lastSaved && <span style={{ fontSize: '10px', color: '#22c55e', fontFamily: "var(--font-code)", marginRight: '8px', display: 'flex', alignItems: 'center', gap: '4px' }}><SaveIcon sx={{ fontSize: 12 }} /> Saved {lastSaved.toLocaleTimeString()}</span>}
+            <ToolButton active={false} onClick={() => setLinkModal(true)} tooltip="Insert Link">
+              <LinkIcon sx={{ fontSize: 18 }} />
+            </ToolButton>
+            <ToolButton active={false} onClick={() => setMediaModal({ open: true, type: 'image' })} tooltip="Insert Image">
+              <ImageIcon sx={{ fontSize: 18 }} />
+            </ToolButton>
+            <button onClick={() => setShowPreview(!showPreview)} style={{ padding: '5px 12px', borderRadius: '6px', border: '1px solid var(--glass-border)', background: showPreview ? 'rgba(34,197,94,0.15)' : 'transparent', color: showPreview ? '#22c55e' : 'var(--text-muted)', fontSize: '12px', cursor: 'pointer', fontFamily: "var(--font-code)", display: 'flex', alignItems: 'center', gap: '4px', transition: 'all 0.15s' }}>
+              {showPreview ? <EditIcon sx={{ fontSize: 14 }} /> : <VisibilityIcon sx={{ fontSize: 14 }} />} {showPreview ? 'Edit' : 'Preview'}
+            </button>
           </div>
         </div>
       </div>
 
-      {/* EDITOR CONTENT - padded below fixed toolbar */}
-      <div style={{ paddingTop: '80px', maxWidth: '900px', margin: '0 auto', padding: '80px clamp(16px, 4vw, 40px) 100px' }}>
+      {/* EDITOR CONTENT */}
+      <div style={{ paddingTop: '100px', maxWidth: '900px', margin: '0 auto', padding: '100px clamp(16px, 4vw, 40px) 100px' }}>
         <input type="text" value={title} onChange={e => setTitle(e.target.value)} placeholder="Blog title..."
           style={{ width: '100%', padding: '12px 0', border: 'none', background: 'transparent', color: 'var(--text)', fontSize: 'clamp(28px, 5vw, 42px)', fontWeight: '700', outline: 'none', fontFamily: 'var(--font-h)', marginBottom: '16px' }} />
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '12px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
           <div style={{ position: 'relative' }}>
             <input type="text" value={coverImage} onChange={e => setCoverImage(e.target.value)} placeholder="Cover image URL..."
-              style={{ width: '100%', padding: '10px 40px 10px 14px', borderRadius: '8px', border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.03)', color: 'var(--text)', fontSize: '12px', outline: 'none', fontFamily: "var(--font-code)", boxSizing: 'border-box' }} />
-            <button onClick={() => setCoverModal(true)} style={{ position: 'absolute', right: '8px', top: '50%', transform: 'translateY(-50%)', padding: '4px', borderRadius: '4px', border: 'none', background: 'transparent', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '14px' }}>📁</button>
+              style={{ width: '100%', padding: '10px 44px 10px 14px', borderRadius: '10px', border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.03)', color: 'var(--text)', fontSize: '13px', outline: 'none', fontFamily: "var(--font-code)", boxSizing: 'border-box' }} />
+            <button onClick={() => setCoverModal(true)} style={{ position: 'absolute', right: '8px', top: '50%', transform: 'translateY(-50%)', padding: '4px', borderRadius: '6px', border: 'none', background: 'transparent', color: 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
+              <CloudUploadIcon sx={{ fontSize: 18 }} />
+            </button>
           </div>
           <input type="text" value={category} onChange={e => setCategory(e.target.value)} placeholder="Category"
-            style={{ padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.03)', color: 'var(--text)', fontSize: '12px', outline: 'none', fontFamily: "var(--font-code)", boxSizing: 'border-box' }} />
+            style={{ padding: '10px 14px', borderRadius: '10px', border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.03)', color: 'var(--text)', fontSize: '13px', outline: 'none', fontFamily: "var(--font-code)", boxSizing: 'border-box' }} />
         </div>
         <input type="text" value={tags} onChange={e => setTags(e.target.value)} placeholder="Tags (comma separated)"
-          style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.03)', color: 'var(--text)', fontSize: '12px', outline: 'none', fontFamily: "var(--font-code)", marginBottom: '10px', boxSizing: 'border-box' }} />
+          style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.03)', color: 'var(--text)', fontSize: '13px', outline: 'none', fontFamily: "var(--font-code)", marginBottom: '10px', boxSizing: 'border-box' }} />
         <textarea value={excerpt} onChange={e => setExcerpt(e.target.value)} placeholder="Excerpt / summary..." rows={2}
-          style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.03)', color: 'var(--text)', fontSize: '12px', outline: 'none', resize: 'vertical', fontFamily: "var(--font-code)", marginBottom: '16px', boxSizing: 'border-box' }} />
+          style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.03)', color: 'var(--text)', fontSize: '13px', outline: 'none', resize: 'vertical', fontFamily: "var(--font-code)", marginBottom: '16px', boxSizing: 'border-box' }} />
 
         {coverImage && (
-          <div style={{ marginBottom: '20px', borderRadius: '12px', overflow: 'hidden', maxHeight: '250px', position: 'relative' }}>
-            <img src={coverImage} alt="Cover" style={{ width: '100%', height: '250px', objectFit: 'cover' }} />
-            <button onClick={() => setCoverImage('')} style={{ position: 'absolute', top: '8px', right: '8px', padding: '4px 10px', borderRadius: '6px', border: 'none', background: 'rgba(239,68,68,0.8)', color: '#fff', cursor: 'pointer', fontSize: '11px' }}>✕ Remove</button>
+          <div style={{ marginBottom: '20px', borderRadius: '14px', overflow: 'hidden', maxHeight: '260px', position: 'relative', border: '1px solid var(--glass-border)' }}>
+            <img src={coverImage} alt="Cover" style={{ width: '100%', height: '260px', objectFit: 'cover' }} />
+            <button onClick={() => setCoverImage('')} style={{ position: 'absolute', top: '10px', right: '10px', padding: '6px 12px', borderRadius: '8px', border: 'none', background: 'rgba(239,68,68,0.9)', color: '#fff', cursor: 'pointer', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '4px' }}><CloseIcon sx={{ fontSize: 14 }} /> Remove</button>
           </div>
         )}
 
         {showPreview ? (
           <div className="blog-content" dangerouslySetInnerHTML={{ __html: editor.getHTML() }} />
         ) : (
-          <div className="liquid-glass" style={{ borderRadius: '12px', overflow: 'hidden' }}>
+          <div className="liquid-glass" style={{ borderRadius: '14px', overflow: 'hidden', border: '1px solid var(--glass-border)' }}>
             <EditorContent editor={editor} />
           </div>
         )}
 
-        <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '24px' }}>
-          <button onClick={() => handleSave(false)} disabled={saving} className="liquid-glass" style={{ padding: '12px 24px', borderRadius: '8px', fontSize: '13px', fontWeight: '500', color: 'var(--text)', cursor: 'pointer', fontFamily: "var(--font-code)" }}>
-            {saving ? 'Saving...' : 'Save Draft'}
+        <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', marginTop: '28px' }}>
+          <button onClick={() => handleSave(false)} disabled={saving} className="liquid-glass" style={{ padding: '12px 28px', borderRadius: '10px', fontSize: '14px', fontWeight: '500', color: 'var(--text)', cursor: 'pointer', fontFamily: "var(--font-code)", display: 'flex', alignItems: 'center', gap: '8px', transition: 'all 0.2s' }}>
+            <SaveIcon sx={{ fontSize: 18 }} /> {saving ? 'Saving...' : 'Save Draft'}
           </button>
-          <button onClick={() => handleSave(true)} disabled={saving} style={{ padding: '12px 28px', borderRadius: '8px', border: 'none', fontSize: '13px', fontWeight: '600', color: '#fff', cursor: 'pointer', background: 'linear-gradient(135deg, #22c55e, #16a34a)', fontFamily: "var(--font-code)" }}>
-            {saving ? 'Publishing...' : 'Publish →'}
+          <button onClick={() => handleSave(true)} disabled={saving} style={{ padding: '12px 32px', borderRadius: '10px', border: 'none', fontSize: '14px', fontWeight: '600', color: '#fff', cursor: 'pointer', background: 'linear-gradient(135deg, #22c55e, #16a34a)', fontFamily: "var(--font-code)", display: 'flex', alignItems: 'center', gap: '8px', transition: 'all 0.2s', boxShadow: '0 4px 15px rgba(34,197,94,0.3)' }}>
+            <PublishIcon sx={{ fontSize: 18 }} /> {saving ? 'Publishing...' : 'Publish'}
           </button>
         </div>
       </div>
     </div>
   )
-}
-
-function TbBtn({ active, onClick, label }) {
-  return (
-    <button onClick={onClick} style={{ padding: '4px 7px', borderRadius: '3px', border: 'none', fontSize: '11px', fontWeight: active ? '700' : '400', cursor: 'pointer', background: active ? 'rgba(34,197,94,0.15)' : 'transparent', color: active ? '#22c55e' : 'var(--text-muted)', fontFamily: "var(--font-code)", lineHeight: 1.2 }}>{label}</button>
-  )
-}
-
-function TbSep() {
-  return <div style={{ width: '1px', background: 'var(--glass-border)', margin: '0 2px', alignSelf: 'stretch' }} />
 }
