@@ -807,8 +807,7 @@ export function TableControlsInline({ editor }) {
           const table = el?.closest?.('table') || el?.querySelector?.('table')
           if (table) {
             const rect = table.getBoundingClientRect()
-            const editorRect = editor.view.dom.getBoundingClientRect()
-            setPos({ top: rect.top - editorRect.top - 36, left: 0, width: rect.width })
+            setPos({ top: rect.top - 40, left: rect.left, width: rect.width })
             setTableEl(table)
             return
           }
@@ -817,11 +816,13 @@ export function TableControlsInline({ editor }) {
       setPos(null)
       setTableEl(null)
     }
+    const onScroll = () => { if (tableEl) { const r = tableEl.getBoundingClientRect(); setPos({ top: r.top - 40, left: r.left, width: r.width }) } }
     editor.on('selectionUpdate', check)
     editor.on('transaction', check)
+    window.addEventListener('scroll', onScroll, true)
     check()
-    return () => { editor.off('selectionUpdate', check); editor.off('transaction', check) }
-  }, [editor])
+    return () => { editor.off('selectionUpdate', check); editor.off('transaction', check); window.removeEventListener('scroll', onScroll, true) }
+  }, [editor, tableEl])
 
   if (!pos || !tableEl) return null
 
@@ -869,7 +870,7 @@ export function TableControlsInline({ editor }) {
   const headerC = ['#bbf7d0', '#93c5fd', '#c4b5fd', '#fcd34d', '#fca5a5', '#67e8f9', '#f9a8d4', '#f1f5f9']
 
   return (
-    <div style={{ position: 'absolute', top: pos.top, left: pos.left, width: pos.width, zIndex: 50, display: 'flex', gap: '3px', padding: '5px 8px', borderRadius: '8px 8px 0 0', background: 'rgba(34,197,94,0.08)', border: '1px solid var(--glass-border)', borderBottom: 'none', alignItems: 'center', flexWrap: 'wrap', backdropFilter: 'blur(8px)' }}>
+    <div style={{ position: 'fixed', top: pos.top, left: pos.left, width: pos.width, zIndex: 9999, display: 'flex', gap: '3px', padding: '5px 8px', borderRadius: '0 0 8px 8px', background: 'var(--bg)', border: '1px solid var(--glass-border)', borderTop: 'none', alignItems: 'center', flexWrap: 'wrap', boxShadow: '0 4px 12px rgba(0,0,0,0.3)' }}>
       <span style={{ fontSize: '8px', color: '#22c55e', fontFamily: "var(--font-code)", fontWeight: '600', marginRight: '2px' }}>TABLE</span>
       <TBtn tip="Add row" onClick={() => editor.chain().focus().addRowAfter().run()}>+R</TBtn>
       <TBtn tip="Add column" onClick={() => editor.chain().focus().addColumnAfter().run()}>+C</TBtn>
