@@ -17,34 +17,34 @@ export function BlogPost() {
 
   return (
     <main style={{ paddingTop: '100px', minHeight: '100vh' }}>
-      <article style={{ maxWidth: '780px', margin: '0 auto', padding: '0 clamp(16px, 4vw, 0)' }}>
-        <div style={{ marginBottom: '8px' }}>
-          {blog.category && <span className="liquid-glass" style={{ display: 'inline-block', padding: '4px 12px', borderRadius: '100px', fontSize: '10px', fontWeight: '600', color: '#22c55e', fontFamily: "var(--font-code)", letterSpacing: '0.05em', textTransform: 'uppercase', marginBottom: '16px' }}>{blog.category}</span>}
+      <article style={{ maxWidth: '780px', margin: '0 auto', padding: '0 clamp(16px, 4vw, 40px)' }}>
+        <div style={{ marginBottom: '16px' }}>
+          {blog.category && <span className="liquid-glass" style={{ display: 'inline-block', padding: '5px 14px', borderRadius: '100px', fontSize: '11px', fontWeight: '600', color: '#22c55e', fontFamily: "var(--font-code)", letterSpacing: '0.05em', textTransform: 'uppercase' }}>{blog.category}</span>}
         </div>
-        <h1 style={{ fontSize: 'clamp(32px, 6vw, 56px)', fontWeight: '800', lineHeight: 1.05, letterSpacing: '-0.03em', marginBottom: '16px', fontFamily: 'var(--font-h)' }}>{blog.title}</h1>
-        {blog.excerpt && <p style={{ fontSize: '18px', color: 'var(--text-muted)', lineHeight: 1.6, marginBottom: '24px' }}>{blog.excerpt}</p>}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '32px', paddingBottom: '24px', borderBottom: '1px solid var(--glass-border)' }}>
-          <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'linear-gradient(135deg, #22c55e, #16a34a)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', fontWeight: '700', color: '#fff' }}>
+        <h1 style={{ fontSize: 'clamp(32px, 5vw, 52px)', fontWeight: '800', lineHeight: 1.1, letterSpacing: '-0.03em', marginBottom: '20px', fontFamily: 'var(--font-h)', color: 'var(--text)' }}>{blog.title}</h1>
+        {blog.excerpt && <p style={{ fontSize: '17px', color: 'var(--text-muted)', lineHeight: 1.7, marginBottom: '28px' }}>{blog.excerpt}</p>}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '36px', paddingBottom: '24px', borderBottom: '1px solid var(--glass-border)' }}>
+          <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'linear-gradient(135deg, #22c55e, #16a34a)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '15px', fontWeight: '700', color: '#fff' }}>
             {(blog.author_name || 'A')[0].toUpperCase()}
           </div>
           <div>
-            <div style={{ fontSize: '13px', fontWeight: '600' }}>{blog.author_name || 'Admin'}</div>
-            <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>{new Date(blog.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
+            <div style={{ fontSize: '14px', fontWeight: '600', color: 'var(--text)' }}>{blog.author_name || 'Admin'}</div>
+            <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>{new Date(blog.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
           </div>
         </div>
 
         {blog.cover_image && (
-          <div style={{ marginBottom: '40px', borderRadius: '16px', overflow: 'hidden' }}>
-            <img src={blog.cover_image} alt={blog.title} style={{ width: '100%', maxHeight: '480px', objectFit: 'cover' }} />
+          <div style={{ marginBottom: '40px', borderRadius: '16px', overflow: 'hidden', border: '1px solid var(--glass-border)' }}>
+            <img src={blog.cover_image} alt={blog.title} style={{ width: '100%', maxHeight: '480px', objectFit: 'cover', display: 'block' }} />
           </div>
         )}
 
         <div className="blog-content" dangerouslySetInnerHTML={{ __html: renderContent(blog.content) }} />
 
         {blog.tags && blog.tags.length > 0 && (
-          <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginTop: '40px', paddingTop: '24px', borderTop: '1px solid var(--glass-border)' }}>
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginTop: '40px', paddingTop: '24px', borderTop: '1px solid var(--glass-border)' }}>
             {blog.tags.map(t => (
-              <span key={t} className="liquid-glass" style={{ padding: '5px 14px', borderRadius: '100px', fontSize: '11px', fontWeight: '500', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>#{t}</span>
+              <span key={t} className="liquid-glass" style={{ padding: '6px 16px', borderRadius: '100px', fontSize: '12px', fontWeight: '500', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>#{t}</span>
             ))}
           </div>
         )}
@@ -134,6 +134,14 @@ function tiptapToHtml(json) {
     case 'columnsBlock': {
       const cols = json.attrs?.cols || 2
       return `<div style="margin:1.5em 0;display:grid;grid-template-columns:repeat(${cols},1fr);gap:12px">${children}</div>`
+    }
+    case 'resizableVideo': {
+      let src = json.attrs?.src || ''
+      const w = json.attrs?.width || '100%'
+      const align = json.attrs?.align || 'center'
+      const ytMatch = src.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&?/]+)/)
+      if (ytMatch) src = `https://www.youtube.com/embed/${ytMatch[1]}`
+      return `<div style="margin:1.5em 0;text-align:${align}"><div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:12px;width:${w};max-width:100%;display:inline-block"><iframe src="${escapeHtml(src)}" style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;border-radius:12px" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen loading="lazy"></iframe></div></div>`
     }
     case 'resizableImage': {
       const src = json.attrs?.src || ''
