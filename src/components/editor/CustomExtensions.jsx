@@ -37,12 +37,13 @@ const RADII = ['0px', '4px', '8px', '12px', '16px', '20px']
 const PADS = ['8px', '12px', '16px', '24px', '32px', '48px']
 
 function ColorPicker({ value, onChange }) {
+  const names = ['Default', 'Green', 'Blue', 'Purple', 'Amber', 'Red', 'Cyan', 'Pink']
   return (
     <div style={{ display: 'flex', gap: '3px', alignItems: 'center' }}>
       {COLORS.map((c, i) => (
-        <button key={i} onClick={() => onChange(c, BORDERS[i])} style={{ width: '14px', height: '14px', borderRadius: '3px', border: `2px solid ${value === c ? '#22c55e' : 'var(--glass-border)'}`, background: c, cursor: 'pointer' }} />
+        <button key={i} title={names[i]} onClick={() => onChange(c, BORDERS[i])} style={{ width: '14px', height: '14px', borderRadius: '3px', border: `2px solid ${value === c ? '#22c55e' : 'var(--glass-border)'}`, background: c, cursor: 'pointer' }} />
       ))}
-      <input type="color" value="#0f1424" onChange={e => { const v = e.target.value; onChange(v + '18', v + '55') }} style={{ width: '18px', height: '14px', border: '1px solid var(--glass-border)', borderRadius: '3px', cursor: 'pointer', padding: 0 }} />
+      <input type="color" value="#0f1424" title="Custom color" onChange={e => { const v = e.target.value; onChange(v + '18', v + '55') }} style={{ width: '18px', height: '14px', border: '1px solid var(--glass-border)', borderRadius: '3px', cursor: 'pointer', padding: 0 }} />
     </div>
   )
 }
@@ -50,7 +51,7 @@ function ColorPicker({ value, onChange }) {
 function RadiusPicker({ value, onChange }) {
   return (
     <div style={{ display: 'flex', gap: '3px', alignItems: 'center' }}>
-      {RADII.map(r => <button key={r} onClick={() => onChange(r)} style={btn(value === r)}>{r}</button>)}
+      {RADII.map(r => <button key={r} title={`Radius: ${r}`} onClick={() => onChange(r)} style={btn(value === r)}>{r}</button>)}
     </div>
   )
 }
@@ -110,20 +111,20 @@ function GridBlockComponent({ node, updateAttributes, deleteNode }) {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 12px', borderBottom: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.02)' }}>
           <span style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>GRID</span>
           <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
-            <button onMouseDown={e => e.stopPropagation()} onClick={e => { e.stopPropagation(); setEditing(!editing) }} style={btn(editing)}>Layout</button>
-            <button onMouseDown={e => e.stopPropagation()} onClick={e => { e.stopPropagation(); addCell() }} style={btn(false, '#3b82f6')}>+ Cell</button>
-            <button onMouseDown={e => e.stopPropagation()} onClick={e => { e.stopPropagation(); deleteNode() }} style={delBtn()}>✕</button>
+            <button title="Toggle layout options" onMouseDown={e => e.stopPropagation()} onClick={e => { e.stopPropagation(); setEditing(!editing) }} style={btn(editing)}>Layout</button>
+            <button title="Add new cell" onMouseDown={e => e.stopPropagation()} onClick={e => { e.stopPropagation(); addCell() }} style={btn(false, '#3b82f6')}>+ Cell</button>
+            <button title="Delete grid" onMouseDown={e => e.stopPropagation()} onClick={e => { e.stopPropagation(); deleteNode() }} style={delBtn()}>✕</button>
           </div>
         </div>
         {editing && (
           <div style={{ padding: '8px 12px', borderBottom: '1px solid var(--glass-border)', display: 'flex', gap: '6px', flexWrap: 'wrap', alignItems: 'center' }}>
             <span style={{ fontSize: '9px', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>Layout:</span>
             {layouts.map((l, i) => (
-              <button key={i} onClick={() => setLayout(l)} style={btn(node.attrs.cols === l.cols && JSON.stringify(node.attrs.colWidths) === JSON.stringify(l.widths))}>{l.label}</button>
+              <button key={i} title={`${l.cols} columns${l.widths ? ' (' + l.label + ')' : ' equal'}`} onClick={() => setLayout(l)} style={btn(node.attrs.cols === l.cols && JSON.stringify(node.attrs.colWidths) === JSON.stringify(l.widths))}>{l.label}</button>
             ))}
             <div style={{ width: '1px', height: '18px', background: 'var(--glass-border)', margin: '0 4px' }} />
             <span style={{ fontSize: '9px', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>Gap:</span>
-            {['4px', '8px', '12px', '16px', '24px'].map(g => <button key={g} onClick={() => updateAttributes({ gap: g })} style={btn(gap === g)}>{g}</button>)}
+            {['4px', '8px', '12px', '16px', '24px'].map(g => <button key={g} title={`Gap: ${g}`} onClick={() => updateAttributes({ gap: g })} style={btn(gap === g)}>{g}</button>)}
           </div>
         )}
         <div style={{ display: 'grid', gridTemplateColumns: gridCols, gap, padding: '12px', background: 'rgba(0,0,0,0.1)' }}>
@@ -366,9 +367,9 @@ function CardBlockComponent({ node, updateAttributes, deleteNode }) {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 10px', borderBottom: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.02)' }}>
             <span style={{ fontSize: '9px', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>CARD</span>
             <div style={{ display: 'flex', gap: '3px', alignItems: 'center' }}>
-              <button title="Add Cell" onMouseDown={e => e.stopPropagation()} onClick={e => { e.stopPropagation(); addCell() }} style={{ padding: '2px 6px', fontSize: '10px', borderRadius: '4px', border: '1px solid var(--glass-border)', background: 'transparent', color: '#3b82f6', cursor: 'pointer' }}>+ Cell</button>
-              <button title="Style" onMouseDown={e => e.stopPropagation()} onClick={e => { e.stopPropagation(); setEditing(!editing) }} style={{ padding: '2px 6px', fontSize: '10px', borderRadius: '4px', border: `1px solid ${editing ? '#22c55e' : 'var(--glass-border)'}`, background: editing ? 'rgba(34,197,94,0.15)' : 'transparent', color: editing ? '#22c55e' : 'var(--text-muted)', cursor: 'pointer' }}>🎨</button>
-              <button title="Delete Card" onMouseDown={e => e.stopPropagation()} onClick={e => { e.stopPropagation(); deleteNode() }} style={{ padding: '2px 6px', fontSize: '10px', borderRadius: '4px', border: '1px solid rgba(239,68,68,0.3)', background: 'transparent', color: '#ef4444', cursor: 'pointer' }}>✕</button>
+              <button title="Add new cell" onMouseDown={e => e.stopPropagation()} onClick={e => { e.stopPropagation(); addCell() }} style={{ padding: '2px 6px', fontSize: '10px', borderRadius: '4px', border: '1px solid var(--glass-border)', background: 'transparent', color: '#3b82f6', cursor: 'pointer' }}>+ Cell</button>
+              <button title="Toggle style options" onMouseDown={e => e.stopPropagation()} onClick={e => { e.stopPropagation(); setEditing(!editing) }} style={{ padding: '2px 6px', fontSize: '10px', borderRadius: '4px', border: `1px solid ${editing ? '#22c55e' : 'var(--glass-border)'}`, background: editing ? 'rgba(34,197,94,0.15)' : 'transparent', color: editing ? '#22c55e' : 'var(--text-muted)', cursor: 'pointer' }}>🎨</button>
+              <button title="Delete card" onMouseDown={e => e.stopPropagation()} onClick={e => { e.stopPropagation(); deleteNode() }} style={{ padding: '2px 6px', fontSize: '10px', borderRadius: '4px', border: '1px solid rgba(239,68,68,0.3)', background: 'transparent', color: '#ef4444', cursor: 'pointer' }}>✕</button>
             </div>
           </div>
 
@@ -377,15 +378,15 @@ function CardBlockComponent({ node, updateAttributes, deleteNode }) {
             <div style={{ padding: '6px 10px', borderBottom: '1px solid var(--glass-border)', display: 'flex', gap: '6px', flexWrap: 'wrap', alignItems: 'center' }}>
               <span style={{ fontSize: '9px', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>BG:</span>
               {presets.map((c, i) => (
-                <button key={i} onClick={() => updateAttributes({ bgColor: c.bg, borderColor: c.border })} style={{ width: '14px', height: '14px', borderRadius: '3px', border: `2px solid ${node.attrs.bgColor === c.bg ? '#22c55e' : 'var(--glass-border)'}`, background: c.bg, cursor: 'pointer' }} />
+                <button key={i} title={`BG Color ${i + 1}`} onClick={() => updateAttributes({ bgColor: c.bg, borderColor: c.border })} style={{ width: '14px', height: '14px', borderRadius: '3px', border: `2px solid ${node.attrs.bgColor === c.bg ? '#22c55e' : 'var(--glass-border)'}`, background: c.bg, cursor: 'pointer' }} />
               ))}
-              <input type="color" value={node.attrs.customColor || '#0f1424'} onChange={e => { const v = e.target.value; updateAttributes({ bgColor: v + '18', borderColor: v + '55', customColor: v }) }} style={{ width: '16px', height: '14px', border: '1px solid var(--glass-border)', borderRadius: '3px', cursor: 'pointer', padding: 0 }} />
+              <input type="color" value={node.attrs.customColor || '#0f1424'} title="Custom background color" onChange={e => { const v = e.target.value; updateAttributes({ bgColor: v + '18', borderColor: v + '55', customColor: v }) }} style={{ width: '16px', height: '14px', border: '1px solid var(--glass-border)', borderRadius: '3px', cursor: 'pointer', padding: 0 }} />
               <div style={{ width: '1px', height: '14px', background: 'var(--glass-border)', margin: '0 2px' }} />
               <span style={{ fontSize: '9px', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>R:</span>
-              {RADII.map(r => <button key={r} onClick={() => updateAttributes({ radius: r })} style={{ padding: '2px 5px', fontSize: '9px', borderRadius: '3px', border: `1px solid ${node.attrs.radius === r ? '#22c55e' : 'var(--glass-border)'}`, background: node.attrs.radius === r ? 'rgba(34,197,94,0.15)' : 'transparent', color: node.attrs.radius === r ? '#22c55e' : 'var(--text-muted)', cursor: 'pointer', fontFamily: "var(--font-code)" }}>{r}</button>)}
+              {RADII.map(r => <button key={r} title={`Border radius: ${r}`} onClick={() => updateAttributes({ radius: r })} style={{ padding: '2px 5px', fontSize: '9px', borderRadius: '3px', border: `1px solid ${node.attrs.radius === r ? '#22c55e' : 'var(--glass-border)'}`, background: node.attrs.radius === r ? 'rgba(34,197,94,0.15)' : 'transparent', color: node.attrs.radius === r ? '#22c55e' : 'var(--text-muted)', cursor: 'pointer', fontFamily: "var(--font-code)" }}>{r}</button>)}
               <div style={{ width: '1px', height: '14px', background: 'var(--glass-border)', margin: '0 2px' }} />
               <span style={{ fontSize: '9px', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>Pad:</span>
-              {PADS.map(p => <button key={p} onClick={() => updateAttributes({ padding: p })} style={{ padding: '2px 5px', fontSize: '9px', borderRadius: '3px', border: `1px solid ${node.attrs.padding === p ? '#22c55e' : 'var(--glass-border)'}`, background: node.attrs.padding === p ? 'rgba(34,197,94,0.15)' : 'transparent', color: node.attrs.padding === p ? '#22c55e' : 'var(--text-muted)', cursor: 'pointer', fontFamily: "var(--font-code)" }}>{p}</button>)}
+              {PADS.map(p => <button key={p} title={`Padding: ${p}`} onClick={() => updateAttributes({ padding: p })} style={{ padding: '2px 5px', fontSize: '9px', borderRadius: '3px', border: `1px solid ${node.attrs.padding === p ? '#22c55e' : 'var(--glass-border)'}`, background: node.attrs.padding === p ? 'rgba(34,197,94,0.15)' : 'transparent', color: node.attrs.padding === p ? '#22c55e' : 'var(--text-muted)', cursor: 'pointer', fontFamily: "var(--font-code)" }}>{p}</button>)}
             </div>
           )}
 
