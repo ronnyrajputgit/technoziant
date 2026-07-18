@@ -158,11 +158,17 @@ function LinkModal({ open, onClose, onInsert }) {
             <input type="text" value={url} onChange={e => setUrl(e.target.value)} autoFocus placeholder="https://example.com"
               style={{ width: '100%', padding: '12px 16px', borderRadius: '10px', border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.03)', color: 'var(--text)', fontSize: '14px', outline: 'none', boxSizing: 'border-box' }} onKeyDown={e => e.key === 'Enter' && url.trim() && (onInsert(url.trim(), text), onClose())} />
           </div>
-          <div style={{ marginBottom: '18px' }}>
+          <div style={{ marginBottom: '14px' }}>
             <label style={{ fontSize: '12px', color: 'var(--text-muted)', fontFamily: "var(--font-code)", marginBottom: '6px', display: 'block' }}>Link Text (Optional)</label>
             <input type="text" value={text} onChange={e => setText(e.target.value)} placeholder="Display text..."
               style={{ width: '100%', padding: '12px 16px', borderRadius: '10px', border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.03)', color: 'var(--text)', fontSize: '14px', outline: 'none', boxSizing: 'border-box' }} />
           </div>
+          {url.trim() && (
+            <div style={{ marginBottom: '16px', padding: '12px 16px', borderRadius: '10px', border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.03)' }}>
+              <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>Preview: </span>
+              <a href={url.trim()} target="_blank" rel="noopener" style={{ color: '#3b82f6', fontSize: '13px', textDecoration: 'underline', wordBreak: 'break-all' }}>{text.trim() || url.trim()}</a>
+            </div>
+          )}
           <button onClick={() => { if (url.trim()) { onInsert(url.trim(), text); onClose() } }} disabled={!url.trim()}
             style={{ width: '100%', padding: '12px', borderRadius: '10px', border: 'none', background: url.trim() ? 'linear-gradient(135deg, #22c55e, #16a34a)' : 'var(--glass)', color: url.trim() ? '#fff' : 'var(--text-muted)', fontSize: '14px', fontWeight: '600', cursor: url.trim() ? 'pointer' : 'not-allowed', fontFamily: "var(--font-code)", display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
             <LinkIcon sx={{ fontSize: 18 }} /> Insert Link
@@ -191,6 +197,9 @@ function TableToolbar({ editor }) {
     </button>
   )
 
+  const setCellBg = (color) => { editor.chain().focus().setCellAttribute('backgroundColor', color).run() }
+  const setCellRadius = (radius) => { editor.chain().focus().setCellAttribute('borderRadius', radius).run() }
+
   return (
     <div style={{ position: 'sticky', top: '90px', zIndex: 50, display: 'flex', gap: '4px', padding: '6px 12px', marginBottom: '8px', borderRadius: '10px', background: 'var(--bg)', border: '1px solid var(--glass-border)', boxShadow: '0 4px 16px rgba(0,0,0,0.3)', alignItems: 'center', flexWrap: 'wrap' }}>
       <span style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: "var(--font-code)", marginRight: '4px' }}>TABLE</span>
@@ -202,6 +211,11 @@ function TableToolbar({ editor }) {
       <div style={{ width: '1px', height: '20px', background: 'var(--glass-border)', margin: '0 4px' }} />
       <TBtn onClick={mergeCells}>Merge</TBtn>
       <TBtn onClick={splitCell}>Split</TBtn>
+      <div style={{ width: '1px', height: '20px', background: 'var(--glass-border)', margin: '0 4px' }} />
+      <span style={{ fontSize: '9px', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>Cell BG:</span>
+      {['transparent', 'rgba(34,197,94,0.15)', 'rgba(59,130,246,0.15)', 'rgba(168,85,247,0.15)', 'rgba(245,158,11,0.15)', 'rgba(239,68,68,0.15)'].map((c, i) => (
+        <button key={i} onClick={() => setCellBg(c)} style={{ width: '16px', height: '16px', borderRadius: '3px', border: '1px solid var(--glass-border)', background: c === 'transparent' ? 'var(--bg)' : c, cursor: 'pointer' }} />
+      ))}
       <div style={{ width: '1px', height: '20px', background: 'var(--glass-border)', margin: '0 4px' }} />
       <TBtn onClick={delTable} color="#ef4444">Delete Table</TBtn>
     </div>
@@ -222,6 +236,7 @@ export function BlogEditor({ initialContent = {}, onSave, saving }) {
   const [mediaModal, setMediaModal] = useState({ open: false, type: 'image' })
   const [linkModal, setLinkModal] = useState(false)
   const [showHeadings, setShowHeadings] = useState(false)
+  const [errors, setErrors] = useState({})
   const toolbarRef = useRef(null)
 
   const [, forceUpdate] = useState(0)
@@ -282,7 +297,11 @@ export function BlogEditor({ initialContent = {}, onSave, saving }) {
   }
 
   const handleSave = useCallback((published) => {
-    if (!title.trim()) { alert('Title is required'); return }
+    const newErrors = {}
+    if (!title.trim()) newErrors.title = 'Title is required'
+    if (!coverImage.trim()) newErrors.coverImage = 'Cover image is required'
+    setErrors(newErrors)
+    if (Object.keys(newErrors).length > 0) return
     onSave({ title: title.trim(), content: editor.getJSON(), excerpt: excerpt.trim(), cover_image: coverImage.trim(), category: category.trim(), tags: tags.split(',').map(t => t.trim()).filter(Boolean), published })
     setLastSaved(new Date())
   }, [title, editor, excerpt, coverImage, category, tags, onSave])
@@ -434,20 +453,20 @@ export function BlogEditor({ initialContent = {}, onSave, saving }) {
       {/* EDITOR CONTENT */}
       <div style={{ paddingTop: '100px', maxWidth: '900px', margin: '0 auto', padding: '100px clamp(16px, 4vw, 40px) 100px' }}>
         <div style={{ marginBottom: '20px' }}>
-          <label style={{ display: 'block', fontSize: '11px', fontWeight: '600', color: 'var(--text-muted)', fontFamily: "var(--font-code)", marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Blog Title</label>
-          <input type="text" value={title} onChange={e => setTitle(e.target.value)} placeholder="Enter your blog title..."
-            style={{ width: '100%', padding: '14px 16px', borderRadius: '10px', border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.03)', color: 'var(--text)', fontSize: 'clamp(20px, 4vw, 28px)', fontWeight: '700', outline: 'none', fontFamily: 'var(--font-h)', boxSizing: 'border-box', transition: 'border-color 0.2s' }}
-            onFocus={e => e.target.style.borderColor = '#22c55e'}
-            onBlur={e => e.target.style.borderColor = 'var(--glass-border)'} />
+          <label style={{ display: 'block', fontSize: '11px', fontWeight: '600', color: errors.title ? '#ef4444' : 'var(--text-muted)', fontFamily: "var(--font-code)", marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Blog Title {errors.title && <span style={{ color: '#ef4444', fontWeight: '400', textTransform: 'none' }}>({errors.title})</span>}</label>
+          <input type="text" value={title} onChange={e => { setTitle(e.target.value); if (errors.title) setErrors(prev => ({ ...prev, title: null })) }} placeholder="Enter your blog title..."
+            style={{ width: '100%', padding: '14px 16px', borderRadius: '10px', border: `1px solid ${errors.title ? '#ef4444' : 'var(--glass-border)'}`, background: 'rgba(255,255,255,0.03)', color: 'var(--text)', fontSize: 'clamp(20px, 4vw, 28px)', fontWeight: '700', outline: 'none', fontFamily: 'var(--font-h)', boxSizing: 'border-box', transition: 'border-color 0.2s' }}
+            onFocus={e => e.target.style.borderColor = errors.title ? '#ef4444' : '#22c55e'}
+            onBlur={e => e.target.style.borderColor = errors.title ? '#ef4444' : 'var(--glass-border)'} />
         </div>
 
         <div className="liquid-glass" style={{ borderRadius: '14px', padding: '20px', marginBottom: '20px', border: '1px solid var(--glass-border)' }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
             <div>
-              <label style={{ display: 'block', fontSize: '11px', fontWeight: '600', color: 'var(--text-muted)', fontFamily: "var(--font-code)", marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Cover Image</label>
+              <label style={{ display: 'block', fontSize: '11px', fontWeight: '600', color: errors.coverImage ? '#ef4444' : 'var(--text-muted)', fontFamily: "var(--font-code)", marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Cover Image {errors.coverImage && <span style={{ color: '#ef4444', fontWeight: '400', textTransform: 'none' }}>({errors.coverImage})</span>}</label>
               <div style={{ position: 'relative' }}>
-                <input type="text" value={coverImage} onChange={e => setCoverImage(e.target.value)} placeholder="Paste image URL..."
-                  style={{ width: '100%', padding: '10px 44px 10px 14px', borderRadius: '10px', border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.03)', color: 'var(--text)', fontSize: '13px', outline: 'none', fontFamily: "var(--font-code)", boxSizing: 'border-box' }} />
+                <input type="text" value={coverImage} onChange={e => { setCoverImage(e.target.value); if (errors.coverImage) setErrors(prev => ({ ...prev, coverImage: null })) }} placeholder="Paste image URL..."
+                  style={{ width: '100%', padding: '10px 44px 10px 14px', borderRadius: '10px', border: `1px solid ${errors.coverImage ? '#ef4444' : 'var(--glass-border)'}`, background: 'rgba(255,255,255,0.03)', color: 'var(--text)', fontSize: '13px', outline: 'none', fontFamily: "var(--font-code)", boxSizing: 'border-box' }} />
                 <button onClick={() => setCoverModal(true)} style={{ position: 'absolute', right: '8px', top: '50%', transform: 'translateY(-50%)', padding: '4px', borderRadius: '6px', border: 'none', background: 'transparent', color: 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
                   <CloudUploadIcon sx={{ fontSize: 18 }} />
                 </button>

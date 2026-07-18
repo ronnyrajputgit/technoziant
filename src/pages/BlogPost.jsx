@@ -190,8 +190,11 @@ function tiptapToHtml(json) {
         quote:    { bg: 'rgba(245,158,11,0.08)', border: '#f59e0b', icon: '💬', label: 'Quote' },
         code:     { bg: 'rgba(236,72,153,0.08)', border: '#ec4899', icon: '💻', label: 'Code' },
       }
+      const shapes = { square: '0px', rounded: '12px', pill: '50%', circle: '50%' }
       const cs = calloutStyles[json.attrs?.type || 'info'] || calloutStyles.info
-      return `<div style="margin:1.5em 0;padding:16px 20px;border-radius:12px;background:${cs.bg};border:1px solid ${cs.border}33;border-left:3px solid ${cs.border}"><div style="display:flex;align-items:flex-start;gap:10px"><span style="font-size:20px;line-height:1;flex-shrink:0;margin-top:2px">${cs.icon}</span><div><div style="font-size:12px;font-weight:600;color:${cs.border};font-family:var(--font-code);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.05em">${cs.label}</div>${children}</div></div></div>`
+      const shape = json.attrs?.shape || 'rounded'
+      const isCircle = shape === 'circle'
+      return `<div style="margin:1.5em 0;padding:16px 20px;border-radius:${shapes[shape]};background:${cs.bg};border:1px solid ${cs.border}33;${isCircle ? 'border-left:none;aspect-ratio:1;display:flex;align-items:center;justify-content:center;' : `border-left:3px solid ${cs.border};`}${isCircle ? 'text-align:center;' : ''}"><div style="display:flex;${isCircle ? 'flex-direction:column;' : 'align-items:flex-start;'}gap:10px;${isCircle ? 'text-align:center;width:80%;' : ''}"><span style="font-size:20px;line-height:1;${isCircle ? '' : 'flex-shrink:0;margin-top:2px'}">${cs.icon}</span><div><div style="font-size:12px;font-weight:600;color:${cs.border};font-family:var(--font-code);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.05em">${cs.label}</div>${children}</div></div></div>`
     }
     case 'spacer': return `<div style="height:32px"></div>`
     default: return children
