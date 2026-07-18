@@ -389,8 +389,13 @@ export function BlogEditor({ initialContent = {}, onSave, saving }) {
 
       {/* EDITOR CONTENT */}
       <div style={{ paddingTop: '100px', maxWidth: '900px', margin: '0 auto', padding: '100px clamp(16px, 4vw, 40px) 100px' }}>
-        <input type="text" value={title} onChange={e => setTitle(e.target.value)} placeholder="Blog title..."
-          style={{ width: '100%', padding: '12px 0', border: 'none', background: 'transparent', color: 'var(--text)', fontSize: 'clamp(28px, 5vw, 42px)', fontWeight: '700', outline: 'none', fontFamily: 'var(--font-h)', marginBottom: '20px' }} />
+        <div style={{ marginBottom: '20px' }}>
+          <label style={{ display: 'block', fontSize: '11px', fontWeight: '600', color: 'var(--text-muted)', fontFamily: "var(--font-code)", marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Blog Title</label>
+          <input type="text" value={title} onChange={e => setTitle(e.target.value)} placeholder="Enter your blog title..."
+            style={{ width: '100%', padding: '14px 16px', borderRadius: '10px', border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.03)', color: 'var(--text)', fontSize: 'clamp(20px, 4vw, 28px)', fontWeight: '700', outline: 'none', fontFamily: 'var(--font-h)', boxSizing: 'border-box', transition: 'border-color 0.2s' }}
+            onFocus={e => e.target.style.borderColor = '#22c55e'}
+            onBlur={e => e.target.style.borderColor = 'var(--glass-border)'} />
+        </div>
 
         <div className="liquid-glass" style={{ borderRadius: '14px', padding: '20px', marginBottom: '20px', border: '1px solid var(--glass-border)' }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
