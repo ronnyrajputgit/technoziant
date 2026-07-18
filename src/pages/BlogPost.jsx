@@ -131,7 +131,17 @@ function tiptapToHtml(json) {
       const pad = json.attrs?.padding || '24px'
       const rad = json.attrs?.radius || '12px'
       const w = json.attrs?.width || '100%'
-      return `<div style="margin:1.5em 0;width:${w};max-width:100%"><div style="padding:${pad};border-radius:${rad};background:${bg};border:1px solid ${border}">${children}</div></div>`
+      const cardSrc = json.attrs?.cardSrc || ''
+      const cardMediaType = json.attrs?.cardMediaType || ''
+      let mediaHtml = ''
+      if (cardSrc) {
+        const isYT = cardSrc.includes('youtube') || cardSrc.includes('youtu.be')
+        const getEmbed = (url) => { const m = url?.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&?/]+)/); return m ? `https://www.youtube.com/embed/${m[1]}` : url }
+        if (isYT) mediaHtml = `<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:8px;margin-bottom:12px"><iframe src="${getEmbed(cardSrc)}" style="position:absolute;top:0;left:0;width:100%;height:100%;border:none" allowfullscreen></iframe></div>`
+        else if (cardMediaType === 'video') mediaHtml = `<video src="${escapeHtml(cardSrc)}" controls style="width:100%;border-radius:8px;display:block;margin-bottom:12px"></video>`
+        else mediaHtml = `<img src="${escapeHtml(cardSrc)}" alt="" style="width:100%;border-radius:8px;display:block;margin-bottom:12px" />`
+      }
+      return `<div style="margin:1.5em 0;width:${w};max-width:100%"><div style="padding:${pad};border-radius:${rad};background:${bg};border:1px solid ${border}">${mediaHtml}${children}</div></div>`
     }
     case 'gridBlock': {
       const cells = json.attrs?.cells || []

@@ -247,31 +247,30 @@ function ImageCell({ cell, onUpdate }) {
 }
 
 function GridCell({ cell, index, isActive, onSelect, onUpdate, onRemove, onMoveLeft, onMoveRight, totalCells }) {
-  const cellTypeBtns = [
-    { type: 'text', icon: '📝', label: 'Text' },
-    { type: 'image', icon: '🖼️', label: 'Image' },
-    { type: 'video', icon: '🎬', label: 'Video' },
-    { type: 'card', icon: '🃏', label: 'Card' },
-  ]
+  const T = ({ tip, active, color, onClick, children, disabled }) => (
+    <button title={tip} disabled={disabled} onMouseDown={e => e.stopPropagation()} onClick={e => { e.stopPropagation(); onClick?.() }}
+      style={{ padding: '3px 5px', fontSize: '10px', borderRadius: '4px', border: `1px solid ${active ? (color || '#22c55e') : 'var(--glass-border)'}`, background: active ? `${color || '#22c55e'}22` : 'transparent', color: active ? (color || '#22c55e') : 'var(--text-muted)', cursor: disabled ? 'not-allowed' : 'pointer', fontFamily: "var(--font-code)", opacity: disabled ? 0.4 : 1, lineHeight: 1 }}>{children}</button>
+  )
 
   return (
     <div onClick={onSelect} style={{ borderRadius: cell.radius || '8px', overflow: 'hidden', border: `1px solid ${isActive ? '#22c55e' : 'var(--glass-border)'}`, background: cell.bgColor || 'var(--bg)', minHeight: '80px', cursor: 'pointer', transition: 'all 0.15s', position: 'relative' }}>
-      <div style={{ display: 'flex', gap: '3px', padding: '4px 6px', borderBottom: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.03)', flexWrap: 'wrap', alignItems: 'center' }}>
-        {cellTypeBtns.map(t => (
-          <button key={t.type} onMouseDown={e => e.stopPropagation()} onClick={e => { e.stopPropagation(); onUpdate({ type: t.type, src: '', alt: '', content: '' }) }} style={btn(cell.type === t.type)}>{t.icon} {t.label}</button>
-        ))}
-        <div style={{ width: '1px', height: '16px', background: 'var(--glass-border)', margin: '0 3px' }} />
-        {['left', 'center', 'right'].map(a => (
-          <button key={a} onMouseDown={e => e.stopPropagation()} onClick={e => { e.stopPropagation(); onUpdate({ align: a }) }} style={btn(cell.align === a)}>{a[0].toUpperCase()}</button>
-        ))}
-        <div style={{ width: '1px', height: '16px', background: 'var(--glass-border)', margin: '0 3px' }} />
+      <div style={{ display: 'flex', gap: '2px', padding: '3px 4px', borderBottom: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.03)', flexWrap: 'wrap', alignItems: 'center' }}>
+        <T tip="Text" active={cell.type === 'text'} onClick={() => onUpdate({ type: 'text', src: '', alt: '', content: '' })}>📝</T>
+        <T tip="Image" active={cell.type === 'image'} onClick={() => onUpdate({ type: 'image', src: '', alt: '', content: '' })}>🖼️</T>
+        <T tip="Video" active={cell.type === 'video'} onClick={() => onUpdate({ type: 'video', src: '', alt: '', content: '' })}>🎬</T>
+        <T tip="Card" active={cell.type === 'card'} onClick={() => onUpdate({ type: 'card', src: '', alt: '', content: '' })}>🃏</T>
+        <div style={{ width: '1px', height: '14px', background: 'var(--glass-border)', margin: '0 2px' }} />
+        <T tip="Align Left" active={cell.align === 'left'} onClick={() => onUpdate({ align: 'left' })}>◀</T>
+        <T tip="Align Center" active={cell.align === 'center'} onClick={() => onUpdate({ align: 'center' })}>●</T>
+        <T tip="Align Right" active={cell.align === 'right'} onClick={() => onUpdate({ align: 'right' })}>▶</T>
+        <div style={{ width: '1px', height: '14px', background: 'var(--glass-border)', margin: '0 2px' }} />
         <ColorPicker value={cell.bgColor} onChange={(bg, border) => onUpdate({ bgColor: bg, borderColor: border })} />
-        <div style={{ width: '1px', height: '16px', background: 'var(--glass-border)', margin: '0 3px' }} />
+        <div style={{ width: '1px', height: '14px', background: 'var(--glass-border)', margin: '0 2px' }} />
         <RadiusPicker value={cell.radius} onChange={r => onUpdate({ radius: r })} />
-        <div style={{ marginLeft: 'auto', display: 'flex', gap: '3px' }}>
-          <button onMouseDown={e => e.stopPropagation()} onClick={e => { e.stopPropagation(); onMoveLeft() }} disabled={index === 0} style={btn(false, '#f59e0b')}>◀</button>
-          <button onMouseDown={e => e.stopPropagation()} onClick={e => { e.stopPropagation(); onMoveRight() }} disabled={index === totalCells - 1} style={btn(false, '#f59e0b')}>▶</button>
-          <button onMouseDown={e => e.stopPropagation()} onClick={e => { e.stopPropagation(); onRemove() }} style={delBtn()}>✕</button>
+        <div style={{ marginLeft: 'auto', display: 'flex', gap: '2px' }}>
+          <T tip="Move Left" color="#f59e0b" disabled={index === 0} onClick={onMoveLeft}>◀</T>
+          <T tip="Move Right" color="#f59e0b" disabled={index === totalCells - 1} onClick={onMoveRight}>▶</T>
+          <T tip="Delete Cell" color="#ef4444" onClick={onRemove}>✕</T>
         </div>
       </div>
       <div style={{ padding: cell.padding || '16px', textAlign: cell.align || 'center', minHeight: '60px' }}>
@@ -327,8 +326,20 @@ export const GridBlock = Node.create({
 /* ═══════════════════════════════════════════════════════ */
 function CardBlockComponent({ node, updateAttributes, deleteNode }) {
   const [editing, setEditing] = useState(false)
+  const [mediaType, setMediaType] = useState(null)
   const containerRef = useRef(null)
+  const fileRef = useRef(null)
   const { width, onMouseDown } = useResizable(node.attrs.width, containerRef, updateAttributes, 200)
+
+  const handleFile = (file) => {
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = () => { updateAttributes({ cardSrc: reader.result, cardMediaType: mediaType }); setMediaType(null) }
+    reader.readAsDataURL(file)
+  }
+
+  const isYouTube = node.attrs.cardSrc?.includes('youtube') || node.attrs.cardSrc?.includes('youtu.be')
+  const getEmbed = (url) => { const m = url?.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&?/]+)/); return m ? `https://www.youtube.com/embed/${m[1]}` : url }
 
   const presets = [
     { label: 'Default', bg: 'rgba(255,255,255,0.03)', border: '#ffffff14' },
@@ -346,26 +357,49 @@ function CardBlockComponent({ node, updateAttributes, deleteNode }) {
       <div ref={containerRef} style={{ margin: '1.5em 0', position: 'relative', width }}>
         <DragHandle onMouseDown={onMouseDown} />
         <div style={{ borderRadius: node.attrs.radius || '12px', overflow: 'hidden', border: `1px solid ${node.attrs.borderColor || 'var(--glass-border)'}`, background: node.attrs.bgColor || 'rgba(255,255,255,0.03)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 12px', borderBottom: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.02)' }}>
-            <span style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>CARD</span>
-            <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
-              <button onMouseDown={e => e.stopPropagation()} onClick={e => { e.stopPropagation(); setEditing(!editing) }} style={btn(editing)}>Style</button>
-              <button onMouseDown={e => e.stopPropagation()} onClick={e => { e.stopPropagation(); deleteNode() }} style={delBtn()}>✕</button>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 10px', borderBottom: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.02)' }}>
+            <span style={{ fontSize: '9px', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>CARD</span>
+            <div style={{ display: 'flex', gap: '3px', alignItems: 'center' }}>
+              <button title="Add Image" onMouseDown={e => e.stopPropagation()} onClick={e => { e.stopPropagation(); setMediaType('image'); fileRef.current?.click() }} style={{ padding: '2px 6px', fontSize: '10px', borderRadius: '4px', border: '1px solid var(--glass-border)', background: 'transparent', color: 'var(--text-muted)', cursor: 'pointer' }}>🖼️</button>
+              <button title="Add Video" onMouseDown={e => e.stopPropagation()} onClick={e => { e.stopPropagation(); setMediaType('video'); fileRef.current?.click() }} style={{ padding: '2px 6px', fontSize: '10px', borderRadius: '4px', border: '1px solid var(--glass-border)', background: 'transparent', color: 'var(--text-muted)', cursor: 'pointer' }}>🎬</button>
+              <input ref={fileRef} type="file" accept={mediaType === 'video' ? 'video/*' : 'image/*'} onChange={e => handleFile(e.target.files?.[0])} style={{ display: 'none' }} />
+              <button title="Add YouTube URL" onMouseDown={e => e.stopPropagation()} onClick={e => { e.stopPropagation(); const url = prompt('YouTube URL:'); if (url) updateAttributes({ cardSrc: url, cardMediaType: 'youtube' }) }} style={{ padding: '2px 6px', fontSize: '10px', borderRadius: '4px', border: '1px solid var(--glass-border)', background: 'transparent', color: 'var(--text-muted)', cursor: 'pointer' }}>📺</button>
+              <div style={{ width: '1px', height: '14px', background: 'var(--glass-border)', margin: '0 2px' }} />
+              <button title="Style" onMouseDown={e => e.stopPropagation()} onClick={e => { e.stopPropagation(); setEditing(!editing) }} style={{ padding: '2px 6px', fontSize: '10px', borderRadius: '4px', border: `1px solid ${editing ? '#22c55e' : 'var(--glass-border)'}`, background: editing ? 'rgba(34,197,94,0.15)' : 'transparent', color: editing ? '#22c55e' : 'var(--text-muted)', cursor: 'pointer' }}>🎨</button>
+              <button title="Delete Card" onMouseDown={e => e.stopPropagation()} onClick={e => { e.stopPropagation(); deleteNode() }} style={{ padding: '2px 6px', fontSize: '10px', borderRadius: '4px', border: '1px solid rgba(239,68,68,0.3)', background: 'transparent', color: '#ef4444', cursor: 'pointer' }}>✕</button>
             </div>
           </div>
           {editing && (
-            <div style={{ padding: '8px 12px', borderBottom: '1px solid var(--glass-border)', display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center' }}>
+            <div style={{ padding: '6px 10px', borderBottom: '1px solid var(--glass-border)', display: 'flex', gap: '6px', flexWrap: 'wrap', alignItems: 'center' }}>
               <span style={{ fontSize: '9px', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>Color:</span>
               {presets.map((c, i) => (
-                <button key={i} onClick={() => updateAttributes({ bgColor: c.bg, borderColor: c.border })} style={{ width: '16px', height: '16px', borderRadius: '3px', border: `2px solid ${node.attrs.bgColor === c.bg ? '#22c55e' : 'var(--glass-border)'}`, background: c.bg, cursor: 'pointer' }} />
+                <button key={i} onClick={() => updateAttributes({ bgColor: c.bg, borderColor: c.border })} style={{ width: '14px', height: '14px', borderRadius: '3px', border: `2px solid ${node.attrs.bgColor === c.bg ? '#22c55e' : 'var(--glass-border)'}`, background: c.bg, cursor: 'pointer' }} />
               ))}
-              <input type="color" value={node.attrs.customColor || '#0f1424'} onChange={e => { const v = e.target.value; updateAttributes({ bgColor: v + '18', borderColor: v + '55', customColor: v }) }} style={{ width: '18px', height: '16px', border: '1px solid var(--glass-border)', borderRadius: '3px', cursor: 'pointer', padding: 0 }} />
-              <div style={{ width: '1px', height: '18px', background: 'var(--glass-border)', margin: '0 4px' }} />
-              <span style={{ fontSize: '9px', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>Radius:</span>
-              {RADII.map(r => <button key={r} onClick={() => updateAttributes({ radius: r })} style={btn(node.attrs.radius === r)}>{r}</button>)}
-              <div style={{ width: '1px', height: '18px', background: 'var(--glass-border)', margin: '0 4px' }} />
+              <input type="color" value={node.attrs.customColor || '#0f1424'} onChange={e => { const v = e.target.value; updateAttributes({ bgColor: v + '18', borderColor: v + '55', customColor: v }) }} style={{ width: '16px', height: '14px', border: '1px solid var(--glass-border)', borderRadius: '3px', cursor: 'pointer', padding: 0 }} />
+              <div style={{ width: '1px', height: '14px', background: 'var(--glass-border)', margin: '0 2px' }} />
+              <span style={{ fontSize: '9px', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>R:</span>
+              {RADII.map(r => <button key={r} onClick={() => updateAttributes({ radius: r })} style={{ padding: '2px 5px', fontSize: '9px', borderRadius: '3px', border: `1px solid ${node.attrs.radius === r ? '#22c55e' : 'var(--glass-border)'}`, background: node.attrs.radius === r ? 'rgba(34,197,94,0.15)' : 'transparent', color: node.attrs.radius === r ? '#22c55e' : 'var(--text-muted)', cursor: 'pointer', fontFamily: "var(--font-code)" }}>{r}</button>)}
+              <div style={{ width: '1px', height: '14px', background: 'var(--glass-border)', margin: '0 2px' }} />
               <span style={{ fontSize: '9px', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>Pad:</span>
-              {PADS.map(p => <button key={p} onClick={() => updateAttributes({ padding: p })} style={btn(node.attrs.padding === p)}>{p}</button>)}
+              {PADS.map(p => <button key={p} onClick={() => updateAttributes({ padding: p })} style={{ padding: '2px 5px', fontSize: '9px', borderRadius: '3px', border: `1px solid ${node.attrs.padding === p ? '#22c55e' : 'var(--glass-border)'}`, background: node.attrs.padding === p ? 'rgba(34,197,94,0.15)' : 'transparent', color: node.attrs.padding === p ? '#22c55e' : 'var(--text-muted)', cursor: 'pointer', fontFamily: "var(--font-code)" }}>{p}</button>)}
+            </div>
+          )}
+          {node.attrs.cardSrc && (
+            <div style={{ padding: '8px 12px 0' }}>
+              <div style={{ position: 'relative' }}>
+                {node.attrs.cardMediaType === 'video' && node.attrs.cardSrc?.startsWith('data:video') ? (
+                  <video src={node.attrs.cardSrc} controls style={{ width: '100%', borderRadius: '8px', display: 'block' }} />
+                ) : isYouTube ? (
+                  <div style={{ position: 'relative', paddingBottom: '56.25%', borderRadius: '8px', overflow: 'hidden' }}>
+                    <iframe src={getEmbed(node.attrs.cardSrc)} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none' }} allowFullScreen />
+                  </div>
+                ) : node.attrs.cardMediaType === 'video' ? (
+                  <video src={node.attrs.cardSrc} controls style={{ width: '100%', borderRadius: '8px', display: 'block' }} />
+                ) : (
+                  <img src={node.attrs.cardSrc} alt="" style={{ width: '100%', borderRadius: '8px', display: 'block' }} />
+                )}
+                <button title="Remove media" onClick={() => updateAttributes({ cardSrc: '', cardMediaType: '' })} style={{ position: 'absolute', top: '4px', right: '4px', padding: '3px 8px', borderRadius: '4px', border: 'none', background: 'rgba(239,68,68,0.8)', color: '#fff', fontSize: '10px', cursor: 'pointer' }}>✕</button>
+              </div>
             </div>
           )}
           <div data-card-content style={{ padding: node.attrs.padding || '24px' }} />
@@ -378,7 +412,7 @@ function CardBlockComponent({ node, updateAttributes, deleteNode }) {
 
 export const CardBlock = Node.create({
   name: 'cardBlock', group: 'block', content: 'block+', defining: true,
-  addAttributes() { return { bgColor: { default: 'rgba(255,255,255,0.03)' }, borderColor: { default: 'var(--glass-border)' }, customColor: { default: '#0f1424' }, padding: { default: '24px' }, radius: { default: '12px' }, width: { default: '100%' } } },
+  addAttributes() { return { bgColor: { default: 'rgba(255,255,255,0.03)' }, borderColor: { default: 'var(--glass-border)' }, customColor: { default: '#0f1424' }, padding: { default: '24px' }, radius: { default: '12px' }, width: { default: '100%' }, cardSrc: { default: '' }, cardMediaType: { default: '' } } },
   parseHTML() { return [{ tag: 'div[data-card-block]' }] },
   renderHTML({ HTMLAttributes }) { return ['div', mergeAttributes(HTMLAttributes, { 'data-card-block': '' }), 0] },
   addNodeView() { return ReactNodeViewRenderer(CardBlockComponent) }
