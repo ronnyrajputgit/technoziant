@@ -7,8 +7,9 @@ async function apiFetch(path, options = {}) {
   const headers = { 'Content-Type': 'application/json', ...options.headers }
   if (token) headers['Authorization'] = `Bearer ${token}`
   const res = await fetch(`${API_BASE}${path}`, { ...options, headers })
-  const data = await res.json()
-  if (!res.ok) throw new Error(data.error || 'Request failed')
+  let data
+  try { data = await res.json() } catch (e) { data = { error: 'Invalid server response' } }
+  if (!res.ok) throw new Error(data.error || `Request failed (${res.status})`)
   return data
 }
 

@@ -71,8 +71,17 @@ export function EditorPage() {
   const handleSave = async (data) => {
     setSaving(true)
     try {
-      if (id) await api.updateBlog(id, data)
-      else await api.createBlog(data)
+      const saveData = { ...data }
+      if (saveData.content && typeof saveData.content === 'object') {
+        const jsonStr = JSON.stringify(saveData.content)
+        if (jsonStr.length > 4000000) {
+          setError('Content is too large (over 4MB). Please reduce image sizes or remove some media.')
+          setSaving(false)
+          return
+        }
+      }
+      if (id) await api.updateBlog(id, saveData)
+      else await api.createBlog(saveData)
       if (data.published) {
         navigate('/dashboard')
       } else {
@@ -80,12 +89,12 @@ export function EditorPage() {
       }
     } catch (err) {
       const msg = err.message || 'Something went wrong'
-      if (msg.includes('Request Entity Too Large') || msg.includes('too large')) {
-        setError('Content is too large. Try reducing image sizes or removing some media.')
-      } else if (msg.includes('JSON')) {
-        setError('Invalid data format. Please try again.')
-      } else if (msg.includes('fetch') || msg.includes('network')) {
+      if (msg.includes('too large') || msg.includes('entity') || msg.includes('PayloadTooLarge')) {
+        setError('Content is too large. Please reduce image sizes or remove some media.')
+      } else if (msg.includes('Failed to fetch') || msg.includes('network') || msg.includes('NetworkError')) {
         setError('Network error. Please check your connection and try again.')
+      } else if (msg.includes('401') || msg.includes('token') || msg.includes('Unauthorized')) {
+        setError('Session expired. Please login again.')
       } else {
         setError(msg)
       }

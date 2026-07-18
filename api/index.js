@@ -114,9 +114,11 @@ app.post('/api/blogs', authMiddleware, async (req, res) => {
     const { title, content, excerpt, cover_image, tags, category, published } = req.body
     if (!title) return res.status(400).json({ error: 'Title is required' })
     const slug = makeSlug(title)
+    let contentStr = '{}'
+    try { contentStr = JSON.stringify(content || {}) } catch (e) { contentStr = '{}' }
     const result = await pool.query(
       'INSERT INTO blogs (title, slug, content, excerpt, cover_image, author_id, published, tags, category) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *',
-      [title, slug, JSON.stringify(content || {}), excerpt || '', cover_image || '', req.user.id, published || false, tags || [], category || '']
+      [title, slug, contentStr, excerpt || '', cover_image || '', req.user.id, published || false, tags || [], category || '']
     )
     res.json(result.rows[0])
   } catch (err) { res.status(500).json({ error: err.message }) }
@@ -125,11 +127,13 @@ app.post('/api/blogs', authMiddleware, async (req, res) => {
 app.put('/api/blogs/:id', authMiddleware, async (req, res) => {
   try {
     const { title, content, excerpt, cover_image, tags, category, published } = req.body
+    let contentStr = null
+    if (content) { try { contentStr = JSON.stringify(content) } catch (e) { contentStr = null } }
     const result = await pool.query(
       `UPDATE blogs SET title = COALESCE($1, title), content = COALESCE($2, content), excerpt = COALESCE($3, excerpt),
        cover_image = COALESCE($4, cover_image), tags = COALESCE($5, tags), category = COALESCE($6, category),
        published = COALESCE($7, published), updated_at = NOW() WHERE id = $8 RETURNING *`,
-      [title, content ? JSON.stringify(content) : null, excerpt, cover_image, tags, category, published, req.params.id]
+      [title, contentStr, excerpt, cover_image, tags, category, published, req.params.id]
     )
     if (!result.rows.length) return res.status(404).json({ error: 'Blog not found' })
     res.json(result.rows[0])
