@@ -152,20 +152,32 @@ function VideoCell({ cell, onUpdate }) {
   const [urlInput, setUrlInput] = useState('')
 
   const handleFile = (file) => {
-    if (!file || !file.type.startsWith('video/')) return
+    if (!file) return
     const reader = new FileReader()
     reader.onload = () => { onUpdate({ src: reader.result }) }
     reader.readAsDataURL(file)
   }
 
-  const embedSrc = getYouTubeEmbed(cell.src)
+  const isBase64 = cell.src?.startsWith('data:video')
+  const isYouTube = cell.src?.includes('youtube') || cell.src?.includes('youtu.be')
+  const embedSrc = isYouTube ? getYouTubeEmbed(cell.src) : ''
 
-  if (embedSrc) {
+  if (cell.src) {
     return (
       <div style={{ width: '100%' }}>
-        <div style={{ position: 'relative', paddingBottom: '56.25%', borderRadius: cell.radius || '8px', overflow: 'hidden' }}>
-          <iframe src={embedSrc} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none' }} allowFullScreen />
-        </div>
+        {isBase64 ? (
+          <div style={{ position: 'relative', borderRadius: cell.radius || '8px', overflow: 'hidden' }}>
+            <video src={cell.src} controls style={{ width: '100%', display: 'block', borderRadius: cell.radius || '8px' }} />
+          </div>
+        ) : embedSrc ? (
+          <div style={{ position: 'relative', paddingBottom: '56.25%', borderRadius: cell.radius || '8px', overflow: 'hidden' }}>
+            <iframe src={embedSrc} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none' }} allowFullScreen />
+          </div>
+        ) : (
+          <div style={{ position: 'relative', borderRadius: cell.radius || '8px', overflow: 'hidden' }}>
+            <video src={cell.src} controls style={{ width: '100%', display: 'block', borderRadius: cell.radius || '8px' }} />
+          </div>
+        )}
         <div style={{ display: 'flex', gap: '4px', marginTop: '6px', justifyContent: 'center' }}>
           <button onClick={() => onUpdate({ src: '' })} style={{ padding: '4px 8px', borderRadius: '4px', border: '1px solid rgba(239,68,68,0.3)', background: 'transparent', color: '#ef4444', fontSize: '9px', cursor: 'pointer', fontFamily: "var(--font-code)" }}>✕ Remove</button>
         </div>
