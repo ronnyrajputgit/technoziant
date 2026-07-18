@@ -182,133 +182,109 @@ function LinkModal({ open, onClose, onInsert }) {
 
 function TableToolbar({ editor }) {
   if (!editor || !editor.isActive('table')) return null
-  const addCol = () => editor.chain().focus().addColumnAfter().run()
-  const addRow = () => editor.chain().focus().addRowAfter().run()
-  const delCol = () => editor.chain().focus().deleteColumn().run()
-  const delRow = () => editor.chain().focus().deleteRow().run()
-  const delTable = () => editor.chain().focus().deleteTable().run()
-  const mergeCells = () => editor.chain().focus().mergeCells().run()
-  const splitCell = () => editor.chain().focus().splitCell().run()
 
-  const TBtn = ({ onClick, children, color, tip, active }) => (
-    <button title={tip} onClick={onClick} style={{ padding: '4px 10px', borderRadius: '6px', border: `1px solid ${active ? (color || '#22c55e') : 'var(--glass-border)'}`, background: active ? `${color || '#22c55e'}22` : 'transparent', color: active ? (color || '#22c55e') : (color || 'var(--text)'), fontSize: '11px', cursor: 'pointer', fontFamily: "var(--font-code)", display: 'flex', alignItems: 'center', gap: '4px', transition: 'all 0.15s' }}
-      onMouseOver={e => { if (!active) e.currentTarget.style.background = 'rgba(255,255,255,0.08)' }}
-      onMouseOut={e => { if (!active) e.currentTarget.style.background = 'transparent' }}>
+  const TBtn = ({ onClick, children, color, tip }) => (
+    <button title={tip} onClick={onClick} style={{ padding: '3px 8px', borderRadius: '4px', border: '1px solid var(--glass-border)', background: 'transparent', color: color || 'var(--text)', fontSize: '10px', cursor: 'pointer', fontFamily: "var(--font-code)", display: 'flex', alignItems: 'center', gap: '3px', transition: 'all 0.15s' }}
+      onMouseOver={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.08)' }}
+      onMouseOut={e => { e.currentTarget.style.background = 'transparent' }}>
       {children}
     </button>
   )
 
-  const setCellBg = (color) => { editor.chain().focus().setCellAttribute('backgroundColor', color).run() }
-  const setHeaderBg = (color) => {
-    editor.chain().focus().command(({ tr }) => {
-      const { selection } = tr
-      const pos = selection.$anchor
-      for (let depth = pos.depth; depth >= 0; depth--) {
-        const node = pos.node(depth)
-        if (node?.type?.name === 'table') {
-          node.forEach((child, offset) => {
-            if (child.type?.name === 'tableRow') {
-              child.forEach((cell, cellOffset) => {
-                if (cell.type?.name === 'tableHeader') {
-                  const cellPos = pos.start(depth) + offset + 1 + cellOffset + 1
-                  tr.setNodeMarkup(cellPos, undefined, { ...cell.attrs, backgroundColor: color })
-                }
-              })
-            }
-          })
-          return true
-        }
+  const applyToSelectedCells = (fn) => {
+    const sel = window.getSelection()
+    if (!sel.rangeCount) return
+    const range = sel.getRangeAt(0)
+    const table = range.commonAncestorContainer.closest?.('table') || range.commonAncestorContainer.parentElement?.closest?.('table')
+    if (!table) return
+    const cells = table.querySelectorAll('td, th')
+    cells.forEach(cell => {
+      const rect = cell.getBoundingClientRect()
+      const selRect = range.getBoundingClientRect()
+      if (rect.left < selRect.right && rect.right > selRect.left && rect.top < selRect.bottom && rect.bottom > selRect.top) {
+        fn(cell)
       }
-      return false
-    }).run()
+    })
   }
 
-  const cellColors = [
-    { color: 'transparent', label: 'None' },
-    { color: 'rgba(34,197,94,0.15)', label: 'Green' },
-    { color: 'rgba(59,130,246,0.15)', label: 'Blue' },
-    { color: 'rgba(168,85,247,0.15)', label: 'Purple' },
-    { color: 'rgba(245,158,11,0.15)', label: 'Amber' },
-    { color: 'rgba(239,68,68,0.15)', label: 'Red' },
-    { color: 'rgba(6,182,212,0.15)', label: 'Cyan' },
-    { color: 'rgba(236,72,153,0.15)', label: 'Pink' },
-  ]
+  const setCellBg = (color) => { applyToSelectedCells(cell => { cell.style.backgroundColor = color === 'transparent' ? '' : color }) }
 
-  const headerColors = [
-    { color: 'rgba(34,197,94,0.2)', label: 'Green' },
-    { color: 'rgba(59,130,246,0.2)', label: 'Blue' },
-    { color: 'rgba(168,85,247,0.2)', label: 'Purple' },
-    { color: 'rgba(245,158,11,0.2)', label: 'Amber' },
-    { color: 'rgba(239,68,68,0.2)', label: 'Red' },
-    { color: 'rgba(6,182,212,0.2)', label: 'Cyan' },
-    { color: 'rgba(236,72,153,0.2)', label: 'Pink' },
-    { color: 'rgba(255,255,255,0.05)', label: 'Light' },
-  ]
+  const setHeaderBg = (color) => {
+    const sel = window.getSelection()
+    if (!sel.rangeCount) return
+    const range = sel.getRangeAt(0)
+    const table = range.commonAncestorContainer.closest?.('table') || range.commonAncestorContainer.parentElement?.closest?.('table')
+    if (!table) return
+    table.querySelectorAll('th').forEach(th => { th.style.backgroundColor = color })
+  }
+
+  const addRow = () => editor.chain().focus().addRowAfter().run()
+  const addCol = () => editor.chain().focus().addColumnAfter().run()
+  const delRow = () => editor.chain().focus().deleteRow().run()
+  const delCol = () => editor.chain().focus().deleteColumn().run()
+  const delTable = () => editor.chain().focus().deleteTable().run()
+  const mergeCells = () => editor.chain().focus().mergeCells().run()
+  const splitCell = () => { try { editor.chain().focus().splitCell().run() } catch (e) {} }
 
   const applyTableRadius = (r) => {
-    document.querySelectorAll('.tiptap table').forEach(t => {
-      t.style.borderRadius = r
-      t.style.overflow = 'hidden'
-      t.style.border = '1px solid var(--glass-border)'
-    })
-    const cells = document.querySelectorAll('.tiptap th, .tiptap td')
-    cells.forEach(c => {
-      c.style.borderRadius = '0'
-      c.style.border = '1px solid var(--glass-border)'
-    })
-    if (cells.length > 0) {
-      const table = cells[0].closest('table')
-      if (table) {
-        const firstRow = table.querySelector('tr')
-        const lastRow = table.querySelector('tr:last-child')
-        if (firstRow) {
-          const firstCell = firstRow.querySelector('th, td')
-          const lastCell = firstRow.querySelector('th:last-child, td:last-child')
-          if (firstCell) firstCell.style.borderTopLeftRadius = r
-          if (lastCell) lastCell.style.borderTopRightRadius = r
-        }
-        if (lastRow && lastRow !== firstRow) {
-          const firstCell = lastRow.querySelector('th, td')
-          const lastCell = lastRow.querySelector('th:last-child, td:last-child')
-          if (firstCell) firstCell.style.borderBottomLeftRadius = r
-          if (lastCell) lastCell.style.borderBottomRightRadius = r
-        }
-      }
+    const sel = window.getSelection()
+    if (!sel.rangeCount) return
+    const range = sel.getRangeAt(0)
+    const table = range.commonAncestorContainer.closest?.('table') || range.commonAncestorContainer.parentElement?.closest?.('table')
+    if (!table) return
+    table.style.borderRadius = r
+    table.style.overflow = 'hidden'
+    table.style.border = '1px solid var(--glass-border)'
+    const allCells = table.querySelectorAll('th, td')
+    allCells.forEach(c => { c.style.borderRadius = '0' })
+    const firstRow = table.querySelector('tr')
+    const lastRow = table.querySelector('tr:last-child')
+    if (firstRow) {
+      const fc = firstRow.querySelector('th, td')
+      const lc = firstRow.querySelector('th:last-child, td:last-child')
+      if (fc) fc.style.borderTopLeftRadius = r
+      if (lc) lc.style.borderTopRightRadius = r
+    }
+    if (lastRow && lastRow !== firstRow) {
+      const fc = lastRow.querySelector('th, td')
+      const lc = lastRow.querySelector('th:last-child, td:last-child')
+      if (fc) fc.style.borderBottomLeftRadius = r
+      if (lc) lc.style.borderBottomRightRadius = r
     }
   }
 
+  const cellColors = ['transparent', '#dcfce7', '#dbeafe', '#ede9fe', '#fef3c7', '#fee2e2', '#cffafe', '#fce7f3']
+  const headerColors = ['#bbf7d0', '#93c5fd', '#c4b5fd', '#fcd34d', '#fca5a5', '#67e8f9', '#f9a8d4', '#f1f5f9']
+
   return (
-    <div style={{ position: 'sticky', top: '90px', zIndex: 50, display: 'flex', gap: '4px', padding: '8px 12px', marginBottom: '8px', borderRadius: '10px', background: 'var(--bg)', border: '1px solid var(--glass-border)', boxShadow: '0 4px 16px rgba(0,0,0,0.3)', alignItems: 'center', flexWrap: 'wrap' }}>
-      <span style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: "var(--font-code)", marginRight: '4px' }}>TABLE</span>
-      <TBtn tip="Add row below" onClick={addRow}><AddCircleOutlineIcon sx={{ fontSize: 14, color: '#22c55e' }} /> Row</TBtn>
-      <TBtn tip="Add column right" onClick={addCol}><AddCircleOutlineIcon sx={{ fontSize: 14, color: '#3b82f6' }} /> Col</TBtn>
-      <div style={{ width: '1px', height: '20px', background: 'var(--glass-border)', margin: '0 4px' }} />
-      <TBtn tip="Delete row" onClick={delRow}><RemoveCircleOutlineIcon sx={{ fontSize: 14, color: '#f59e0b' }} /> Row</TBtn>
-      <TBtn tip="Delete column" onClick={delCol}><RemoveCircleOutlineIcon sx={{ fontSize: 14, color: '#f59e0b' }} /> Col</TBtn>
-      <div style={{ width: '1px', height: '20px', background: 'var(--glass-border)', margin: '0 4px' }} />
-      <TBtn tip="Merge selected cells" onClick={mergeCells}>Merge</TBtn>
+    <div style={{ display: 'flex', gap: '3px', padding: '6px 10px', marginBottom: '4px', borderRadius: '8px 8px 0 0', background: 'rgba(34,197,94,0.05)', border: '1px solid var(--glass-border)', borderBottom: 'none', alignItems: 'center', flexWrap: 'wrap' }}>
+      <span style={{ fontSize: '9px', color: '#22c55e', fontFamily: "var(--font-code)", fontWeight: '600', marginRight: '4px' }}>TABLE</span>
+      <TBtn tip="Add row" onClick={addRow}>+Row</TBtn>
+      <TBtn tip="Add column" onClick={addCol}>+Col</TBtn>
+      <TBtn tip="Delete row" onClick={delRow} color="#f59e0b">-Row</TBtn>
+      <TBtn tip="Delete column" onClick={delCol} color="#f59e0b">-Col</TBtn>
+      <div style={{ width: '1px', height: '16px', background: 'var(--glass-border)', margin: '0 2px' }} />
+      <TBtn tip="Merge cells" onClick={mergeCells}>Merge</TBtn>
       <TBtn tip="Split cell" onClick={splitCell}>Split</TBtn>
-
-      <div style={{ width: '1px', height: '20px', background: 'var(--glass-border)', margin: '0 4px' }} />
-      <span style={{ fontSize: '9px', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>Cell:</span>
+      <div style={{ width: '1px', height: '16px', background: 'var(--glass-border)', margin: '0 2px' }} />
+      <span style={{ fontSize: '8px', color: 'var(--text-muted)' }}>Cell:</span>
       {cellColors.map((c, i) => (
-        <button key={i} title={c.label} onClick={() => setCellBg(c.color)} style={{ width: '16px', height: '16px', borderRadius: '3px', border: '1px solid var(--glass-border)', background: c.color === 'transparent' ? 'var(--bg)' : c.color, cursor: 'pointer' }} />
+        <button key={i} title={c === 'transparent' ? 'Clear' : c} onClick={() => setCellBg(c)} style={{ width: '14px', height: '14px', borderRadius: '3px', border: '1px solid var(--glass-border)', background: c === 'transparent' ? 'var(--bg)' : c, cursor: 'pointer' }} />
       ))}
-
-      <div style={{ width: '1px', height: '20px', background: 'var(--glass-border)', margin: '0 4px' }} />
-      <span style={{ fontSize: '9px', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>Header:</span>
+      <input type="color" value="#ffffff" title="Custom cell color" onChange={e => setCellBg(e.target.value + '22')} style={{ width: '16px', height: '14px', border: '1px solid var(--glass-border)', borderRadius: '3px', cursor: 'pointer', padding: 0 }} />
+      <div style={{ width: '1px', height: '16px', background: 'var(--glass-border)', margin: '0 2px' }} />
+      <span style={{ fontSize: '8px', color: 'var(--text-muted)' }}>Header:</span>
       {headerColors.map((c, i) => (
-        <button key={i} title={c.label} onClick={() => setHeaderBg(c.color)} style={{ width: '16px', height: '16px', borderRadius: '3px', border: '1px solid var(--glass-border)', background: c.color, cursor: 'pointer' }} />
+        <button key={i} title={c} onClick={() => setHeaderBg(c)} style={{ width: '14px', height: '14px', borderRadius: '3px', border: '1px solid var(--glass-border)', background: c, cursor: 'pointer' }} />
       ))}
-
-      <div style={{ width: '1px', height: '20px', background: 'var(--glass-border)', margin: '0 4px' }} />
-      <span style={{ fontSize: '9px', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>Radius:</span>
+      <input type="color" value="#22c55e" title="Custom header color" onChange={e => setHeaderBg(e.target.value + '33')} style={{ width: '16px', height: '14px', border: '1px solid var(--glass-border)', borderRadius: '3px', cursor: 'pointer', padding: 0 }} />
+      <div style={{ width: '1px', height: '16px', background: 'var(--glass-border)', margin: '0 2px' }} />
+      <span style={{ fontSize: '8px', color: 'var(--text-muted)' }}>R:</span>
       {['0px', '6px', '10px', '16px'].map(r => (
-        <button key={r} title={`Table radius: ${r}`} onClick={() => applyTableRadius(r)} style={{ padding: '3px 6px', fontSize: '9px', borderRadius: '4px', border: '1px solid var(--glass-border)', background: 'transparent', color: 'var(--text-muted)', cursor: 'pointer', fontFamily: "var(--font-code)" }}>{r}</button>
+        <button key={r} title={`Radius: ${r}`} onClick={() => applyTableRadius(r)} style={{ padding: '2px 5px', fontSize: '8px', borderRadius: '3px', border: '1px solid var(--glass-border)', background: 'transparent', color: 'var(--text-muted)', cursor: 'pointer', fontFamily: "var(--font-code)" }}>{r}</button>
       ))}
-
-      <div style={{ width: '1px', height: '20px', background: 'var(--glass-border)', margin: '0 4px' }} />
-      <TBtn tip="Delete table" onClick={delTable} color="#ef4444">Delete</TBtn>
+      <div style={{ width: '1px', height: '16px', background: 'var(--glass-border)', margin: '0 2px' }} />
+      <TBtn tip="Delete table" onClick={delTable} color="#ef4444">✕</TBtn>
     </div>
   )
 }
@@ -341,10 +317,17 @@ export function BlogEditor({ initialContent = {}, onSave, saving }) {
       Underline, Highlight, Link.configure({ openOnClick: false }),
       Youtube, Blockquote, TextStyle, Color, FontFamily,
       Dropcursor.configure({ color: '#22c55e', width: 2 }), Gapcursor,
-      Table.configure({ resizable: true }),
+      Table.configure({
+        resizable: true,
+        HTMLAttributes: { class: 'tiptap-table' },
+      }),
       TableRow,
-      TableCell,
-      TableHeader,
+      TableCell.configure({
+        HTMLAttributes: { class: 'tiptap-table-cell' },
+      }),
+      TableHeader.configure({
+        HTMLAttributes: { class: 'tiptap-table-header' },
+      }),
       CardBlock, ColumnsBlock, GridBlock, ResizableImage, ResizableVideo, Callout, Spacer
     ],
     content: initialContent.content || '',
