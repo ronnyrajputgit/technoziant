@@ -33,7 +33,7 @@ const ResizeHandle = ({ onMouseDown }) => (
 
 const COLORS = ['rgba(255,255,255,0.03)', 'rgba(34,197,94,0.08)', 'rgba(59,130,246,0.08)', 'rgba(168,85,247,0.08)', 'rgba(245,158,11,0.08)', 'rgba(239,68,68,0.08)', 'rgba(6,182,212,0.08)', 'rgba(236,72,153,0.08)']
 const BORDERS = ['#ffffff14', '#22c55e4d', '#3b82f64d', '#a855f74d', '#f59e0b4d', '#ef44444d', '#06b6d44d', '#ec48994d']
-const RADII = ['0px', '4px', '8px', '12px', '16px', '20px', '50%']
+const RADII = ['0px', '4px', '8px', '12px', '16px', '20px']
 const PADS = ['8px', '12px', '16px', '24px', '32px', '48px']
 
 function ColorPicker({ value, onChange }) {
@@ -50,7 +50,7 @@ function ColorPicker({ value, onChange }) {
 function RadiusPicker({ value, onChange }) {
   return (
     <div style={{ display: 'flex', gap: '3px', alignItems: 'center' }}>
-      {RADII.map(r => <button key={r} onClick={() => onChange(r)} style={btn(value === r)}>{r === '50%' ? '⭕' : r}</button>)}
+      {RADII.map(r => <button key={r} onClick={() => onChange(r)} style={btn(value === r)}>{r}</button>)}
     </div>
   )
 }
@@ -140,6 +140,46 @@ function GridBlockComponent({ node, updateAttributes, deleteNode }) {
   )
 }
 
+function ImageCell({ cell, onUpdate }) {
+  const fileRef = useRef(null)
+  const [dragging, setDragging] = useState(false)
+
+  const handleFile = (file) => {
+    if (!file || !file.type.startsWith('image/')) return
+    const reader = new FileReader()
+    reader.onload = () => { onUpdate({ src: reader.result }) }
+    reader.readAsDataURL(file)
+  }
+
+  if (cell.src) {
+    return (
+      <div style={{ width: '100%' }}>
+        <img src={cell.src} alt={cell.alt || ''} style={{ width: '100%', borderRadius: cell.radius || '8px', display: 'block' }} onError={e => { e.target.style.display = 'none' }} />
+        <div style={{ display: 'flex', gap: '4px', marginTop: '6px', alignItems: 'center' }}>
+          <input type="text" value={cell.alt || ''} onChange={e => onUpdate({ alt: e.target.value })} placeholder="Caption..." style={{ flex: 1, textAlign: 'center', border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.03)', color: 'var(--text-muted)', fontSize: '11px', fontStyle: 'italic', outline: 'none', borderRadius: '4px', padding: '4px 8px', boxSizing: 'border-box' }} />
+          <button onClick={() => onUpdate({ src: '', alt: '' })} style={{ padding: '4px 8px', borderRadius: '4px', border: '1px solid rgba(239,68,68,0.3)', background: 'transparent', color: '#ef4444', fontSize: '9px', cursor: 'pointer', fontFamily: "var(--font-code)" }}>✕</button>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div style={{ width: '100%' }}>
+      <input ref={fileRef} type="file" accept="image/*" onChange={e => handleFile(e.target.files?.[0])} style={{ display: 'none' }} />
+      <div onDragOver={e => { e.preventDefault(); setDragging(true) }} onDragLeave={() => setDragging(false)} onDrop={e => { e.preventDefault(); setDragging(false); handleFile(e.dataTransfer.files?.[0]) }}
+        onClick={() => fileRef.current?.click()}
+        style={{ padding: '20px', border: `2px dashed ${dragging ? '#22c55e' : 'var(--glass-border)'}`, borderRadius: '8px', textAlign: 'center', cursor: 'pointer', background: dragging ? 'rgba(34,197,94,0.05)' : 'transparent', transition: 'all 0.2s' }}>
+        <div style={{ fontSize: '24px', marginBottom: '4px' }}>📤</div>
+        <div style={{ fontSize: '11px', color: 'var(--text)', fontWeight: '500', marginBottom: '4px' }}>Click or drag to upload</div>
+        <div style={{ fontSize: '9px', color: 'var(--text-muted)' }}>or paste URL below</div>
+      </div>
+      <input type="text" value={cell.src || ''} onChange={e => onUpdate({ src: e.target.value })} placeholder="Paste image URL..."
+        onKeyDown={e => e.key === 'Enter' && e.preventDefault()}
+        style={{ width: '100%', padding: '6px 10px', borderRadius: '6px', border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.05)', color: 'var(--text)', fontSize: '11px', outline: 'none', boxSizing: 'border-box', marginTop: '8px' }} />
+    </div>
+  )
+}
+
 function GridCell({ cell, index, isActive, onSelect, onUpdate, onRemove, onMoveLeft, onMoveRight, totalCells }) {
   const cellTypeBtns = [
     { type: 'text', icon: '📝', label: 'Text' },
@@ -177,24 +217,7 @@ function GridCell({ cell, index, isActive, onSelect, onUpdate, onRemove, onMoveL
             style={{ width: '100%', background: 'transparent', border: 'none', outline: 'none', color: 'var(--text)', fontSize: '14px', lineHeight: 1.6, resize: 'vertical', fontFamily: 'inherit', textAlign: cell.align || 'center', boxSizing: 'border-box' }} />
         )}
         {cell.type === 'image' && (
-          <div onClick={e => e.stopPropagation()} style={{ width: '100%' }}>
-            {cell.src ? (
-              <div>
-                <img src={cell.src} alt={cell.alt || ''} style={{ width: '100%', borderRadius: cell.radius || '8px', display: 'block' }} onError={e => { e.target.style.display = 'none' }} />
-                <div style={{ display: 'flex', gap: '4px', marginTop: '6px', alignItems: 'center' }}>
-                  <input type="text" value={cell.alt || ''} onChange={e => onUpdate({ alt: e.target.value })} placeholder="Caption..." style={{ flex: 1, textAlign: 'center', border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.03)', color: 'var(--text-muted)', fontSize: '11px', fontStyle: 'italic', outline: 'none', borderRadius: '4px', padding: '4px 8px', boxSizing: 'border-box' }} />
-                  <button onClick={() => onUpdate({ src: '', alt: '' })} style={{ padding: '4px 8px', borderRadius: '4px', border: '1px solid rgba(239,68,68,0.3)', background: 'transparent', color: '#ef4444', fontSize: '9px', cursor: 'pointer', fontFamily: "var(--font-code)" }}>✕</button>
-                </div>
-              </div>
-            ) : (
-              <div style={{ padding: '20px', border: '2px dashed var(--glass-border)', borderRadius: '8px', textAlign: 'center' }}>
-                <div style={{ fontSize: '24px', marginBottom: '4px' }}>🖼️</div>
-                <input type="text" value={cell.src || ''} onChange={e => onUpdate({ src: e.target.value })} placeholder="Paste image URL and press Enter..."
-                  onKeyDown={e => e.key === 'Enter' && e.preventDefault()}
-                  style={{ width: '100%', padding: '6px 10px', borderRadius: '6px', border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.05)', color: 'var(--text)', fontSize: '11px', outline: 'none', boxSizing: 'border-box' }} />
-              </div>
-            )}
-          </div>
+          <ImageCell cell={cell} onUpdate={onUpdate} />
         )}
         {cell.type === 'video' && (
           <div onClick={e => e.stopPropagation()} style={{ width: '100%' }}>
@@ -291,7 +314,7 @@ function CardBlockComponent({ node, updateAttributes, deleteNode }) {
               <input type="color" value={node.attrs.customColor || '#0f1424'} onChange={e => { const v = e.target.value; updateAttributes({ bgColor: v + '18', borderColor: v + '55', customColor: v }) }} style={{ width: '18px', height: '16px', border: '1px solid var(--glass-border)', borderRadius: '3px', cursor: 'pointer', padding: 0 }} />
               <div style={{ width: '1px', height: '18px', background: 'var(--glass-border)', margin: '0 4px' }} />
               <span style={{ fontSize: '9px', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>Radius:</span>
-              {RADII.map(r => <button key={r} onClick={() => updateAttributes({ radius: r })} style={btn(node.attrs.radius === r)}>{r === '50%' ? '⭕' : r}</button>)}
+              {RADII.map(r => <button key={r} onClick={() => updateAttributes({ radius: r })} style={btn(node.attrs.radius === r)}>{r}</button>)}
               <div style={{ width: '1px', height: '18px', background: 'var(--glass-border)', margin: '0 4px' }} />
               <span style={{ fontSize: '9px', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>Pad:</span>
               {PADS.map(p => <button key={p} onClick={() => updateAttributes({ padding: p })} style={btn(node.attrs.padding === p)}>{p}</button>)}
