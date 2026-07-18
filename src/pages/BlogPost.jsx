@@ -60,7 +60,10 @@ export function BlogPost() {
 
 function renderContent(content) {
   if (!content) return ''
-  if (typeof content === 'string') return content
+  if (typeof content === 'string') {
+    try { content = JSON.parse(content) } catch (e) { return content }
+  }
+  if (!content || !content.type) return ''
   return tiptapToHtml(content)
 }
 
@@ -136,14 +139,17 @@ function tiptapToHtml(json) {
         const align = cell.align || 'center'
         const cellBg = cell.bgColor || 'transparent'
         const cellRad = cell.radius || '6px'
+        const cellW = cell.width || '100%'
         let inner = ''
         if (cell.type === 'text') inner = cell.content || ''
-        else if (cell.type === 'image' && cell.src) inner = `<img src="${escapeHtml(cell.src)}" alt="${escapeHtml(cell.alt || '')}" style="width:100%;border-radius:${cellRad};display:block" />${cell.alt ? `<div style="font-size:10px;color:var(--text-muted);margin-top:4px;font-style:italic">${escapeHtml(cell.alt)}</div>` : ''}`
+        else if (cell.type === 'image' && cell.src) inner = `<img src="${escapeHtml(cell.src)}" alt="${escapeHtml(cell.alt || '')}" style="width:${cellW};max-width:100%;border-radius:${cellRad};display:block" />${cell.alt ? `<div style="font-size:10px;color:var(--text-muted);margin-top:4px;font-style:italic">${escapeHtml(cell.alt)}</div>` : ''}`
         else if (cell.type === 'video' && cell.src) {
+          const isBase64 = cell.src.startsWith('data:video')
           const isYT = cell.src.includes('youtube') || cell.src.includes('youtu.be')
           const getEmbed = (url) => { const m = url?.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&?/]+)/); return m ? `https://www.youtube.com/embed/${m[1]}` : url }
-          if (isYT) inner = `<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:${cellRad}"><iframe src="${getEmbed(cell.src)}" style="position:absolute;top:0;left:0;width:100%;height:100%;border:none" allowfullscreen></iframe></div>`
-          else inner = `<video src="${escapeHtml(cell.src)}" controls style="width:100%;border-radius:${cellRad};display:block"></video>`
+          if (isBase64) inner = `<video src="${escapeHtml(cell.src)}" controls style="width:${cellW};max-width:100%;border-radius:${cellRad};display:block"></video>`
+          else if (isYT) inner = `<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:${cellRad}"><iframe src="${getEmbed(cell.src)}" style="position:absolute;top:0;left:0;width:100%;height:100%;border:none" allowfullscreen></iframe></div>`
+          else inner = `<video src="${escapeHtml(cell.src)}" controls style="width:${cellW};max-width:100%;border-radius:${cellRad};display:block"></video>`
         }
         return `<div style="background:${cellBg};border-radius:${cellRad};padding:8px;text-align:${align};min-height:50px">${inner}</div>`
       }).join('')

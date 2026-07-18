@@ -447,23 +447,43 @@ function CardCell({ cell, index, isActive, onSelect, onUpdate, onRemove, totalCe
 
 function CardCellImage({ cell, onUpdate }) {
   const ref = useRef(null)
+  const [dragging, setDragging] = useState(false)
+  const imgRef = useRef(null)
+  const [resizable, setResizable] = useState(false)
+  const startX = useRef(0)
+  const startW = useRef(0)
+
+  const startResize = (e) => {
+    e.preventDefault()
+    startX.current = e.clientX
+    startW.current = imgRef.current?.offsetWidth || 200
+    const onMove = (e) => { const newW = Math.max(80, startW.current + (e.clientX - startX.current)); imgRef.current.style.width = newW + 'px' }
+    const onUp = () => { document.removeEventListener('mousemove', onMove); document.removeEventListener('mouseup', onUp); if (imgRef.current) onUpdate({ width: imgRef.current.style.width }) }
+    document.addEventListener('mousemove', onMove); document.addEventListener('mouseup', onUp)
+  }
+
   if (cell.src) {
     return (
       <div style={{ width: '100%' }}>
-        <img src={cell.src} alt={cell.alt || ''} style={{ width: '100%', borderRadius: cell.radius || '6px', display: 'block' }} />
-        <div style={{ display: 'flex', gap: '3px', marginTop: '4px', alignItems: 'center' }}>
-          <input type="text" value={cell.alt || ''} onChange={e => onUpdate({ alt: e.target.value })} placeholder="Caption..." style={{ flex: 1, border: '1px solid var(--glass-border)', background: 'transparent', color: 'var(--text-muted)', fontSize: '10px', outline: 'none', borderRadius: '3px', padding: '3px 6px', boxSizing: 'border-box' }} />
-          <button onClick={() => onUpdate({ src: '', alt: '' })} style={{ padding: '3px 6px', borderRadius: '3px', border: '1px solid rgba(239,68,68,0.3)', background: 'transparent', color: '#ef4444', fontSize: '9px', cursor: 'pointer' }}>✕</button>
+        <div style={{ display: 'flex', gap: '3px', marginBottom: '4px', justifyContent: 'center' }}>
+          <button title="Toggle resize" onClick={() => setResizable(!resizable)} style={{ padding: '2px 6px', fontSize: '9px', borderRadius: '3px', border: `1px solid ${resizable ? '#3b82f6' : 'var(--glass-border)'}`, background: resizable ? 'rgba(59,130,246,0.15)' : 'transparent', color: resizable ? '#3b82f6' : 'var(--text-muted)', cursor: 'pointer' }}>↔ Resize</button>
+          <button title="Remove image" onClick={() => onUpdate({ src: '', alt: '', width: '' })} style={{ padding: '2px 6px', fontSize: '9px', borderRadius: '3px', border: '1px solid rgba(239,68,68,0.3)', background: 'transparent', color: '#ef4444', cursor: 'pointer' }}>✕</button>
         </div>
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <img ref={imgRef} src={cell.src} alt={cell.alt || ''} style={{ width: cell.width || '100%', maxWidth: '100%', borderRadius: '6px', display: 'block', cursor: resizable ? 'ew-resize' : 'default' }} onMouseDown={resizable ? startResize : undefined} />
+        </div>
+        {resizable && <div style={{ textAlign: 'center', fontSize: '9px', color: '#3b82f6', marginTop: '2px' }}>↔ Drag edges to resize</div>}
+        <input type="text" value={cell.alt || ''} onChange={e => onUpdate({ alt: e.target.value })} placeholder="Caption..." style={{ width: '100%', border: '1px solid var(--glass-border)', background: 'transparent', color: 'var(--text-muted)', fontSize: '10px', outline: 'none', borderRadius: '3px', padding: '3px 6px', boxSizing: 'border-box', marginTop: '4px', textAlign: 'center' }} />
       </div>
     )
   }
   return (
     <div style={{ width: '100%' }}>
       <input ref={ref} type="file" accept="image/*" onChange={e => { const f = e.target.files?.[0]; if (f) { const r = new FileReader(); r.onload = () => onUpdate({ src: r.result }); r.readAsDataURL(f) } }} style={{ display: 'none' }} />
-      <div onClick={() => ref.current?.click()} style={{ padding: '12px', border: '1px dashed var(--glass-border)', borderRadius: '6px', textAlign: 'center', cursor: 'pointer' }}>
+      <div onDragOver={e => { e.preventDefault(); setDragging(true) }} onDragLeave={() => setDragging(false)} onDrop={e => { e.preventDefault(); setDragging(false); const f = e.dataTransfer.files?.[0]; if (f) { const r = new FileReader(); r.onload = () => onUpdate({ src: r.result }); r.readAsDataURL(f) } }}
+        onClick={() => ref.current?.click()} style={{ padding: '12px', border: `1px dashed ${dragging ? '#22c55e' : 'var(--glass-border)'}`, borderRadius: '6px', textAlign: 'center', cursor: 'pointer', background: dragging ? 'rgba(34,197,94,0.05)' : 'transparent' }}>
         <div style={{ fontSize: '18px' }}>📤</div>
-        <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Upload or URL</div>
+        <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Upload or drag</div>
       </div>
       <input type="text" value={cell.src || ''} onChange={e => onUpdate({ src: e.target.value })} placeholder="Image URL..."
         style={{ width: '100%', padding: '4px 8px', borderRadius: '4px', border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.05)', color: 'var(--text)', fontSize: '10px', outline: 'none', boxSizing: 'border-box', marginTop: '6px' }} />
@@ -474,6 +494,20 @@ function CardCellImage({ cell, onUpdate }) {
 function CardCellVideo({ cell, onUpdate }) {
   const ref = useRef(null)
   const [urlInput, setUrlInput] = useState('')
+  const [resizable, setResizable] = useState(false)
+  const vidRef = useRef(null)
+  const startX = useRef(0)
+  const startW = useRef(0)
+
+  const startResize = (e) => {
+    e.preventDefault()
+    startX.current = e.clientX
+    startW.current = vidRef.current?.offsetWidth || 200
+    const onMove = (e) => { const newW = Math.max(120, startW.current + (e.clientX - startX.current)); vidRef.current.style.width = newW + 'px' }
+    const onUp = () => { document.removeEventListener('mousemove', onMove); document.removeEventListener('mouseup', onUp); if (vidRef.current) onUpdate({ width: vidRef.current.style.width }) }
+    document.addEventListener('mousemove', onMove); document.addEventListener('mouseup', onUp)
+  }
+
   const isYT = cell.src?.includes('youtube') || cell.src?.includes('youtu.be')
   const getEmbed = (url) => { const m = url?.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&?/]+)/); return m ? `https://www.youtube.com/embed/${m[1]}` : url }
   const isBase64 = cell.src?.startsWith('data:video')
@@ -481,18 +515,23 @@ function CardCellVideo({ cell, onUpdate }) {
   if (cell.src) {
     return (
       <div style={{ width: '100%' }}>
-        {isBase64 ? (
-          <video src={cell.src} controls style={{ width: '100%', borderRadius: '6px', display: 'block' }} />
-        ) : isYT ? (
-          <div style={{ position: 'relative', paddingBottom: '56.25%', borderRadius: '6px', overflow: 'hidden' }}>
-            <iframe src={getEmbed(cell.src)} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none' }} allowFullScreen />
-          </div>
-        ) : (
-          <video src={cell.src} controls style={{ width: '100%', borderRadius: '6px', display: 'block' }} />
-        )}
-        <div style={{ textAlign: 'center', marginTop: '4px' }}>
-          <button onClick={() => onUpdate({ src: '' })} style={{ padding: '3px 8px', borderRadius: '3px', border: '1px solid rgba(239,68,68,0.3)', background: 'transparent', color: '#ef4444', fontSize: '9px', cursor: 'pointer' }}>✕ Remove</button>
+        <div style={{ display: 'flex', gap: '3px', marginBottom: '4px', justifyContent: 'center' }}>
+          <button title="Toggle resize" onClick={() => setResizable(!resizable)} style={{ padding: '2px 6px', fontSize: '9px', borderRadius: '3px', border: `1px solid ${resizable ? '#3b82f6' : 'var(--glass-border)'}`, background: resizable ? 'rgba(59,130,246,0.15)' : 'transparent', color: resizable ? '#3b82f6' : 'var(--text-muted)', cursor: 'pointer' }}>↔ Resize</button>
+          <button title="Remove video" onClick={() => onUpdate({ src: '', width: '' })} style={{ padding: '2px 6px', fontSize: '9px', borderRadius: '3px', border: '1px solid rgba(239,68,68,0.3)', background: 'transparent', color: '#ef4444', cursor: 'pointer' }}>✕</button>
         </div>
+        <div ref={vidRef} style={{ width: cell.width || '100%', maxWidth: '100%', cursor: resizable ? 'ew-resize' : 'default', position: 'relative' }} onMouseDown={resizable ? startResize : undefined}>
+          {isBase64 ? (
+            <video src={cell.src} controls style={{ width: '100%', borderRadius: '6px', display: 'block' }} />
+          ) : isYT ? (
+            <div style={{ position: 'relative', paddingBottom: '56.25%', borderRadius: '6px', overflow: 'hidden' }}>
+              <iframe src={getEmbed(cell.src)} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none' }} allowFullScreen />
+            </div>
+          ) : (
+            <video src={cell.src} controls style={{ width: '100%', borderRadius: '6px', display: 'block' }} />
+          )}
+          {resizable && <div style={{ position: 'absolute', top: '50%', right: '-10px', transform: 'translateY(-50%)', width: '8px', height: '24px', background: '#3b82f6', borderRadius: '4px', cursor: 'ew-resize' }} onMouseDown={startResize} />}
+        </div>
+        {resizable && <div style={{ textAlign: 'center', fontSize: '9px', color: '#3b82f6', marginTop: '2px' }}>↔ Drag to resize</div>}
       </div>
     )
   }
@@ -502,7 +541,7 @@ function CardCellVideo({ cell, onUpdate }) {
       <input ref={ref} type="file" accept="video/*" onChange={e => { const f = e.target.files?.[0]; if (f) { const r = new FileReader(); r.onload = () => onUpdate({ src: r.result }); r.readAsDataURL(f) } }} style={{ display: 'none' }} />
       <div onClick={() => ref.current?.click()} style={{ padding: '12px', border: '1px dashed var(--glass-border)', borderRadius: '6px', textAlign: 'center', cursor: 'pointer' }}>
         <div style={{ fontSize: '18px' }}>🎬</div>
-        <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Upload or URL</div>
+        <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Upload video</div>
       </div>
       <div style={{ display: 'flex', gap: '4px', marginTop: '6px' }}>
         <input type="text" value={urlInput} onChange={e => setUrlInput(e.target.value)} placeholder="YouTube URL..."
@@ -517,7 +556,7 @@ function CardCellVideo({ cell, onUpdate }) {
 
 export const CardBlock = Node.create({
   name: 'cardBlock', group: 'block', atom: true,
-  addAttributes() { return { bgColor: { default: 'rgba(255,255,255,0.03)' }, borderColor: { default: 'var(--glass-border)' }, customColor: { default: '#0f1424' }, padding: { default: '16px' }, radius: { default: '12px' }, width: { default: '100%' }, cells: { default: [{ type: 'text', content: '', src: '', alt: '', align: 'center', bgColor: 'transparent', radius: '8px' }] } } },
+  addAttributes() { return { bgColor: { default: 'rgba(255,255,255,0.03)' }, borderColor: { default: 'var(--glass-border)' }, customColor: { default: '#0f1424' }, padding: { default: '16px' }, radius: { default: '12px' }, width: { default: '100%' }, cells: { default: [{ type: 'text', content: '', src: '', alt: '', align: 'center', bgColor: 'transparent', radius: '8px', width: '100%' }] } } },
   parseHTML() { return [{ tag: 'div[data-card-block]' }] },
   renderHTML({ HTMLAttributes }) { return ['div', mergeAttributes(HTMLAttributes, { 'data-card-block': '' })] },
   addNodeView() { return ReactNodeViewRenderer(CardBlockComponent) }
