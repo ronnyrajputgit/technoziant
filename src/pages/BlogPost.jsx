@@ -164,7 +164,14 @@ function tiptapToHtml(json) {
         let inner = ''
         if (cell.type === 'text') inner = cell.content || ''
         else if (cell.type === 'image' && cell.src) inner = `<img src="${escapeHtml(cell.src)}" alt="${escapeHtml(cell.alt || '')}" style="width:100%;border-radius:${rad};display:block" />${cell.alt ? `<div style="font-size:11px;color:var(--text-muted);margin-top:6px;font-style:italic">${escapeHtml(cell.alt)}</div>` : ''}`
-        else if (cell.type === 'video' && cell.src) inner = `<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:${rad}"><iframe src="${escapeHtml(cell.src)}" style="position:absolute;top:0;left:0;width:100%;height:100%;border:none" allowfullscreen></iframe></div>`
+        else if (cell.type === 'video' && cell.src) {
+          const isBase64 = cell.src.startsWith('data:video')
+          const isYT = cell.src.includes('youtube') || cell.src.includes('youtu.be')
+          const getEmbed = (url) => { const m = url?.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&?/]+)/); return m ? `https://www.youtube.com/embed/${m[1]}` : url }
+          if (isBase64) inner = `<video src="${escapeHtml(cell.src)}" controls style="width:100%;border-radius:${rad};display:block"></video>`
+          else if (isYT) inner = `<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:${rad}"><iframe src="${getEmbed(cell.src)}" style="position:absolute;top:0;left:0;width:100%;height:100%;border:none" allowfullscreen></iframe></div>`
+          else inner = `<video src="${escapeHtml(cell.src)}" controls style="width:100%;border-radius:${rad};display:block"></video>`
+        }
         else if (cell.type === 'card') inner = `<div style="background:${bg};border-radius:${rad};padding:${cellPad};border:1px solid var(--glass-border)">${cell.src ? `<img src="${escapeHtml(cell.src)}" alt="" style="width:100%;border-radius:8px;margin-bottom:8px" />` : ''}${cell.content || ''}</div>`
         else inner = cell.content || ''
         return `<div style="background:${bg};border-radius:${rad};padding:${cellPad};text-align:${align};min-height:60px">${inner}</div>`
@@ -182,8 +189,11 @@ function tiptapToHtml(json) {
       let src = json.attrs?.src || ''
       const w = json.attrs?.width || '100%'
       const align = json.attrs?.align || 'center'
-      const ytMatch = src.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&?/]+)/)
-      if (ytMatch) src = `https://www.youtube.com/embed/${ytMatch[1]}`
+      const isBase64 = src.startsWith('data:video')
+      const isYT = src.includes('youtube') || src.includes('youtu.be')
+      const getEmbed = (url) => { const m = url?.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&?/]+)/); return m ? `https://www.youtube.com/embed/${m[1]}` : url }
+      if (isBase64) return `<div style="margin:1.5em 0;text-align:${align}"><video src="${escapeHtml(src)}" controls style="width:${w};max-width:100%;border-radius:12px;display:inline-block"></video></div>`
+      if (isYT) src = getEmbed(src)
       return `<div style="margin:1.5em 0;text-align:${align}"><div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:12px;width:${w};max-width:100%;display:inline-block"><iframe src="${escapeHtml(src)}" style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;border-radius:12px" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen loading="lazy"></iframe></div></div>`
     }
     case 'resizableImage': {
