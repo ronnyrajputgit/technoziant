@@ -183,17 +183,19 @@ function LinkModal({ open, onClose, onInsert }) {
 function TableToolbar({ editor }) {
   if (!editor || !editor.isActive('table')) return null
 
-  const getActiveTable = () => {
+  const getTable = () => {
     const { state } = editor
-    const { from } = state.selection
-    let node = state.doc.nodeAt(from)
-    let depth = 0
-    while (node && node.type.name !== 'table' && depth < 10) {
-      depth++
-      node = state.doc.nodeAt(from - depth)
+    const { $from } = state.selection
+    for (let d = $from.depth; d >= 0; d--) {
+      const node = $from.node(d)
+      if (node?.type?.name === 'table') {
+        const pos = $from.start(d)
+        const dom = editor.view.domAtPos(pos)
+        const el = dom.node?.nodeType === 1 ? dom.node : dom.node?.parentElement
+        return el?.closest?.('table') || el?.querySelector?.('table') || null
+      }
     }
-    const domNode = editor.view.domAtPos(from - depth).node
-    return domNode?.closest?.('table') || domNode?.querySelector?.('table') || null
+    return null
   }
 
   const TBtn = ({ onClick, children, color, tip }) => (
@@ -205,22 +207,22 @@ function TableToolbar({ editor }) {
   )
 
   const setCellBg = (color) => {
-    const table = getActiveTable()
+    const table = getTable()
     if (!table) return
     const sel = window.getSelection()
     if (!sel.rangeCount) return
     const range = sel.getRangeAt(0)
     table.querySelectorAll('td, th').forEach(cell => {
-      const cellRect = cell.getBoundingClientRect()
-      const selRect = range.getBoundingClientRect()
-      if (cellRect.left < selRect.right && cellRect.right > selRect.left && cellRect.top < selRect.bottom && cellRect.bottom > selRect.top) {
+      const cr = cell.getBoundingClientRect()
+      const sr = range.getBoundingClientRect()
+      if (cr.left < sr.right && cr.right > sr.left && cr.top < sr.bottom && cr.bottom > sr.top) {
         cell.style.backgroundColor = color === 'transparent' ? '' : color
       }
     })
   }
 
   const setAllHeaderBg = (color) => {
-    const table = getActiveTable()
+    const table = getTable()
     if (!table) return
     table.querySelectorAll('th').forEach(th => { th.style.backgroundColor = color })
   }
@@ -234,22 +236,19 @@ function TableToolbar({ editor }) {
   const splitCell = () => { try { editor.chain().focus().splitCell().run() } catch(e) {} }
 
   const applyTableRadius = (r) => {
-    const table = getActiveTable()
+    const table = getTable()
     if (!table) return
     table.style.borderRadius = r
     table.style.overflow = 'hidden'
     table.querySelectorAll('th, td').forEach(c => c.style.borderRadius = '0')
     const rows = table.querySelectorAll('tr')
     if (rows.length > 0) {
-      const firstRow = rows[0]
-      const lastRow = rows[rows.length - 1]
-      const fc1 = firstRow.querySelector('th, td')
-      const lc1 = firstRow.querySelector('th:last-child, td:last-child')
+      const first = rows[0], last = rows[rows.length - 1]
+      const fc1 = first.querySelector('th, td'), lc1 = first.querySelector('th:last-child, td:last-child')
       if (fc1) fc1.style.borderTopLeftRadius = r
       if (lc1) lc1.style.borderTopRightRadius = r
-      if (lastRow !== firstRow) {
-        const fc2 = lastRow.querySelector('th, td')
-        const lc2 = lastRow.querySelector('th:last-child, td:last-child')
+      if (last !== first) {
+        const fc2 = last.querySelector('th, td'), lc2 = last.querySelector('th:last-child, td:last-child')
         if (fc2) fc2.style.borderBottomLeftRadius = r
         if (lc2) lc2.style.borderBottomRightRadius = r
       }
@@ -267,24 +266,24 @@ function TableToolbar({ editor }) {
       <TBtn tip="Delete row" onClick={delRow} color="#f59e0b">-Row</TBtn>
       <TBtn tip="Delete column" onClick={delCol} color="#f59e0b">-Col</TBtn>
       <div style={{ width: '1px', height: '16px', background: 'var(--glass-border)', margin: '0 2px' }} />
-      <TBtn tip="Merge cells (select multiple first)" onClick={mergeCells}>Merge</TBtn>
+      <TBtn tip="Merge selected cells" onClick={mergeCells}>Merge</TBtn>
       <TBtn tip="Split cell" onClick={splitCell}>Split</TBtn>
       <div style={{ width: '1px', height: '16px', background: 'var(--glass-border)', margin: '0 2px' }} />
       <span style={{ fontSize: '8px', color: 'var(--text-muted)' }}>Cell:</span>
       {cellColors.map((c, i) => (
-        <button key={i} title={c === 'transparent' ? 'Clear' : c} onClick={(e) => { e.preventDefault(); setCellBg(c) }} style={{ width: '14px', height: '14px', borderRadius: '3px', border: '1px solid var(--glass-border)', background: c === 'transparent' ? 'var(--bg)' : c, cursor: 'pointer' }} />
+        <button key={i} title={c === 'transparent' ? 'Clear' : c} onMouseDown={(e) => { e.preventDefault(); e.stopPropagation() }} onClick={(e) => { e.preventDefault(); e.stopPropagation(); setCellBg(c) }} style={{ width: '14px', height: '14px', borderRadius: '3px', border: '1px solid var(--glass-border)', background: c === 'transparent' ? 'var(--bg)' : c, cursor: 'pointer' }} />
       ))}
-      <input type="color" value="#ffffff" title="Custom cell color" onChange={e => setCellBg(e.target.value + '22')} style={{ width: '16px', height: '14px', border: '1px solid var(--glass-border)', borderRadius: '3px', cursor: 'pointer', padding: 0 }} />
+      <input type="color" value="#ffffff" title="Custom cell color" onMouseDown={e => e.stopPropagation()} onChange={e => setCellBg(e.target.value + '22')} style={{ width: '16px', height: '14px', border: '1px solid var(--glass-border)', borderRadius: '3px', cursor: 'pointer', padding: 0 }} />
       <div style={{ width: '1px', height: '16px', background: 'var(--glass-border)', margin: '0 2px' }} />
       <span style={{ fontSize: '8px', color: 'var(--text-muted)' }}>Header:</span>
       {headerColors.map((c, i) => (
-        <button key={i} title={c} onClick={(e) => { e.preventDefault(); setAllHeaderBg(c) }} style={{ width: '14px', height: '14px', borderRadius: '3px', border: '1px solid var(--glass-border)', background: c, cursor: 'pointer' }} />
+        <button key={i} title={c} onMouseDown={e => e.stopPropagation()} onClick={(e) => { e.preventDefault(); e.stopPropagation(); setAllHeaderBg(c) }} style={{ width: '14px', height: '14px', borderRadius: '3px', border: '1px solid var(--glass-border)', background: c, cursor: 'pointer' }} />
       ))}
-      <input type="color" value="#22c55e" title="Custom header color" onChange={e => setAllHeaderBg(e.target.value + '33')} style={{ width: '16px', height: '14px', border: '1px solid var(--glass-border)', borderRadius: '3px', cursor: 'pointer', padding: 0 }} />
+      <input type="color" value="#22c55e" title="Custom header color" onMouseDown={e => e.stopPropagation()} onChange={e => setAllHeaderBg(e.target.value + '33')} style={{ width: '16px', height: '14px', border: '1px solid var(--glass-border)', borderRadius: '3px', cursor: 'pointer', padding: 0 }} />
       <div style={{ width: '1px', height: '16px', background: 'var(--glass-border)', margin: '0 2px' }} />
       <span style={{ fontSize: '8px', color: 'var(--text-muted)' }}>R:</span>
       {['0px', '6px', '10px', '16px'].map(r => (
-        <button key={r} title={`Radius: ${r}`} onClick={(e) => { e.preventDefault(); applyTableRadius(r) }} style={{ padding: '2px 5px', fontSize: '8px', borderRadius: '3px', border: '1px solid var(--glass-border)', background: 'transparent', color: 'var(--text-muted)', cursor: 'pointer', fontFamily: "var(--font-code)" }}>{r}</button>
+        <button key={r} title={`Radius: ${r}`} onMouseDown={e => e.stopPropagation()} onClick={(e) => { e.preventDefault(); e.stopPropagation(); applyTableRadius(r) }} style={{ padding: '2px 5px', fontSize: '8px', borderRadius: '3px', border: '1px solid var(--glass-border)', background: 'transparent', color: 'var(--text-muted)', cursor: 'pointer', fontFamily: "var(--font-code)" }}>{r}</button>
       ))}
       <div style={{ width: '1px', height: '16px', background: 'var(--glass-border)', margin: '0 2px' }} />
       <TBtn tip="Delete table" onClick={delTable} color="#ef4444">✕</TBtn>
@@ -628,12 +627,14 @@ export function BlogEditor({ initialContent = {}, onSave, saving }) {
         {showPreview ? (
           <div className="blog-content" dangerouslySetInnerHTML={{ __html: renderContent(editor.getJSON()) }} />
         ) : (
-          <>
-            <TableToolbar editor={editor} />
-            <div className="liquid-glass" style={{ borderRadius: '14px', overflow: 'hidden', border: '1px solid var(--glass-border)' }}>
-              <EditorContent editor={editor} />
-            </div>
-          </>
+          <div className="liquid-glass" style={{ borderRadius: '14px', overflow: 'hidden', border: '1px solid var(--glass-border)', position: 'relative' }}>
+            {editor.isActive('table') && (
+              <div style={{ position: 'sticky', top: 0, zIndex: 10 }}>
+                <TableToolbar editor={editor} />
+              </div>
+            )}
+            <EditorContent editor={editor} />
+          </div>
         )}
       </div>
 
