@@ -77,10 +77,30 @@ function GridBlockComponent({ node, updateAttributes, deleteNode }) {
     const newCells = Array.from({ length: l.cols }, (_, i) => cells[i] || { type: 'text', content: '', src: '', alt: '', align: 'center', bgColor: COLORS[0], borderColor: BORDERS[0], radius: '8px', padding: '16px' })
     updateAttributes({ cols: l.cols, colWidths: l.widths, cells: newCells })
   }
-  const updateCell = (i, updates) => { const c = [...cells]; c[i] = { ...c[i], ...updates }; updateAttributes({ cells: c }) }
-  const addCell = () => { updateAttributes({ cells: [...cells, { type: 'text', content: '', src: '', alt: '', align: 'center', bgColor: COLORS[0], borderColor: BORDERS[0], radius: '8px', padding: '16px' }], cols: cells.length + 1 }) }
-  const removeCell = (i) => { if (cells.length <= 1) return; const c = cells.filter((_, j) => j !== i); updateAttributes({ cells: c, cols: c.length }) }
-  const moveCell = (from, to) => { if (to < 0 || to >= cells.length) return; const c = [...cells]; const [m] = c.splice(from, 1); c.splice(to, 0, m); updateAttributes({ cells: c }) }
+  const updateCell = (i, updates) => {
+    const currentCells = node.attrs.cells || []
+    const c = [...currentCells]
+    c[i] = { ...c[i], ...updates }
+    updateAttributes({ cells: c })
+  }
+  const addCell = () => {
+    const currentCells = node.attrs.cells || []
+    updateAttributes({ cells: [...currentCells, { type: 'text', content: '', src: '', alt: '', align: 'center', bgColor: COLORS[0], borderColor: BORDERS[0], radius: '8px', padding: '16px' }], cols: currentCells.length + 1 })
+  }
+  const removeCell = (i) => {
+    const currentCells = node.attrs.cells || []
+    if (currentCells.length <= 1) return
+    const c = currentCells.filter((_, j) => j !== i)
+    updateAttributes({ cells: c, cols: c.length })
+  }
+  const moveCell = (from, to) => {
+    const currentCells = node.attrs.cells || []
+    if (to < 0 || to >= currentCells.length) return
+    const c = [...currentCells]
+    const [m] = c.splice(from, 1)
+    c.splice(to, 0, m)
+    updateAttributes({ cells: c })
+  }
   const gridCols = node.attrs.colWidths ? node.attrs.colWidths.join(' ') : `repeat(${node.attrs.cols || 2}, 1fr)`
 
   return (
@@ -133,7 +153,7 @@ function GridCell({ cell, index, isActive, onSelect, onUpdate, onRemove, onMoveL
       {isActive && (
         <div style={{ display: 'flex', gap: '3px', padding: '4px 6px', borderBottom: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.03)', flexWrap: 'wrap', alignItems: 'center' }}>
           {cellTypeBtns.map(t => (
-            <button key={t.type} onMouseDown={e => e.stopPropagation()} onClick={e => { e.stopPropagation(); onUpdate({ type: t.type, content: '', src: '' }) }} style={btn(cell.type === t.type)}>{t.icon} {t.label}</button>
+            <button key={t.type} onMouseDown={e => e.stopPropagation()} onClick={e => { e.stopPropagation(); onUpdate({ type: t.type, src: '', alt: '', content: '' }) }} style={btn(cell.type === t.type)}>{t.icon} {t.label}</button>
           ))}
           <div style={{ width: '1px', height: '16px', background: 'var(--glass-border)', margin: '0 3px' }} />
           {['left', 'center', 'right'].map(a => (
@@ -150,25 +170,29 @@ function GridCell({ cell, index, isActive, onSelect, onUpdate, onRemove, onMoveL
           </div>
         </div>
       )}
-      <div style={{ padding: cell.padding || '16px', textAlign: cell.align || 'center', minHeight: '60px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ padding: cell.padding || '16px', textAlign: cell.align || 'center', minHeight: '60px' }}>
         {cell.type === 'text' && (
           <textarea value={cell.content || ''} onChange={e => onUpdate({ content: e.target.value })}
             onMouseDown={e => e.stopPropagation()} onClick={e => e.stopPropagation()}
             placeholder="Type here..."
             rows={3}
-            style={{ width: '100%', background: 'transparent', border: 'none', outline: 'none', color: 'var(--text)', fontSize: '14px', lineHeight: 1.6, resize: 'vertical', fontFamily: 'inherit', textAlign: cell.align || 'center' }} />
+            style={{ width: '100%', background: 'transparent', border: 'none', outline: 'none', color: 'var(--text)', fontSize: '14px', lineHeight: 1.6, resize: 'vertical', fontFamily: 'inherit', textAlign: cell.align || 'center', boxSizing: 'border-box' }} />
         )}
         {cell.type === 'image' && (
           <div onClick={e => e.stopPropagation()} style={{ width: '100%' }}>
             {cell.src ? (
-              <>
-                <img src={cell.src} alt={cell.alt || ''} style={{ width: '100%', borderRadius: cell.radius || '8px', display: 'block' }} />
-                <input type="text" value={cell.alt || ''} onChange={e => onUpdate({ alt: e.target.value })} placeholder="Caption..." style={{ width: '100%', textAlign: 'center', border: 'none', background: 'transparent', color: 'var(--text-muted)', fontSize: '11px', fontStyle: 'italic', marginTop: '6px', outline: 'none' }} />
-              </>
+              <div>
+                <img src={cell.src} alt={cell.alt || ''} style={{ width: '100%', borderRadius: cell.radius || '8px', display: 'block' }} onError={e => { e.target.style.display = 'none' }} />
+                <div style={{ display: 'flex', gap: '4px', marginTop: '6px', alignItems: 'center' }}>
+                  <input type="text" value={cell.alt || ''} onChange={e => onUpdate({ alt: e.target.value })} placeholder="Caption..." style={{ flex: 1, textAlign: 'center', border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.03)', color: 'var(--text-muted)', fontSize: '11px', fontStyle: 'italic', outline: 'none', borderRadius: '4px', padding: '4px 8px', boxSizing: 'border-box' }} />
+                  <button onClick={() => onUpdate({ src: '', alt: '' })} style={{ padding: '4px 8px', borderRadius: '4px', border: '1px solid rgba(239,68,68,0.3)', background: 'transparent', color: '#ef4444', fontSize: '9px', cursor: 'pointer', fontFamily: "var(--font-code)" }}>✕</button>
+                </div>
+              </div>
             ) : (
               <div style={{ padding: '20px', border: '2px dashed var(--glass-border)', borderRadius: '8px', textAlign: 'center' }}>
                 <div style={{ fontSize: '24px', marginBottom: '4px' }}>🖼️</div>
-                <input type="text" value={cell.src || ''} onChange={e => onUpdate({ src: e.target.value })} placeholder="Paste image URL..."
+                <input type="text" value={cell.src || ''} onChange={e => onUpdate({ src: e.target.value })} placeholder="Paste image URL and press Enter..."
+                  onKeyDown={e => e.key === 'Enter' && e.preventDefault()}
                   style={{ width: '100%', padding: '6px 10px', borderRadius: '6px', border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.05)', color: 'var(--text)', fontSize: '11px', outline: 'none', boxSizing: 'border-box' }} />
               </div>
             )}
@@ -177,32 +201,43 @@ function GridCell({ cell, index, isActive, onSelect, onUpdate, onRemove, onMoveL
         {cell.type === 'video' && (
           <div onClick={e => e.stopPropagation()} style={{ width: '100%' }}>
             {cell.src ? (
-              <div style={{ position: 'relative', paddingBottom: '56.25%', borderRadius: cell.radius || '8px', overflow: 'hidden' }}>
-                <iframe src={cell.src} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none' }} allowFullScreen />
+              <div>
+                <div style={{ position: 'relative', paddingBottom: '56.25%', borderRadius: cell.radius || '8px', overflow: 'hidden' }}>
+                  <iframe src={cell.src} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none' }} allowFullScreen />
+                </div>
+                <div style={{ display: 'flex', gap: '4px', marginTop: '6px', justifyContent: 'center' }}>
+                  <button onClick={() => onUpdate({ src: '' })} style={{ padding: '4px 8px', borderRadius: '4px', border: '1px solid rgba(239,68,68,0.3)', background: 'transparent', color: '#ef4444', fontSize: '9px', cursor: 'pointer', fontFamily: "var(--font-code)" }}>Remove Video</button>
+                </div>
               </div>
             ) : (
               <div style={{ padding: '20px', border: '2px dashed var(--glass-border)', borderRadius: '8px', textAlign: 'center' }}>
                 <div style={{ fontSize: '24px', marginBottom: '4px' }}>🎬</div>
-                <input type="text" value={cell.src || ''} onChange={e => onUpdate({ src: e.target.value })} placeholder="YouTube URL..."
+                <input type="text" value={cell.src || ''} onChange={e => onUpdate({ src: e.target.value })} placeholder="Paste YouTube URL and press Enter..."
+                  onKeyDown={e => e.key === 'Enter' && e.preventDefault()}
                   style={{ width: '100%', padding: '6px 10px', borderRadius: '6px', border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.05)', color: 'var(--text)', fontSize: '11px', outline: 'none', boxSizing: 'border-box' }} />
               </div>
             )}
           </div>
         )}
         {cell.type === 'card' && (
-          <div onClick={e => e.stopPropagation()} style={{ width: '100%', background: 'rgba(255,255,255,0.05)', borderRadius: '12px', padding: '16px', border: '1px solid var(--glass-border)' }}>
-            {cell.src ? (
-              <img src={cell.src} alt="" style={{ width: '100%', borderRadius: '8px', marginBottom: '8px', display: 'block' }} />
-            ) : (
-              <div style={{ padding: '10px', border: '1px dashed var(--glass-border)', borderRadius: '6px', marginBottom: '8px', textAlign: 'center', cursor: 'pointer' }} onClick={() => { const url = prompt('Image URL:'); if (url) onUpdate({ src: url }) }}>
-                <span style={{ fontSize: '18px' }}>➕</span>
-                <div style={{ fontSize: '10px', color: 'var(--text-muted)', marginTop: '2px' }}>Add image</div>
+          <div onClick={e => e.stopPropagation()} style={{ width: '100%', background: 'rgba(255,255,255,0.05)', borderRadius: cell.radius || '12px', padding: '16px', border: '1px solid var(--glass-border)' }}>
+            {cell.src && (
+              <div style={{ marginBottom: '8px', position: 'relative' }}>
+                <img src={cell.src} alt="" style={{ width: '100%', borderRadius: '8px', display: 'block' }} onError={e => { e.target.style.display = 'none' }} />
+                <button onClick={() => onUpdate({ src: '' })} style={{ position: 'absolute', top: '4px', right: '4px', padding: '2px 6px', borderRadius: '4px', border: 'none', background: 'rgba(239,68,68,0.8)', color: '#fff', fontSize: '9px', cursor: 'pointer' }}>✕</button>
+              </div>
+            )}
+            {!cell.src && (
+              <div style={{ padding: '12px', border: '1px dashed var(--glass-border)', borderRadius: '6px', marginBottom: '8px', textAlign: 'center' }}>
+                <input type="text" value={cell.src || ''} onChange={e => onUpdate({ src: e.target.value })} placeholder="Paste image URL..."
+                  onKeyDown={e => e.key === 'Enter' && e.preventDefault()}
+                  style={{ width: '100%', padding: '6px 10px', borderRadius: '6px', border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.05)', color: 'var(--text)', fontSize: '11px', outline: 'none', boxSizing: 'border-box', textAlign: 'center' }} />
               </div>
             )}
             <textarea value={cell.content || ''} onChange={e => onUpdate({ content: e.target.value })}
               placeholder="Card content..."
               rows={2}
-              style={{ width: '100%', background: 'transparent', border: 'none', outline: 'none', color: 'var(--text)', fontSize: '13px', lineHeight: 1.5, resize: 'vertical', fontFamily: 'inherit', textAlign: 'center' }} />
+              style={{ width: '100%', background: 'transparent', border: 'none', outline: 'none', color: 'var(--text)', fontSize: '13px', lineHeight: 1.5, resize: 'vertical', fontFamily: 'inherit', textAlign: 'center', boxSizing: 'border-box' }} />
           </div>
         )}
       </div>
