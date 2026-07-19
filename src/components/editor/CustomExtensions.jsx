@@ -909,13 +909,14 @@ function ExcelTableComponent({ node, updateAttributes, deleteNode }) {
               {data.slice(1).map((row, r) => (
                 <tr key={r}>
                   {row.map((cell, c) => {
-                    const cellKey = `${r + 1}_${c}`
+                    const cellKey = (r + 1) + '_' + c
                     const bg = cellColorsMap[cellKey] || 'transparent'
                     const txtColor = textColorsMap[cellKey] || 'var(--text)'
+                    const isSelected = selectedCell === cellKey
                     return (
-                      <td key={c} style={{ padding: '8px 14px', borderRight: c < (row.length - 1) ? '1px solid var(--glass-border)' : 'none', borderBottom: r < (data.length - 2) ? '1px solid var(--glass-border)' : 'none', background: bg, minWidth: colWidths[c] || 150, position: 'relative', outline: selectedCell === cellKey ? '2px solid #22c55e' : 'none', outlineOffset: '-2px' }}
-                        onClick={(e) => { if (e.target.tagName !== 'INPUT') { setSelectedCell(selectedCell === cellKey ? null : cellKey) } }}>
-                        <input type="text" value={cell} onChange={e => updateCell(r + 1, c, e.target.value)} style={{ width: '100%', background: 'transparent', border: 'none', color: txtColor, fontSize: '13px', outline: 'none', fontFamily: "inherit" }} />
+                      <td key={c} style={{ padding: '8px 14px', borderRight: c < (row.length - 1) ? '1px solid var(--glass-border)' : 'none', borderBottom: r < (data.length - 2) ? '1px solid var(--glass-border)' : 'none', background: bg, minWidth: colWidths[c] || 150, position: 'relative', outline: isSelected ? '2px solid #22c55e' : 'none', outlineOffset: '-2px', cursor: 'pointer' }}
+                        onMouseDown={() => setSelectedCell(cellKey)}>
+                        <input type="text" value={cell} onChange={e => updateCell(r + 1, c, e.target.value)} onMouseDown={e => e.stopPropagation()} style={{ width: '100%', background: 'transparent', border: 'none', color: txtColor, fontSize: '13px', outline: 'none', fontFamily: "inherit", cursor: 'text' }} />
                       </td>
                     )
                   })}
