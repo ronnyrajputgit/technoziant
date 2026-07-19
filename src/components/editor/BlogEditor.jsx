@@ -449,11 +449,17 @@ export function BlogEditor({ initialContent = {}, onSave, saving }) {
       {/* EDITOR CONTENT */}
       <div style={{ paddingTop: '100px', maxWidth: '900px', margin: '0 auto', padding: '100px clamp(16px, 4vw, 40px) 100px' }}>
         <div style={{ marginBottom: '20px' }}>
-          <label style={{ display: 'block', fontSize: '11px', fontWeight: '600', color: errors.title ? '#ef4444' : 'var(--text-muted)', fontFamily: "var(--font-code)", marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Blog Title {errors.title && <span style={{ color: '#ef4444', fontWeight: '400', textTransform: 'none' }}>({errors.title})</span>}</label>
+          <label style={{ display: 'block', fontSize: '11px', fontWeight: '600', color: errors.title ? '#ef4444' : 'var(--text-muted)', fontFamily: "var(--font-code)", marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Blog Title *</label>
           <input type="text" value={title} onChange={e => { setTitle(e.target.value); if (errors.title) setErrors(prev => ({ ...prev, title: null })) }} placeholder="Enter your blog title..."
-            style={{ width: '100%', padding: '14px 16px', borderRadius: '10px', border: `1px solid ${errors.title ? '#ef4444' : 'var(--glass-border)'}`, background: 'rgba(255,255,255,0.03)', color: 'var(--text)', fontSize: 'clamp(20px, 4vw, 28px)', fontWeight: '700', outline: 'none', fontFamily: 'var(--font-h)', boxSizing: 'border-box', transition: 'border-color 0.2s' }}
+            style={{ width: '100%', padding: '14px 16px', borderRadius: '10px', border: `2px solid ${errors.title ? '#ef4444' : 'var(--glass-border)'}`, background: 'rgba(255,255,255,0.03)', color: 'var(--text)', fontSize: 'clamp(20px, 4vw, 28px)', fontWeight: '700', outline: 'none', fontFamily: 'var(--font-h)', boxSizing: 'border-box', transition: 'all 0.2s' }}
             onFocus={e => e.target.style.borderColor = errors.title ? '#ef4444' : '#22c55e'}
             onBlur={e => e.target.style.borderColor = errors.title ? '#ef4444' : 'var(--glass-border)'} />
+          {errors.title && (
+            <div style={{ marginTop: '6px', padding: '6px 12px', borderRadius: '8px', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span style={{ fontSize: '12px' }}>⚠️</span>
+              <span style={{ fontSize: '12px', color: '#ef4444', fontFamily: "var(--font-code)" }}>{errors.title}</span>
+            </div>
+          )}
         </div>
 
         <div className="liquid-glass" style={{ borderRadius: '14px', padding: '20px', marginBottom: '20px', border: '1px solid var(--glass-border)' }}>
