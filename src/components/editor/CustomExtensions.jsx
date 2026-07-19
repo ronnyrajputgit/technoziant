@@ -832,11 +832,9 @@ function ExcelTableComponent({ node, updateAttributes, deleteNode }) {
   const cellColors = ['transparent', '#dcfce7', '#dbeafe', '#ede9fe', '#fef3c7', '#fee2e2', '#cffafe', '#fce7f3']
 
   const setCellColor = (r, c, color) => {
-    const newData = data.map(row => [...row])
-    const key = `color_${r}_${c}`
-    if (!newData._colors) newData._colors = {}
-    if (!newData._colors) newData._colors = {}
-    updateAttributes({ data: newData, cellColors: { ...(node.attrs.cellColors || {}), [key]: color } })
+    const key = `${r}_${c}`
+    const newColors = { ...(node.attrs.cellColors || {}), [key]: color }
+    updateAttributes({ cellColors: newColors })
   }
 
   const cellColorsMap = node.attrs.cellColors || {}
