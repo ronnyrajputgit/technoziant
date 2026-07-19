@@ -208,13 +208,21 @@ export function BlogEditor({ initialContent = {}, onSave, saving }) {
 
   const editor = useEditor({
     extensions: [
-      StarterKit.configure({ heading: { levels: [1, 2, 3, 4] } }),
+      StarterKit.configure({
+        heading: { levels: [1, 2, 3, 4] },
+        blockquote: false,
+        dropcursor: false,
+        gapcursor: false,
+      }),
       Image.configure({ inline: false, allowBase64: true }),
       Placeholder.configure({ placeholder: 'Start writing your story...' }),
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
-      Underline, Highlight, Link.configure({ openOnClick: false }),
-      Youtube, Blockquote, TextStyle, Color, FontFamily,
-      Dropcursor.configure({ color: '#22c55e', width: 2 }), Gapcursor,
+      Underline, Highlight,
+      Link.configure({ openOnClick: false, HTMLAttributes: { class: 'tiptap-link' } }),
+      Youtube, TextStyle, Color, FontFamily,
+      Dropcursor.configure({ color: '#22c55e', width: 2 }),
+      Gapcursor,
+      Blockquote,
       Table.configure({
         resizable: true,
         HTMLAttributes: { class: 'tiptap-table' },
