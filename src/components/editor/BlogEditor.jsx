@@ -502,6 +502,7 @@ export function BlogEditor({ initialContent = {}, onSave, saving }) {
                 ))}
                 <div style={{ marginLeft: 'auto', display: 'flex', gap: '6px' }}>
                   <button onClick={() => { setCoverPos({ x: 50, y: 50 }); setCoverZoom(100); setCoverFit('cover'); setCoverHeight(300); setCoverFilter({ brightness: 100, contrast: 100, blur: 0, saturate: 100 }); setCoverRadius('0px') }} style={{ padding: '4px 12px', borderRadius: '6px', border: '1px solid var(--glass-border)', background: 'transparent', color: 'var(--text)', fontSize: '11px', cursor: 'pointer', fontFamily: "var(--font-code)", display: 'flex', alignItems: 'center', gap: '4px', transition: 'all 0.15s' }}>Reset</button>
+                  <button onClick={() => setCoverModal(true)} style={{ padding: '4px 12px', borderRadius: '6px', border: '1px solid rgba(59,130,246,0.3)', background: 'transparent', color: '#3b82f6', fontSize: '11px', cursor: 'pointer', fontFamily: "var(--font-code)", display: 'flex', alignItems: 'center', gap: '4px', transition: 'all 0.15s' }}>Replace</button>
                   <button onClick={() => setCoverImage('')} style={{ padding: '4px 12px', borderRadius: '6px', border: '1px solid rgba(239,68,68,0.3)', background: 'transparent', color: '#ef4444', fontSize: '11px', cursor: 'pointer', fontFamily: "var(--font-code)", display: 'flex', alignItems: 'center', gap: '4px', transition: 'all 0.15s' }}>Remove</button>
                 </div>
               </div>
