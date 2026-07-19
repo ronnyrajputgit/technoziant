@@ -97,6 +97,13 @@ export function EditorPage() {
   return (
     <div style={{ display: 'flex', minHeight: '100vh' }}>
       <SuccessDialog message={success} onClose={() => setSuccess(null)} />
+      {error && (
+        <div style={{ position: 'fixed', top: '80px', left: '280px', right: '20px', zIndex: 9999, padding: '10px 16px', borderRadius: '10px', background: 'rgba(239,68,68,0.15)', border: '1px solid rgba(239,68,68,0.3)', backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <span style={{ fontSize: '14px' }}>⚠️</span>
+          <span style={{ fontSize: '13px', color: '#ef4444', fontFamily: "var(--font-code)", flex: 1 }}>{error}</span>
+          <button onClick={() => setError(null)} style={{ padding: '4px 8px', borderRadius: '6px', border: '1px solid rgba(239,68,68,0.3)', background: 'transparent', color: '#ef4444', cursor: 'pointer', fontSize: '11px', fontFamily: "var(--font-code)" }}>✕ Dismiss</button>
+        </div>
+      )}
       <aside style={{ width: '240px', minWidth: '240px', background: 'var(--bg-2)', borderRight: '1px solid var(--glass-border)', height: '100vh', position: 'sticky', top: 0, overflow: 'auto', display: 'flex', flexDirection: 'column' }}>
         <div style={{ padding: '20px 16px', borderBottom: '1px solid var(--glass-border)' }}>
           <div style={{ fontSize: '16px', fontWeight: '700', fontFamily: 'var(--font-h)', marginBottom: '4px' }}>Editor</div>
