@@ -503,37 +503,33 @@ export function BlogEditor({ initialContent = {}, onSave, saving }) {
               }}>
               <img src={coverImage} alt="Cover" style={{ width: coverFit === 'contain' || coverFit === 'none' || coverFit === 'scale-down' ? 'auto' : '100%', height: coverFit === 'contain' || coverFit === 'none' || coverFit === 'scale-down' ? 'auto' : '100%', maxWidth: '100%', maxHeight: '100%', objectFit: coverFit, objectPosition: `${coverPos.x}% ${coverPos.y}%`, display: 'block', filter: `brightness(${coverFilter.brightness}%) contrast(${coverFilter.contrast}%) blur(${coverFilter.blur}px) saturate(${coverFilter.saturate}%)`, transform: `scale(${coverZoom / 100})`, transformOrigin: `${coverPos.x}% ${coverPos.y}%`, transition: 'transform 0.1s' }} draggable={false} />
             </div>
-            <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(transparent, rgba(0,0,0,0.8))', padding: '40px 12px 10px' }}>
-              {/* Row 1: Fit + Height */}
-              <div style={{ display: 'flex', gap: '6px', alignItems: 'center', marginBottom: '6px', flexWrap: 'wrap' }}>
+            {/* Controls at TOP */}
+            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, background: 'linear-gradient(rgba(0,0,0,0.85), transparent)', padding: '8px 12px 30px', zIndex: 10 }}>
+              <div style={{ display: 'flex', gap: '4px', alignItems: 'center', marginBottom: '4px', flexWrap: 'wrap' }}>
+                <span style={{ fontSize: '9px', color: '#fff', fontFamily: "var(--font-code)", fontWeight: '600' }}>COVER</span>
+                <div style={{ width: '1px', height: '14px', background: 'rgba(255,255,255,0.3)', margin: '0 2px' }} />
                 <span style={{ fontSize: '9px', color: '#fff', fontFamily: "var(--font-code)" }}>Fit:</span>
                 {['cover', 'contain', 'fill', 'scale-down', 'none'].map(f => (
-                  <button key={f} onClick={() => setCoverFit(f)} style={{ padding: '2px 8px', borderRadius: '4px', border: `1px solid ${coverFit === f ? '#22c55e' : 'rgba(255,255,255,0.3)'}`, background: coverFit === f ? 'rgba(34,197,94,0.3)' : 'rgba(255,255,255,0.1)', color: coverFit === f ? '#22c55e' : '#fff', fontSize: '9px', cursor: 'pointer', fontFamily: "var(--font-code)" }}>{f}</button>
+                  <button key={f} onClick={() => setCoverFit(f)} style={{ padding: '2px 6px', borderRadius: '4px', border: `1px solid ${coverFit === f ? '#22c55e' : 'rgba(255,255,255,0.3)'}`, background: coverFit === f ? 'rgba(34,197,94,0.3)' : 'rgba(255,255,255,0.1)', color: coverFit === f ? '#22c55e' : '#fff', fontSize: '9px', cursor: 'pointer', fontFamily: "var(--font-code)" }}>{f}</button>
                 ))}
-                <div style={{ width: '1px', height: '16px', background: 'rgba(255,255,255,0.3)', margin: '0 2px' }} />
+                <div style={{ width: '1px', height: '14px', background: 'rgba(255,255,255,0.3)', margin: '0 2px' }} />
                 <span style={{ fontSize: '9px', color: '#fff', fontFamily: "var(--font-code)" }}>H:</span>
                 <input type="range" min="150" max="500" value={coverHeight} onChange={e => setCoverHeight(parseInt(e.target.value))} style={{ width: '60px', height: '4px', accentColor: '#22c55e', cursor: 'pointer' }} />
                 <span style={{ fontSize: '9px', color: '#22c55e', fontFamily: "var(--font-code)" }}>{coverHeight}px</span>
-                <div style={{ width: '1px', height: '16px', background: 'rgba(255,255,255,0.3)', margin: '0 2px' }} />
+                <div style={{ width: '1px', height: '14px', background: 'rgba(255,255,255,0.3)', margin: '0 2px' }} />
                 <span style={{ fontSize: '9px', color: '#fff', fontFamily: "var(--font-code)" }}>R:</span>
                 {['0px', '8px', '12px', '20px', '50%'].map(r => (
                   <button key={r} onClick={() => setCoverRadius(r)} style={{ padding: '2px 6px', borderRadius: '4px', border: `1px solid ${coverRadius === r ? '#22c55e' : 'rgba(255,255,255,0.3)'}`, background: coverRadius === r ? 'rgba(34,197,94,0.3)' : 'rgba(255,255,255,0.1)', color: coverRadius === r ? '#22c55e' : '#fff', fontSize: '9px', cursor: 'pointer', fontFamily: "var(--font-code)" }}>{r}</button>
                 ))}
               </div>
-              {/* Row 2: Zoom + Position */}
-              <div style={{ display: 'flex', gap: '6px', alignItems: 'center', marginBottom: '6px', flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', gap: '4px', alignItems: 'center', marginBottom: '4px', flexWrap: 'wrap' }}>
                 <span style={{ fontSize: '9px', color: '#fff', fontFamily: "var(--font-code)" }}>Zoom:</span>
                 <input type="range" min="100" max="300" value={coverZoom} onChange={e => setCoverZoom(parseInt(e.target.value))} style={{ width: '80px', height: '4px', accentColor: '#22c55e', cursor: 'pointer' }} />
                 <span style={{ fontSize: '9px', color: '#22c55e', fontFamily: "var(--font-code)" }}>{coverZoom}%</span>
-                <div style={{ width: '1px', height: '16px', background: 'rgba(255,255,255,0.3)', margin: '0 2px' }} />
+                <div style={{ width: '1px', height: '14px', background: 'rgba(255,255,255,0.3)', margin: '0 2px' }} />
                 <span style={{ fontSize: '9px', color: '#fff', fontFamily: "var(--font-code)" }}>X:{Math.round(coverPos.x)}%</span>
                 <span style={{ fontSize: '9px', color: '#fff', fontFamily: "var(--font-code)" }}>Y:{Math.round(coverPos.y)}%</span>
-                <div style={{ width: '1px', height: '16px', background: 'rgba(255,255,255,0.3)', margin: '0 2px' }} />
-                <button onClick={() => { setCoverPos({ x: 50, y: 50 }); setCoverZoom(100); setCoverFit('cover'); setCoverHeight(300); setCoverFilter({ brightness: 100, contrast: 100, blur: 0, saturate: 100 }); setCoverRadius('0px') }} style={{ padding: '3px 8px', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.3)', background: 'rgba(255,255,255,0.1)', color: '#fff', fontSize: '9px', cursor: 'pointer', fontFamily: "var(--font-code)" }}>Reset All</button>
-                <button onClick={() => setCoverImage('')} style={{ padding: '3px 8px', borderRadius: '4px', border: '1px solid rgba(239,68,68,0.5)', background: 'rgba(239,68,68,0.2)', color: '#ef4444', fontSize: '9px', cursor: 'pointer', fontFamily: "var(--font-code)" }}>Remove</button>
-              </div>
-              {/* Row 3: Filters */}
-              <div style={{ display: 'flex', gap: '6px', alignItems: 'center', flexWrap: 'wrap' }}>
+                <div style={{ width: '1px', height: '14px', background: 'rgba(255,255,255,0.3)', margin: '0 2px' }} />
                 <span style={{ fontSize: '9px', color: '#fff', fontFamily: "var(--font-code)" }}>Filters:</span>
                 {[
                   { key: 'brightness', label: 'Bright', min: 0, max: 200 },
@@ -543,12 +539,15 @@ export function BlogEditor({ initialContent = {}, onSave, saving }) {
                 ].map(f => (
                   <span key={f.key} style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
                     <span style={{ fontSize: '8px', color: 'rgba(255,255,255,0.7)', fontFamily: "var(--font-code)" }}>{f.label}:</span>
-                    <input type="range" min={f.min} max={f.max} value={coverFilter[f.key]} onChange={e => setCoverFilter({ ...coverFilter, [f.key]: parseInt(e.target.value) })} style={{ width: '50px', height: '3px', accentColor: '#22c55e', cursor: 'pointer' }} />
-                    <span style={{ fontSize: '8px', color: '#22c55e', fontFamily: "var(--font-code)", minWidth: '22px' }}>{coverFilter[f.key]}{f.key === 'blur' ? 'px' : '%'}</span>
+                    <input type="range" min={f.min} max={f.max} value={coverFilter[f.key]} onChange={e => setCoverFilter({ ...coverFilter, [f.key]: parseInt(e.target.value) })} style={{ width: '45px', height: '3px', accentColor: '#22c55e', cursor: 'pointer' }} />
+                    <span style={{ fontSize: '8px', color: '#22c55e', fontFamily: "var(--font-code)", minWidth: '20px' }}>{coverFilter[f.key]}{f.key === 'blur' ? 'px' : '%'}</span>
                   </span>
                 ))}
+                <div style={{ width: '1px', height: '14px', background: 'rgba(255,255,255,0.3)', margin: '0 2px' }} />
+                <button onClick={() => { setCoverPos({ x: 50, y: 50 }); setCoverZoom(100); setCoverFit('cover'); setCoverHeight(300); setCoverFilter({ brightness: 100, contrast: 100, blur: 0, saturate: 100 }); setCoverRadius('0px') }} style={{ padding: '2px 6px', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.3)', background: 'rgba(255,255,255,0.1)', color: '#fff', fontSize: '9px', cursor: 'pointer', fontFamily: "var(--font-code)" }}>Reset</button>
+                <button onClick={() => setCoverImage('')} style={{ padding: '2px 6px', borderRadius: '4px', border: '1px solid rgba(239,68,68,0.5)', background: 'rgba(239,68,68,0.2)', color: '#ef4444', fontSize: '9px', cursor: 'pointer', fontFamily: "var(--font-code)" }}>Remove</button>
               </div>
-              <div style={{ fontSize: '8px', color: 'rgba(255,255,255,0.5)', fontFamily: "var(--font-code)", marginTop: '4px' }}>DRAG IMAGE TO REPOSITION</div>
+              <div style={{ fontSize: '8px', color: 'rgba(255,255,255,0.5)', fontFamily: "var(--font-code)" }}>DRAG IMAGE TO REPOSITION</div>
             </div>
           </div>
         )}
