@@ -18,7 +18,17 @@ export function BlogPost() {
 
   return (
     <main style={{ paddingTop: '100px', minHeight: '100vh' }}>
-      <article style={{ maxWidth: '780px', margin: '0 auto', padding: '0 clamp(16px, 4vw, 40px)' }}>
+      {/* Cover Image - Full Width */}
+      {blog.cover_image && (
+        <div style={{ marginBottom: '40px', overflow: 'hidden' }}>
+          <div style={{ height: `${blog.cover_height || 400}px`, overflow: 'hidden', position: 'relative' }}>
+            <img src={blog.cover_image} alt={blog.title} style={{ width: (blog.cover_fit || 'cover') === 'contain' || (blog.cover_fit || 'cover') === 'none' || (blog.cover_fit || 'cover') === 'scale-down' ? 'auto' : '100%', height: (blog.cover_fit || 'cover') === 'contain' || (blog.cover_fit || 'cover') === 'none' || (blog.cover_fit || 'cover') === 'scale-down' ? 'auto' : '100%', maxWidth: '100%', maxHeight: '100%', objectFit: blog.cover_fit || 'cover', objectPosition: `${blog.cover_pos?.x || 50}% ${blog.cover_pos?.y || 50}%`, filter: `brightness(${blog.cover_filter?.brightness || 100}%) contrast(${blog.cover_filter?.contrast || 100}%) blur(${blog.cover_filter?.blur || 0}px) saturate(${blog.cover_filter?.saturate || 100}%)`, transform: `scale(${(blog.cover_zoom || 100) / 100})`, transformOrigin: `${blog.cover_pos?.x || 50}% ${blog.cover_pos?.y || 50}%`, display: 'block' }} />
+          </div>
+        </div>
+      )}
+
+      {/* Article Content */}
+      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 clamp(16px, 4vw, 40px)' }}>
         <div style={{ marginBottom: '16px' }}>
           {blog.category && <span className="liquid-glass" style={{ display: 'inline-block', padding: '5px 14px', borderRadius: '100px', fontSize: '11px', fontWeight: '600', color: '#22c55e', fontFamily: "var(--font-code)", letterSpacing: '0.05em', textTransform: 'uppercase' }}>{blog.category}</span>}
         </div>
@@ -34,15 +44,7 @@ export function BlogPost() {
           </div>
         </div>
 
-        {blog.cover_image && (
-          <div style={{ marginBottom: '40px', borderRadius: blog.cover_radius || '16px', overflow: 'hidden', border: '1px solid var(--glass-border)' }}>
-            <div style={{ height: `${blog.cover_height || 400}px`, overflow: 'hidden', position: 'relative' }}>
-              <img src={blog.cover_image} alt={blog.title} style={{ width: (blog.cover_fit || 'cover') === 'contain' || (blog.cover_fit || 'cover') === 'none' || (blog.cover_fit || 'cover') === 'scale-down' ? 'auto' : '100%', height: (blog.cover_fit || 'cover') === 'contain' || (blog.cover_fit || 'cover') === 'none' || (blog.cover_fit || 'cover') === 'scale-down' ? 'auto' : '100%', maxWidth: '100%', maxHeight: '100%', objectFit: blog.cover_fit || 'cover', objectPosition: `${blog.cover_pos?.x || 50}% ${blog.cover_pos?.y || 50}%`, filter: `brightness(${blog.cover_filter?.brightness || 100}%) contrast(${blog.cover_filter?.contrast || 100}%) blur(${blog.cover_filter?.blur || 0}px) saturate(${blog.cover_filter?.saturate || 100}%)`, transform: `scale(${(blog.cover_zoom || 100) / 100})`, transformOrigin: `${blog.cover_pos?.x || 50}% ${blog.cover_pos?.y || 50}%`, display: 'block' }} />
-            </div>
-          </div>
-        )}
-
-        <div className="blog-content" dangerouslySetInnerHTML={{ __html: renderContent(blog.content) }} />
+        <div className="blog-content" style={{ maxWidth: '900px' }} dangerouslySetInnerHTML={{ __html: renderContent(blog.content) }} />
 
         {blog.tags && blog.tags.length > 0 && (
           <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginTop: '40px', paddingTop: '24px', borderTop: '1px solid var(--glass-border)' }}>
@@ -55,7 +57,7 @@ export function BlogPost() {
         <div style={{ textAlign: 'center', marginTop: '48px', paddingTop: '32px', borderTop: '1px solid var(--glass-border)' }}>
           <Link to="/blog" className="liquid-glass" style={{ display: 'inline-block', padding: '12px 28px', borderRadius: '8px', fontSize: '13px', fontWeight: '500', color: 'var(--text)', textDecoration: 'none', fontFamily: "var(--font-code)" }}>← Back to Blog</Link>
         </div>
-      </article>
+      </div>
       <Footer />
     </main>
   )
