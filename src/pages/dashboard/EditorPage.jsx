@@ -96,12 +96,18 @@ export function EditorPage() {
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh' }}>
-      <ErrorDialog error={error} onClose={() => setError(null)} />
       <SuccessDialog message={success} onClose={() => setSuccess(null)} />
       <aside style={{ width: '240px', minWidth: '240px', background: 'var(--bg-2)', borderRight: '1px solid var(--glass-border)', height: '100vh', position: 'sticky', top: 0, overflow: 'auto', display: 'flex', flexDirection: 'column' }}>
         <div style={{ padding: '20px 16px', borderBottom: '1px solid var(--glass-border)' }}>
           <div style={{ fontSize: '16px', fontWeight: '700', fontFamily: 'var(--font-h)', marginBottom: '4px' }}>Editor</div>
           <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>{id ? 'Edit Mode' : 'New Blog'}</div>
+          {error && (
+            <div style={{ marginTop: '10px', padding: '8px 12px', borderRadius: '8px', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ fontSize: '12px' }}>⚠️</span>
+              <span style={{ fontSize: '11px', color: '#ef4444', fontFamily: "var(--font-code)", flex: 1 }}>{error}</span>
+              <button onClick={() => setError(null)} style={{ padding: '2px 6px', borderRadius: '4px', border: 'none', background: 'transparent', color: '#ef4444', cursor: 'pointer', fontSize: '10px' }}>✕</button>
+            </div>
+          )}
         </div>
         <nav style={{ flex: 1, padding: '12px 8px' }}>
           {[
