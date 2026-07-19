@@ -579,13 +579,6 @@ export function BlogEditor({ initialContent = {}, onSave, saving }) {
           </div>
         )}
       </div>
-
-      <style>{`
-        .tiptap table { width: 100%; border-collapse: separate; border-spacing: 0; margin: 1.5em 0; border: 1px solid var(--glass-border); border-radius: 8px; overflow: hidden; }
-        .tiptap td, .tiptap th { border: 1px solid var(--glass-border); padding: 10px 14px; min-width: 80px; position: relative; }
-        .tiptap th { background: rgba(255,255,255,0.05); font-weight: 600; text-align: left; }
-        .tiptap td[style*="background"], .tiptap th[style*="background"] { border-radius: 0; }
-      `}</style>
     </div>
   )
 }
