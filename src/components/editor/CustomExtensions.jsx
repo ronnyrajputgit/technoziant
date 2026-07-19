@@ -792,7 +792,6 @@ export const Spacer = Node.create({
 /*  TABLE WRAPPER — inline controls for table             */
 /* ═══════════════════════════════════════════════════════ */
 export function TableControlsInline({ editor }) {
-  const [pos, setPos] = useState(null)
   const [tableEl, setTableEl] = useState(null)
 
   useEffect(() => {
@@ -805,26 +804,18 @@ export function TableControlsInline({ editor }) {
           const p = editor.view.domAtPos($from.start(d))
           const el = p.node?.nodeType === 1 ? p.node : p.node?.parentElement
           const table = el?.closest?.('table') || el?.querySelector?.('table')
-          if (table) {
-            const rect = table.getBoundingClientRect()
-            setPos({ top: rect.top - 40, left: rect.left, width: rect.width })
-            setTableEl(table)
-            return
-          }
+          if (table) { setTableEl(table); return }
         }
       }
-      setPos(null)
       setTableEl(null)
     }
-    const onScroll = () => { if (tableEl) { const r = tableEl.getBoundingClientRect(); setPos({ top: r.top - 40, left: r.left, width: r.width }) } }
     editor.on('selectionUpdate', check)
     editor.on('transaction', check)
-    window.addEventListener('scroll', onScroll, true)
     check()
-    return () => { editor.off('selectionUpdate', check); editor.off('transaction', check); window.removeEventListener('scroll', onScroll, true) }
-  }, [editor, tableEl])
+    return () => { editor.off('selectionUpdate', check); editor.off('transaction', check) }
+  }, [editor])
 
-  if (!pos || !tableEl) return null
+  if (!tableEl) return null
 
   const TBtn = ({ onClick, children, color, tip }) => (
     <button title={tip} onMouseDown={e => e.preventDefault()} onClick={(e) => { e.preventDefault(); e.stopPropagation(); onClick() }} style={{ padding: '3px 8px', borderRadius: '4px', border: '1px solid var(--glass-border)', background: 'transparent', color: color || 'var(--text)', fontSize: '10px', cursor: 'pointer', fontFamily: "var(--font-code)", display: 'flex', alignItems: 'center', gap: '3px', transition: 'all 0.15s' }}
@@ -834,15 +825,8 @@ export function TableControlsInline({ editor }) {
   )
 
   const setBg = (color) => {
-    const sel = window.getSelection()
-    if (!sel.rangeCount) return
-    const range = sel.getRangeAt(0)
     tableEl.querySelectorAll('td, th').forEach(cell => {
-      const cr = cell.getBoundingClientRect()
-      const sr = range.getBoundingClientRect()
-      if (cr.left < sr.right && cr.right > sr.left && cr.top < sr.bottom && cr.bottom > sr.top) {
-        cell.style.backgroundColor = color === 'transparent' ? '' : color
-      }
+      cell.style.backgroundColor = color === 'transparent' ? '' : color
     })
   }
 
@@ -869,24 +853,36 @@ export function TableControlsInline({ editor }) {
   const cellC = ['transparent', '#dcfce7', '#dbeafe', '#ede9fe', '#fef3c7', '#fee2e2', '#cffafe', '#fce7f3']
   const headerC = ['#bbf7d0', '#93c5fd', '#c4b5fd', '#fcd34d', '#fca5a5', '#67e8f9', '#f9a8d4', '#f1f5f9']
 
+  const toolbarHtml = `
+    <div style="display:flex;gap:3px;padding:5px 8px;border-radius:0 0 8px 8px;background:var(--bg);border:1px solid var(--glass-border);border-top:none;align-items:center;flex-wrap:wrap;box-shadow:0 4px 12px rgba(0,0,0,0.3)">
+      <span style="font-size:9px;color:#22c55e;font-family:var(--font-code);font-weight:600;margin-right:4px">TABLE</span>
+    </div>
+  `
+
   return (
-    <div style={{ position: 'fixed', top: pos.top, left: pos.left, width: pos.width, zIndex: 9999, display: 'flex', gap: '3px', padding: '5px 8px', borderRadius: '0 0 8px 8px', background: 'var(--bg)', border: '1px solid var(--glass-border)', borderTop: 'none', alignItems: 'center', flexWrap: 'wrap', boxShadow: '0 4px 12px rgba(0,0,0,0.3)' }}>
-      <span style={{ fontSize: '8px', color: '#22c55e', fontFamily: "var(--font-code)", fontWeight: '600', marginRight: '2px' }}>TABLE</span>
-      <TBtn tip="Add row" onClick={() => editor.chain().focus().addRowAfter().run()}>+R</TBtn>
-      <TBtn tip="Add column" onClick={() => editor.chain().focus().addColumnAfter().run()}>+C</TBtn>
-      <TBtn tip="Delete row" onClick={() => editor.chain().focus().deleteRow().run()} color="#f59e0b">-R</TBtn>
-      <TBtn tip="Delete column" onClick={() => editor.chain().focus().deleteColumn().run()} color="#f59e0b">-C</TBtn>
-      <TBtn tip="Merge" onClick={() => editor.chain().focus().mergeCells().run()}>Merge</TBtn>
-      <TBtn tip="Split" onClick={() => { try { editor.chain().focus().splitCell().run() } catch(e) {} }}>Split</TBtn>
-      <div style={{ width: '1px', height: '14px', background: 'var(--glass-border)', margin: '0 2px' }} />
-      {cellC.map((c, i) => <button key={i} title={c} onMouseDown={e => e.preventDefault()} onClick={(e) => { e.preventDefault(); setBg(c) }} style={{ width: '12px', height: '12px', borderRadius: '2px', border: '1px solid var(--glass-border)', background: c === 'transparent' ? 'var(--bg)' : c, cursor: 'pointer' }} />)}
-      <input type="color" value="#fff" title="Custom cell color" onMouseDown={e => e.preventDefault()} onChange={e => setBg(e.target.value + '22')} style={{ width: '14px', height: '12px', border: '1px solid var(--glass-border)', borderRadius: '2px', cursor: 'pointer', padding: 0 }} />
-      <div style={{ width: '1px', height: '14px', background: 'var(--glass-border)', margin: '0 2px' }} />
-      {headerC.map((c, i) => <button key={i} title={c} onMouseDown={e => e.preventDefault()} onClick={(e) => { e.preventDefault(); setHeaderBg(c) }} style={{ width: '12px', height: '12px', borderRadius: '2px', border: '1px solid var(--glass-border)', background: c, cursor: 'pointer' }} />)}
-      <input type="color" value="#22c55e" title="Custom header color" onMouseDown={e => e.preventDefault()} onChange={e => setHeaderBg(e.target.value + '33')} style={{ width: '14px', height: '12px', border: '1px solid var(--glass-border)', borderRadius: '2px', cursor: 'pointer', padding: 0 }} />
-      <div style={{ width: '1px', height: '14px', background: 'var(--glass-border)', margin: '0 2px' }} />
-      {['0px', '6px', '10px', '16px'].map(r => <button key={r} title={`R:${r}`} onMouseDown={e => e.preventDefault()} onClick={(e) => { e.preventDefault(); setRadius(r) }} style={{ padding: '1px 4px', fontSize: '8px', borderRadius: '2px', border: '1px solid var(--glass-border)', background: 'transparent', color: 'var(--text-muted)', cursor: 'pointer', fontFamily: "var(--font-code)" }}>{r}</button>)}
-      <TBtn tip="Delete" onClick={() => editor.chain().focus().deleteTable().run()} color="#ef4444">✕</TBtn>
+    <div ref={el => {
+      if (el && tableEl) {
+        tableEl.parentNode?.insertBefore(el, tableEl)
+      }
+    }} style={{ marginBottom: '0' }}>
+      <div style={{ display: 'flex', gap: '3px', padding: '5px 8px', borderRadius: '0 0 8px 8px', background: 'var(--bg)', border: '1px solid var(--glass-border)', borderTop: 'none', alignItems: 'center', flexWrap: 'wrap', boxShadow: '0 4px 12px rgba(0,0,0,0.3)' }}>
+        <span style={{ fontSize: '9px', color: '#22c55e', fontFamily: "var(--font-code)", fontWeight: '600', marginRight: '4px' }}>TABLE</span>
+        <TBtn tip="Add row" onClick={() => editor.chain().focus().addRowAfter().run()}>+R</TBtn>
+        <TBtn tip="Add column" onClick={() => editor.chain().focus().addColumnAfter().run()}>+C</TBtn>
+        <TBtn tip="Delete row" onClick={() => editor.chain().focus().deleteRow().run()} color="#f59e0b">-R</TBtn>
+        <TBtn tip="Delete column" onClick={() => editor.chain().focus().deleteColumn().run()} color="#f59e0b">-C</TBtn>
+        <TBtn tip="Merge" onClick={() => editor.chain().focus().mergeCells().run()}>Merge</TBtn>
+        <TBtn tip="Split" onClick={() => { try { editor.chain().focus().splitCell().run() } catch(e) {} }}>Split</TBtn>
+        <div style={{ width: '1px', height: '14px', background: 'var(--glass-border)', margin: '0 2px' }} />
+        {cellC.map((c, i) => <button key={i} title={c === 'transparent' ? 'Clear' : c} onMouseDown={e => e.preventDefault()} onClick={(e) => { e.preventDefault(); setBg(c) }} style={{ width: '12px', height: '12px', borderRadius: '2px', border: '1px solid var(--glass-border)', background: c === 'transparent' ? 'var(--bg)' : c, cursor: 'pointer' }} />)}
+        <input type="color" value="#fff" title="Custom cell color" onMouseDown={e => e.preventDefault()} onChange={e => setBg(e.target.value + '33')} style={{ width: '14px', height: '12px', border: '1px solid var(--glass-border)', borderRadius: '2px', cursor: 'pointer', padding: 0 }} />
+        <div style={{ width: '1px', height: '14px', background: 'var(--glass-border)', margin: '0 2px' }} />
+        {headerC.map((c, i) => <button key={i} title={c} onMouseDown={e => e.preventDefault()} onClick={(e) => { e.preventDefault(); setHeaderBg(c) }} style={{ width: '12px', height: '12px', borderRadius: '2px', border: '1px solid var(--glass-border)', background: c, cursor: 'pointer' }} />)}
+        <input type="color" value="#22c55e" title="Custom header color" onMouseDown={e => e.preventDefault()} onChange={e => setHeaderBg(e.target.value + '44')} style={{ width: '14px', height: '12px', border: '1px solid var(--glass-border)', borderRadius: '2px', cursor: 'pointer', padding: 0 }} />
+        <div style={{ width: '1px', height: '14px', background: 'var(--glass-border)', margin: '0 2px' }} />
+        {['0px', '6px', '10px', '16px'].map(r => <button key={r} title={`R:${r}`} onMouseDown={e => e.preventDefault()} onClick={(e) => { e.preventDefault(); setRadius(r) }} style={{ padding: '1px 4px', fontSize: '8px', borderRadius: '2px', border: '1px solid var(--glass-border)', background: 'transparent', color: 'var(--text-muted)', cursor: 'pointer', fontFamily: "var(--font-code)" }}>{r}</button>)}
+        <TBtn tip="Delete" onClick={() => editor.chain().focus().deleteTable().run()} color="#ef4444">✕</TBtn>
+      </div>
     </div>
   )
 }
