@@ -796,11 +796,14 @@ export const Spacer = Node.create({
 /* ═══════════════════════════════════════════════════════ */
 function ExcelTableComponent({ node, updateAttributes, deleteNode }) {
   const [selectedCell, setSelectedCell] = useState(null)
-  const [editing, setEditing] = useState(false)
+  const [showCellColors, setShowCellColors] = useState(false)
+  const [showTextColors, setShowTextColors] = useState(false)
   const data = node.attrs.data || [['', '', ''], ['', '', '']]
   const colWidths = node.attrs.colWidths || [150, 150, 150]
   const headerBg = node.attrs.headerBg || '#22c55e'
   const tableRadius = node.attrs.tableRadius || '8px'
+  const cellColorsMap = node.attrs.cellColors || {}
+  const textColorsMap = node.attrs.textColors || {}
 
   const updateCell = (r, c, val) => {
     const newData = data.map(row => [...row])
@@ -808,40 +811,14 @@ function ExcelTableComponent({ node, updateAttributes, deleteNode }) {
     updateAttributes({ data: newData })
   }
 
-  const addRow = () => {
-    const newData = [...data, Array(data[0]?.length || 3).fill('')]
-    updateAttributes({ data: newData })
-  }
+  const addRow = () => { updateAttributes({ data: [...data, Array(data[0]?.length || 3).fill('')] }) }
+  const addCol = () => { updateAttributes({ data: data.map(row => [...row, '']), colWidths: [...colWidths, 150] }) }
+  const delRow = () => { if (data.length > 1) updateAttributes({ data: data.slice(0, -1) }) }
+  const delCol = () => { if (data[0]?.length > 1) updateAttributes({ data: data.map(row => row.slice(0, -1)), colWidths: colWidths.slice(0, -1) }) }
 
-  const addCol = () => {
-    const newData = data.map(row => [...row, ''])
-    const newWidths = [...colWidths, 150]
-    updateAttributes({ data: newData, colWidths: newWidths })
-  }
-
-  const delRow = () => {
-    if (data.length <= 1) return
-    updateAttributes({ data: data.slice(0, -1) })
-  }
-
-  const delCol = () => {
-    if (data[0]?.length <= 1) return
-    updateAttributes({ data: data.map(row => row.slice(0, -1)), colWidths: colWidths.slice(0, -1) })
-  }
-
-  const cellColors = ['transparent', '#dcfce7', '#dbeafe', '#ede9fe', '#fef3c7', '#fee2e2', '#cffafe', '#fce7f3']
-
-  const setCellColor = (r, c, color) => {
-    const key = `${r}_${c}`
-    const newColors = { ...(node.attrs.cellColors || {}), [key]: color }
-    updateAttributes({ cellColors: newColors })
-  }
-
-  const cellColorsMap = node.attrs.cellColors || {}
-
-  const setHeaderRow = (color) => {
-    updateAttributes({ headerBg: color })
-  }
+  const cellColorOptions = ['transparent', '#dcfce7', '#dbeafe', '#ede9fe', '#fef3c7', '#fee2e2', '#cffafe', '#fce7f3', '#fef9c3', '#e0e7ff']
+  const textColorOptions = ['#000000', '#ef4444', '#f59e0b', '#22c55e', '#3b82f6', '#a855f7', '#ec4899', '#06b6d4', '#ffffff', '#64748b']
+  const headerColors = ['#22c55e', '#3b82f6', '#a855f7', '#f59e0b', '#ef4444', '#06b6d4', '#ec4899', '#64748b', '#0f172a', '#f1f5f9']
 
   return (
     <NodeViewWrapper>
@@ -853,20 +830,61 @@ function ExcelTableComponent({ node, updateAttributes, deleteNode }) {
           <button title="Add column" onMouseDown={e => e.preventDefault()} onClick={(e) => { e.preventDefault(); addCol() }} style={{ padding: '3px 8px', borderRadius: '4px', border: '1px solid var(--glass-border)', background: 'transparent', color: 'var(--text)', fontSize: '10px', cursor: 'pointer', fontFamily: "var(--font-code)" }}>+Col</button>
           <button title="Delete last row" onMouseDown={e => e.preventDefault()} onClick={(e) => { e.preventDefault(); delRow() }} style={{ padding: '3px 8px', borderRadius: '4px', border: '1px solid var(--glass-border)', background: 'transparent', color: '#f59e0b', fontSize: '10px', cursor: 'pointer', fontFamily: "var(--font-code)" }}>-Row</button>
           <button title="Delete last column" onMouseDown={e => e.preventDefault()} onClick={(e) => { e.preventDefault(); delCol() }} style={{ padding: '3px 8px', borderRadius: '4px', border: '1px solid var(--glass-border)', background: 'transparent', color: '#f59e0b', fontSize: '10px', cursor: 'pointer', fontFamily: "var(--font-code)" }}>-Col</button>
+
           <div style={{ width: '1px', height: '14px', background: 'var(--glass-border)', margin: '0 4px' }} />
+
+          {/* Header Color */}
           <span style={{ fontSize: '9px', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>Header:</span>
-          {['#22c55e', '#3b82f6', '#a855f7', '#f59e0b', '#ef4444', '#06b6d4', '#ec4899', '#64748b'].map(c => (
-            <button key={c} title={c} onMouseDown={e => e.preventDefault()} onClick={(e) => { e.preventDefault(); setHeaderRow(c) }} style={{ width: '14px', height: '14px', borderRadius: '3px', border: `2px solid ${headerBg === c ? '#fff' : 'var(--glass-border)'}`, background: c, cursor: 'pointer' }} />
+          {headerColors.map(c => (
+            <button key={c} title={c} onMouseDown={e => e.preventDefault()} onClick={(e) => { e.preventDefault(); updateAttributes({ headerBg: c }) }} style={{ width: '14px', height: '14px', borderRadius: '3px', border: `2px solid ${headerBg === c ? '#fff' : 'var(--glass-border)'}`, background: c, cursor: 'pointer' }} />
           ))}
-          <input type="color" value={headerBg} title="Custom header color" onMouseDown={e => e.preventDefault()} onChange={e => setHeaderRow(e.target.value)} style={{ width: '16px', height: '14px', border: '1px solid var(--glass-border)', borderRadius: '3px', cursor: 'pointer', padding: 0 }} />
+          <input type="color" value={headerBg} title="Custom header color" onMouseDown={e => e.preventDefault()} onChange={e => updateAttributes({ headerBg: e.target.value })} style={{ width: '16px', height: '14px', border: '1px solid var(--glass-border)', borderRadius: '3px', cursor: 'pointer', padding: 0 }} />
+
           <div style={{ width: '1px', height: '14px', background: 'var(--glass-border)', margin: '0 4px' }} />
-          <span style={{ fontSize: '9px', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>Radius:</span>
+
+          {/* Cell Color Toggle */}
+          <button title="Cell background color" onMouseDown={e => e.preventDefault()} onClick={(e) => { e.preventDefault(); setShowCellColors(!showCellColors); setShowTextColors(false) }} style={{ padding: '3px 6px', borderRadius: '4px', border: `1px solid ${showCellColors ? '#22c55e' : 'var(--glass-border)'}`, background: showCellColors ? 'rgba(34,197,94,0.15)' : 'transparent', color: showCellColors ? '#22c55e' : 'var(--text)', fontSize: '9px', cursor: 'pointer', fontFamily: "var(--font-code)" }}>Cell BG</button>
+
+          {/* Text Color Toggle */}
+          <button title="Text color" onMouseDown={e => e.preventDefault()} onClick={(e) => { e.preventDefault(); setShowTextColors(!showTextColors); setShowCellColors(false) }} style={{ padding: '3px 6px', borderRadius: '4px', border: `1px solid ${showTextColors ? '#a855f7' : 'var(--glass-border)'}`, background: showTextColors ? 'rgba(168,85,247,0.15)' : 'transparent', color: showTextColors ? '#a855f7' : 'var(--text)', fontSize: '9px', cursor: 'pointer', fontFamily: "var(--font-code)" }}>Text</button>
+
+          <div style={{ width: '1px', height: '14px', background: 'var(--glass-border)', margin: '0 4px' }} />
+
+          {/* Radius */}
+          <span style={{ fontSize: '9px', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>R:</span>
           {['0px', '6px', '10px', '16px'].map(r => (
             <button key={r} title={`Radius: ${r}`} onMouseDown={e => e.preventDefault()} onClick={(e) => { e.preventDefault(); updateAttributes({ tableRadius: r }) }} style={{ padding: '2px 5px', fontSize: '9px', borderRadius: '3px', border: `1px solid ${tableRadius === r ? '#22c55e' : 'var(--glass-border)'}`, background: tableRadius === r ? 'rgba(34,197,94,0.15)' : 'transparent', color: tableRadius === r ? '#22c55e' : 'var(--text-muted)', cursor: 'pointer', fontFamily: "var(--font-code)" }}>{r}</button>
           ))}
-          <div style={{ width: '1px', height: '14px', background: 'var(--glass-border)', margin: '0 4px' }} />
-          <button title="Delete table" onMouseDown={e => e.preventDefault()} onClick={(e) => { e.preventDefault(); deleteNode() }} style={{ padding: '3px 8px', borderRadius: '4px', border: '1px solid rgba(239,68,68,0.3)', background: 'transparent', color: '#ef4444', fontSize: '10px', cursor: 'pointer', fontFamily: "var(--font-code)" }}>Delete</button>
+
+          <div style={{ marginLeft: 'auto' }}>
+            <button title="Delete table" onMouseDown={e => e.preventDefault()} onClick={(e) => { e.preventDefault(); deleteNode() }} style={{ padding: '3px 8px', borderRadius: '4px', border: '1px solid rgba(239,68,68,0.3)', background: 'transparent', color: '#ef4444', fontSize: '10px', cursor: 'pointer', fontFamily: "var(--font-code)" }}>Delete</button>
+          </div>
         </div>
+
+        {showCellColors && (
+          <div style={{ display: 'flex', gap: '3px', padding: '5px 10px', borderBottom: '1px solid var(--glass-border)', background: 'rgba(220,252,231,0.05)', alignItems: 'center', flexWrap: 'wrap' }}>
+            <span style={{ fontSize: '9px', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>Select cell then pick color:</span>
+            {cellColorOptions.map(c => (
+              <button key={c} title={c === 'transparent' ? 'Clear' : c} onMouseDown={e => e.preventDefault()} onClick={() => { if (!selectedCell) return; const parts = selectedCell.split('_').map(Number); updateAttributes({ cellColors: { ...cellColorsMap, [parts[0] + '_' + parts[1]]: c } }) }} style={{ width: '16px', height: '16px', borderRadius: '3px', border: '1px solid var(--glass-border)', background: c === 'transparent' ? 'var(--bg)' : c, cursor: 'pointer' }} />
+            ))}
+            <input type="color" value="#ffffff" title="Custom cell color" onMouseDown={e => e.preventDefault()} onChange={e => { if (!selectedCell) return; const parts = selectedCell.split('_').map(Number); const k = parts[0] + '_' + parts[1]; updateAttributes({ cellColors: { ...cellColorsMap, [k]: e.target.value + '33' } }) }} style={{ width: '18px', height: '16px', border: '1px solid var(--glass-border)', borderRadius: '3px', cursor: 'pointer', padding: 0 }} />
+            {selectedCell && <span style={{ fontSize: '9px', color: '#22c55e', fontFamily: "var(--font-code)" }}>Cell: {selectedCell}</span>}
+            {!selectedCell && <span style={{ fontSize: '9px', color: 'var(--text-muted)', fontFamily: "var(--font-code)", fontStyle: 'italic' }}>Click a cell first</span>}
+          </div>
+        )}
+
+        {showTextColors && (
+          <div style={{ display: 'flex', gap: '3px', padding: '5px 10px', borderBottom: '1px solid var(--glass-border)', background: 'rgba(168,85,247,0.05)', alignItems: 'center', flexWrap: 'wrap' }}>
+            <span style={{ fontSize: '9px', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>Select cell then pick color:</span>
+            {textColorOptions.map(c => (
+              <button key={c} title={c} onMouseDown={e => e.preventDefault()} onClick={() => { if (!selectedCell) return; const parts = selectedCell.split('_').map(Number); updateAttributes({ textColors: { ...textColorsMap, [parts[0] + '_' + parts[1]]: c } }) }} style={{ width: '16px', height: '16px', borderRadius: '3px', border: `2px solid ${c === '#ffffff' ? '#666' : 'var(--glass-border)'}`, background: c, cursor: 'pointer' }} />
+            ))}
+            <input type="color" value="#000000" title="Custom text color" onMouseDown={e => e.preventDefault()} onChange={e => { if (!selectedCell) return; const parts = selectedCell.split('_').map(Number); const k = parts[0] + '_' + parts[1]; updateAttributes({ textColors: { ...textColorsMap, [k]: e.target.value } }) }} style={{ width: '18px', height: '16px', border: '1px solid var(--glass-border)', borderRadius: '3px', cursor: 'pointer', padding: 0 }} />
+            {selectedCell && <span style={{ fontSize: '9px', color: '#a855f7', fontFamily: "var(--font-code)" }}>Cell: {selectedCell}</span>}
+            {!selectedCell && <span style={{ fontSize: '9px', color: 'var(--text-muted)', fontFamily: "var(--font-code)", fontStyle: 'italic' }}>Click a cell first</span>}
+          </div>
+        )}
+
         {/* Table */}
         <div style={{ overflow: 'auto', border: '1px solid var(--glass-border)', borderRadius: tableRadius }}>
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
@@ -893,18 +911,11 @@ function ExcelTableComponent({ node, updateAttributes, deleteNode }) {
                   {row.map((cell, c) => {
                     const cellKey = `${r + 1}_${c}`
                     const bg = cellColorsMap[cellKey] || 'transparent'
+                    const txtColor = textColorsMap[cellKey] || 'var(--text)'
                     return (
-                      <td key={c} style={{ padding: '8px 14px', borderRight: c < (row.length - 1) ? '1px solid var(--glass-border)' : 'none', borderBottom: r < (data.length - 2) ? '1px solid var(--glass-border)' : 'none', background: bg, minWidth: colWidths[c] || 150, position: 'relative' }}
-                        onClick={() => setSelectedCell(selectedCell === cellKey ? null : cellKey)}>
-                        <input type="text" value={cell} onChange={e => updateCell(r + 1, c, e.target.value)} style={{ width: '100%', background: 'transparent', border: 'none', color: 'var(--text)', fontSize: '13px', outline: 'none', fontFamily: "inherit" }} />
-                        {selectedCell === cellKey && (
-                          <div style={{ position: 'absolute', top: -2, right: -2, display: 'flex', gap: '2px', zIndex: 10, background: 'var(--bg)', border: '1px solid var(--glass-border)', borderRadius: '4px', padding: '2px' }}>
-                            {cellColors.map(clr => (
-                              <button key={clr} title={clr === 'transparent' ? 'Clear' : clr} onMouseDown={e => e.preventDefault()} onClick={(e) => { e.preventDefault(); setCellColor(r + 1, c, clr) }} style={{ width: '14px', height: '14px', borderRadius: '2px', border: '1px solid var(--glass-border)', background: clr === 'transparent' ? 'var(--bg)' : clr, cursor: 'pointer' }} />
-                            ))}
-                            <input type="color" value="#fff" title="Custom" onMouseDown={e => e.preventDefault()} onChange={e => setCellColor(r + 1, c, e.target.value + '33')} style={{ width: '14px', height: '14px', border: '1px solid var(--glass-border)', borderRadius: '2px', cursor: 'pointer', padding: 0 }} />
-                          </div>
-                        )}
+                      <td key={c} style={{ padding: '8px 14px', borderRight: c < (row.length - 1) ? '1px solid var(--glass-border)' : 'none', borderBottom: r < (data.length - 2) ? '1px solid var(--glass-border)' : 'none', background: bg, minWidth: colWidths[c] || 150, position: 'relative', outline: selectedCell === cellKey ? '2px solid #22c55e' : 'none', outlineOffset: '-2px' }}
+                        onClick={(e) => { if (e.target.tagName !== 'INPUT') { setSelectedCell(selectedCell === cellKey ? null : cellKey) } }}>
+                        <input type="text" value={cell} onChange={e => updateCell(r + 1, c, e.target.value)} style={{ width: '100%', background: 'transparent', border: 'none', color: txtColor, fontSize: '13px', outline: 'none', fontFamily: "inherit" }} />
                       </td>
                     )
                   })}
@@ -926,7 +937,8 @@ export const ExcelTable = Node.create({
       colWidths: { default: [150, 150, 150] },
       headerBg: { default: '#22c55e' },
       tableRadius: { default: '8px' },
-      cellColors: { default: {} }
+      cellColors: { default: {} },
+      textColors: { default: {} }
     }
   },
   parseHTML() { return [{ tag: 'div[data-excel-table]' }] },
