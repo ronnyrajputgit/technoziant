@@ -505,7 +505,7 @@ export function BlogEditor({ initialContent = {}, onSave, saving }) {
                 <div style={{ width: '1px', height: '18px', background: 'var(--glass-border)', margin: '0 4px' }} />
                 <span style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>Radius:</span>
                 {['0px', '8px', '12px', '20px', '50%'].map(r => (
-                  <button key={r} onClick={() => setCoverRadius(r)} style={{ padding: '4px 10px', borderRadius: '6px', border: `1px solid ${coverRadius === r ? '#a855f7' : 'var(--glass-border)'}`, background: coverRadius === a ? 'rgba(168,85,247,0.15)' : 'transparent', color: coverRadius === r ? '#a855f7' : 'var(--text)', fontSize: '11px', cursor: 'pointer', fontFamily: "var(--font-code)", transition: 'all 0.15s' }}>{r}</button>
+                  <button key={r} onClick={() => setCoverRadius(r)} style={{ padding: '4px 10px', borderRadius: '6px', border: `1px solid ${coverRadius === r ? '#a855f7' : 'var(--glass-border)'}`, background: coverRadius === r ? 'rgba(168,85,247,0.15)' : 'transparent', color: coverRadius === r ? '#a855f7' : 'var(--text)', fontSize: '11px', cursor: 'pointer', fontFamily: "var(--font-code)", transition: 'all 0.15s' }}>{r}</button>
                 ))}
                 <div style={{ marginLeft: 'auto', display: 'flex', gap: '6px' }}>
                   <button onClick={() => setCoverModal(true)} style={{ padding: '5px 14px', borderRadius: '6px', border: '1px solid rgba(59,130,246,0.3)', background: 'transparent', color: '#3b82f6', fontSize: '11px', cursor: 'pointer', fontFamily: "var(--font-code)", display: 'flex', alignItems: 'center', gap: '4px' }}>Replace</button>
