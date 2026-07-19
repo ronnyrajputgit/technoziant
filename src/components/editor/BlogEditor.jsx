@@ -201,6 +201,7 @@ export function BlogEditor({ initialContent = {}, onSave, saving }) {
   const [linkModal, setLinkModal] = useState(false)
   const [showHeadings, setShowHeadings] = useState(false)
   const [errors, setErrors] = useState({})
+  const [showTitleError, setShowTitleError] = useState(false)
   const toolbarRef = useRef(null)
 
   const [, forceUpdate] = useState(0)
@@ -292,7 +293,7 @@ export function BlogEditor({ initialContent = {}, onSave, saving }) {
   const handleSave = useCallback((published) => {
     const newErrors = {}
     if (published) {
-      if (!title.trim()) newErrors.title = 'Title is required'
+      if (!title.trim()) { newErrors.title = 'Title is required'; setShowTitleError(true) }
       if (!coverImage.trim()) newErrors.coverImage = 'Cover image is required'
     }
     setErrors(newErrors)
@@ -478,8 +479,24 @@ export function BlogEditor({ initialContent = {}, onSave, saving }) {
               <label style={{ display: 'block', fontSize: '11px', fontWeight: '600', color: 'var(--text-muted)', fontFamily: "var(--font-code)", marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Category</label>
               <input type="text" value={category} onChange={e => setCategory(e.target.value)} placeholder="e.g. Technology, Design..."
                 style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.03)', color: 'var(--text)', fontSize: '13px', outline: 'none', fontFamily: "var(--font-code)", boxSizing: 'border-box' }} />
+      </div>
+
+      {/* Title Error Dialog */}
+      {showTitleError && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }} onClick={() => setShowTitleError(false)}>
+          <div className="liquid-glass" style={{ width: '100%', maxWidth: '400px', borderRadius: '16px', overflow: 'hidden', boxShadow: '0 25px 60px rgba(0,0,0,0.5)' }} onClick={e => e.stopPropagation()}>
+            <div style={{ padding: '24px', textAlign: 'center' }}>
+              <div style={{ width: '60px', height: '60px', borderRadius: '50%', background: 'rgba(239,68,68,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+                <span style={{ fontSize: '28px' }}>⚠️</span>
+              </div>
+              <h3 style={{ fontSize: '18px', fontWeight: '700', color: 'var(--text)', marginBottom: '8px' }}>Title is Required</h3>
+              <p style={{ fontSize: '13px', color: 'var(--text-muted)', fontFamily: 'var(--font-code)', marginBottom: '20px', lineHeight: 1.5 }}>Please enter a blog title before publishing.</p>
+              <button onClick={() => setShowTitleError(false)} style={{ width: '100%', padding: '12px', borderRadius: '10px', border: 'none', background: 'linear-gradient(135deg, #22c55e, #16a34a)', color: '#fff', fontSize: '14px', fontWeight: '600', cursor: 'pointer', fontFamily: 'var(--font-code)' }}>Got it</button>
             </div>
           </div>
+        </div>
+      )}
+    </div>
           <div style={{ marginBottom: '16px' }}>
             <label style={{ display: 'block', fontSize: '11px', fontWeight: '600', color: 'var(--text-muted)', fontFamily: "var(--font-code)", marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Tags</label>
             <input type="text" value={tags} onChange={e => setTags(e.target.value)} placeholder="react, nextjs, javascript..."
