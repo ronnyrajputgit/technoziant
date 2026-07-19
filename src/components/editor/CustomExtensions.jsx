@@ -794,21 +794,25 @@ export const Spacer = Node.create({
 export function TableControlsInline({ editor }) {
   const [tableEl, setTableEl] = useState(null)
 
-  useEffect(() => {
-    if (!editor) return
-    const check = () => {
-      const { state } = editor
-      const { $from } = state.selection
-      for (let d = $from.depth; d >= 0; d--) {
-        if ($from.node(d)?.type?.name === 'table') {
+  const findTable = () => {
+    if (!editor) return null
+    const { state } = editor
+    const { $from } = state.selection
+    for (let d = $from.depth; d >= 0; d--) {
+      if ($from.node(d)?.type?.name === 'table') {
+        try {
           const p = editor.view.domAtPos($from.start(d))
           const el = p.node?.nodeType === 1 ? p.node : p.node?.parentElement
-          const table = el?.closest?.('table') || el?.querySelector?.('table')
-          if (table) { setTableEl(table); return }
-        }
+          return el?.closest?.('table') || el?.querySelector?.('table') || null
+        } catch(e) { return null }
       }
-      setTableEl(null)
     }
+    return null
+  }
+
+  useEffect(() => {
+    if (!editor) return
+    const check = () => { setTableEl(findTable()) }
     editor.on('selectionUpdate', check)
     editor.on('transaction', check)
     check()
@@ -824,19 +828,23 @@ export function TableControlsInline({ editor }) {
     </button>
   )
 
-  const setBg = (color) => {
-    tableEl.querySelectorAll('td, th').forEach(cell => {
-      cell.style.backgroundColor = color === 'transparent' ? '' : color
-    })
+  const applyColor = (color, target) => {
+    const tbl = findTable()
+    if (!tbl) return
+    if (target === 'header') {
+      tbl.querySelectorAll('th').forEach(th => { th.style.backgroundColor = color === 'transparent' ? '' : color })
+    } else {
+      tbl.querySelectorAll('td').forEach(td => { td.style.backgroundColor = color === 'transparent' ? '' : color })
+    }
   }
 
-  const setHeaderBg = (color) => { tableEl.querySelectorAll('th').forEach(th => { th.style.backgroundColor = color }) }
-
   const setRadius = (r) => {
-    tableEl.style.borderRadius = r
-    tableEl.style.overflow = 'hidden'
-    tableEl.querySelectorAll('th, td').forEach(c => c.style.borderRadius = '0')
-    const rows = tableEl.querySelectorAll('tr')
+    const tbl = findTable()
+    if (!tbl) return
+    tbl.style.borderRadius = r
+    tbl.style.overflow = 'hidden'
+    tbl.querySelectorAll('th, td').forEach(c => c.style.borderRadius = '0')
+    const rows = tbl.querySelectorAll('tr')
     if (rows.length > 0) {
       const f = rows[0], l = rows[rows.length - 1]
       const fc = f.querySelector('th, td'), lc = f.querySelector('th:last-child, td:last-child')
@@ -864,11 +872,11 @@ export function TableControlsInline({ editor }) {
         <TBtn tip="Merge" onClick={() => editor.chain().focus().mergeCells().run()}>Merge</TBtn>
         <TBtn tip="Split" onClick={() => { try { editor.chain().focus().splitCell().run() } catch(e) {} }}>Split</TBtn>
         <div style={{ width: '1px', height: '14px', background: 'var(--glass-border)', margin: '0 2px' }} />
-        {cellC.map((c, i) => <button key={i} title={c === 'transparent' ? 'Clear' : c} onMouseDown={e => e.preventDefault()} onClick={(e) => { e.preventDefault(); setBg(c) }} style={{ width: '14px', height: '14px', borderRadius: '3px', border: '1px solid var(--glass-border)', background: c === 'transparent' ? 'var(--bg)' : c, cursor: 'pointer' }} />)}
-        <input type="color" value="#fff" title="Custom cell color" onMouseDown={e => e.preventDefault()} onChange={e => setBg(e.target.value + '33')} style={{ width: '16px', height: '14px', border: '1px solid var(--glass-border)', borderRadius: '3px', cursor: 'pointer', padding: 0 }} />
+        {cellC.map((c, i) => <button key={i} title={c === 'transparent' ? 'Clear cell' : c} onMouseDown={e => e.preventDefault()} onClick={(e) => { e.preventDefault(); applyColor(c, 'cell') }} style={{ width: '14px', height: '14px', borderRadius: '3px', border: '1px solid var(--glass-border)', background: c === 'transparent' ? 'var(--bg)' : c, cursor: 'pointer' }} />)}
+        <input type="color" value="#ffffff" title="Custom cell color" onMouseDown={e => e.preventDefault()} onChange={e => applyColor(e.target.value + '33', 'cell')} style={{ width: '16px', height: '14px', border: '1px solid var(--glass-border)', borderRadius: '3px', cursor: 'pointer', padding: 0 }} />
         <div style={{ width: '1px', height: '14px', background: 'var(--glass-border)', margin: '0 2px' }} />
-        {headerC.map((c, i) => <button key={i} title={c} onMouseDown={e => e.preventDefault()} onClick={(e) => { e.preventDefault(); setHeaderBg(c) }} style={{ width: '14px', height: '14px', borderRadius: '3px', border: '1px solid var(--glass-border)', background: c, cursor: 'pointer' }} />)}
-        <input type="color" value="#22c55e" title="Custom header color" onMouseDown={e => e.preventDefault()} onChange={e => setHeaderBg(e.target.value + '44')} style={{ width: '16px', height: '14px', border: '1px solid var(--glass-border)', borderRadius: '3px', cursor: 'pointer', padding: 0 }} />
+        {headerC.map((c, i) => <button key={i} title={c} onMouseDown={e => e.preventDefault()} onClick={(e) => { e.preventDefault(); applyColor(c, 'header') }} style={{ width: '14px', height: '14px', borderRadius: '3px', border: '1px solid var(--glass-border)', background: c, cursor: 'pointer' }} />)}
+        <input type="color" value="#22c55e" title="Custom header color" onMouseDown={e => e.preventDefault()} onChange={e => applyColor(e.target.value + '44', 'header')} style={{ width: '16px', height: '14px', border: '1px solid var(--glass-border)', borderRadius: '3px', cursor: 'pointer', padding: 0 }} />
         <div style={{ width: '1px', height: '14px', background: 'var(--glass-border)', margin: '0 2px' }} />
         {['0px', '6px', '10px', '16px'].map(r => <button key={r} title={`R:${r}`} onMouseDown={e => e.preventDefault()} onClick={(e) => { e.preventDefault(); setRadius(r) }} style={{ padding: '2px 5px', fontSize: '8px', borderRadius: '3px', border: '1px solid var(--glass-border)', background: 'transparent', color: 'var(--text-muted)', cursor: 'pointer', fontFamily: "var(--font-code)" }}>{r}</button>)}
         <TBtn tip="Delete" onClick={() => editor.chain().focus().deleteTable().run()} color="#ef4444">✕</TBtn>
