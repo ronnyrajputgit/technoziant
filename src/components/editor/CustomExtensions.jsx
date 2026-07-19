@@ -795,7 +795,6 @@ export const Spacer = Node.create({
 /*  EXCEL TABLE — spreadsheet-like editing                */
 /* ═══════════════════════════════════════════════════════ */
 function ExcelTableComponent({ node, updateAttributes, deleteNode }) {
-  const [selectedCell, setSelectedCell] = useState(null)
   const [showCellColors, setShowCellColors] = useState(false)
   const [showTextColors, setShowTextColors] = useState(false)
   const data = node.attrs.data || [['', '', ''], ['', '', '']]
@@ -804,17 +803,21 @@ function ExcelTableComponent({ node, updateAttributes, deleteNode }) {
   const tableRadius = node.attrs.tableRadius || '8px'
   const cellColorsMap = node.attrs.cellColors || {}
   const textColorsMap = node.attrs.textColors || {}
+  const selectedCell = node.attrs.selectedCell || null
+
+  const setSelectedCell = (val) => updateAttributes({ selectedCell: val })
 
   const updateCell = (r, c, val) => {
     const newData = data.map(row => [...row])
+    newData[r] = [...newData[r]]
     newData[r][c] = val
     updateAttributes({ data: newData })
   }
 
-  const addRow = () => { updateAttributes({ data: [...data, Array(data[0]?.length || 3).fill('')] }) }
-  const addCol = () => { updateAttributes({ data: data.map(row => [...row, '']), colWidths: [...colWidths, 150] }) }
+  const addRow = () => { updateAttributes({ data: [...data.map(r => [...r]), Array(data[0]?.length || 3).fill('')] }) }
+  const addCol = () => { updateAttributes({ data: data.map(r => [...r, '']), colWidths: [...colWidths, 150] }) }
   const delRow = () => { if (data.length > 1) updateAttributes({ data: data.slice(0, -1) }) }
-  const delCol = () => { if (data[0]?.length > 1) updateAttributes({ data: data.map(row => row.slice(0, -1)), colWidths: colWidths.slice(0, -1) }) }
+  const delCol = () => { if (data[0]?.length > 1) updateAttributes({ data: data.map(r => r.slice(0, -1)), colWidths: colWidths.slice(0, -1) }) }
 
   const cellColorOptions = ['transparent', '#dcfce7', '#dbeafe', '#ede9fe', '#fef3c7', '#fee2e2', '#cffafe', '#fce7f3', '#fef9c3', '#e0e7ff']
   const textColorOptions = ['#000000', '#ef4444', '#f59e0b', '#22c55e', '#3b82f6', '#a855f7', '#ec4899', '#06b6d4', '#ffffff', '#64748b']
@@ -908,15 +911,17 @@ function ExcelTableComponent({ node, updateAttributes, deleteNode }) {
             <tbody>
               {data.slice(1).map((row, r) => (
                 <tr key={r}>
-                  {row.map((cell, c) => {
+              {row.map((cell, c) => {
                     const cellKey = (r + 1) + '_' + c
                     const bg = cellColorsMap[cellKey] || 'transparent'
                     const txtColor = textColorsMap[cellKey] || 'var(--text)'
                     const isSelected = selectedCell === cellKey
                     return (
                       <td key={c} style={{ padding: '8px 14px', borderRight: c < (row.length - 1) ? '1px solid var(--glass-border)' : 'none', borderBottom: r < (data.length - 2) ? '1px solid var(--glass-border)' : 'none', background: bg, minWidth: colWidths[c] || 150, position: 'relative', outline: isSelected ? '2px solid #22c55e' : 'none', outlineOffset: '-2px', cursor: 'pointer' }}
-                        onMouseDown={() => setSelectedCell(cellKey)}>
-                        <input type="text" value={cell} onChange={e => updateCell(r + 1, c, e.target.value)} onMouseDown={e => e.stopPropagation()} style={{ width: '100%', background: 'transparent', border: 'none', color: txtColor, fontSize: '13px', outline: 'none', fontFamily: "inherit", cursor: 'text' }} />
+                        onMouseDown={(e) => { e.stopPropagation(); setSelectedCell(cellKey) }}>
+                        <input type="text" value={cell} onChange={e => updateCell(r + 1, c, e.target.value)}
+                          onFocus={() => setSelectedCell(cellKey)}
+                          style={{ width: '100%', background: 'transparent', border: 'none', color: txtColor, fontSize: '13px', outline: 'none', fontFamily: "inherit", cursor: 'text' }} />
                       </td>
                     )
                   })}
@@ -931,7 +936,7 @@ function ExcelTableComponent({ node, updateAttributes, deleteNode }) {
 }
 
 export const ExcelTable = Node.create({
-  name: 'excelTable', group: 'block', atom: true,
+  name: 'excelTable', group: 'block', content: 'block*', atom: false,
   addAttributes() {
     return {
       data: { default: [['Header 1', 'Header 2', 'Header 3'], ['', '', ''], ['', '', '']] },
@@ -939,7 +944,8 @@ export const ExcelTable = Node.create({
       headerBg: { default: '#22c55e' },
       tableRadius: { default: '8px' },
       cellColors: { default: {} },
-      textColors: { default: {} }
+      textColors: { default: {} },
+      selectedCell: { default: null }
     }
   },
   parseHTML() { return [{ tag: 'div[data-excel-table]' }] },
