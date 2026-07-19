@@ -66,6 +66,23 @@ function tiptapToHtml(json) {
     case 'tableRow': return `<tr>${children}</tr>`
     case 'tableCell': return `<td style="padding:10px 14px;border:1px solid var(--glass-border)">${children}</td>`
     case 'tableHeader': return `<th style="padding:10px 14px;border:1px solid var(--glass-border);font-weight:600;text-align:left;background:rgba(255,255,255,0.03)">${children}</th>`
+    case 'excelTable': {
+      const data = json.attrs?.data || [['', '', ''], ['', '', '']]
+      const headerBg = json.attrs?.headerBg || '#22c55e'
+      const tableRadius = json.attrs?.tableRadius || '8px'
+      const cellColors = json.attrs?.cellColors || {}
+      const headerRow = data[0] || []
+      const bodyRows = data.slice(1) || []
+      const headerHtml = headerRow.map((cell, c) => `<th style="background:${headerBg};color:#fff;padding:10px 14px;font-size:13px;font-weight:600;text-align:left;border-right:1px solid rgba(255,255,255,0.2)">${escapeHtml(cell)}</th>`).join('')
+      const bodyHtml = bodyRows.map((row, r) => {
+        const cellsHtml = row.map((cell, c) => {
+          const bg = cellColors[`${r + 1}_${c}`] || 'transparent'
+          return `<td style="padding:8px 14px;border:1px solid var(--glass-border);background:${bg}">${escapeHtml(cell)}</td>`
+        }).join('')
+        return `<tr>${cellsHtml}</tr>`
+      }).join('')
+      return `<div style="overflow-x:auto;margin:1.5em 0;border-radius:${tableRadius};border:1px solid var(--glass-border)"><table style="width:100%;border-collapse:collapse"><thead><tr>${headerHtml}</tr></thead><tbody>${bodyHtml}</tbody></table></div>`
+    }
     case 'cardBlock': {
       const bg = json.attrs?.bgColor || 'rgba(255,255,255,0.03)'
       const border = json.attrs?.borderColor || 'var(--glass-border)'

@@ -791,96 +791,147 @@ export const Spacer = Node.create({
 /* ═══════════════════════════════════════════════════════ */
 /*  TABLE WRAPPER — inline controls for table             */
 /* ═══════════════════════════════════════════════════════ */
-export function TableControlsInline({ editor }) {
-  const [tableEl, setTableEl] = useState(null)
+/* ═══════════════════════════════════════════════════════ */
+/*  EXCEL TABLE — spreadsheet-like editing                */
+/* ═══════════════════════════════════════════════════════ */
+function ExcelTableComponent({ node, updateAttributes, deleteNode }) {
+  const [selectedCell, setSelectedCell] = useState(null)
+  const [editing, setEditing] = useState(false)
+  const data = node.attrs.data || [['', '', ''], ['', '', '']]
+  const colWidths = node.attrs.colWidths || [150, 150, 150]
+  const headerBg = node.attrs.headerBg || '#22c55e'
+  const tableRadius = node.attrs.tableRadius || '8px'
 
-  const findTable = () => {
-    if (!editor) return null
-    const { state } = editor
-    const { $from } = state.selection
-    for (let d = $from.depth; d >= 0; d--) {
-      if ($from.node(d)?.type?.name === 'table') {
-        try {
-          const p = editor.view.domAtPos($from.start(d))
-          const el = p.node?.nodeType === 1 ? p.node : p.node?.parentElement
-          return el?.closest?.('table') || el?.querySelector?.('table') || null
-        } catch(e) { return null }
-      }
-    }
-    return null
+  const updateCell = (r, c, val) => {
+    const newData = data.map(row => [...row])
+    newData[r][c] = val
+    updateAttributes({ data: newData })
   }
 
-  useEffect(() => {
-    if (!editor) return
-    const check = () => { setTableEl(findTable()) }
-    editor.on('selectionUpdate', check)
-    editor.on('transaction', check)
-    check()
-    return () => { editor.off('selectionUpdate', check); editor.off('transaction', check) }
-  }, [editor])
-
-  if (!tableEl) return null
-
-  const TBtn = ({ onClick, children, color, tip }) => (
-    <button title={tip} onMouseDown={e => e.preventDefault()} onClick={(e) => { e.preventDefault(); e.stopPropagation(); onClick() }} style={{ padding: '3px 8px', borderRadius: '4px', border: '1px solid var(--glass-border)', background: 'transparent', color: color || 'var(--text)', fontSize: '10px', cursor: 'pointer', fontFamily: "var(--font-code)", display: 'flex', alignItems: 'center', gap: '3px', transition: 'all 0.15s' }}
-      onMouseOver={e => e.currentTarget.style.background = 'rgba(255,255,255,0.08)'} onMouseOut={e => e.currentTarget.style.background = 'transparent'}>
-      {children}
-    </button>
-  )
-
-  const applyColor = (color, target) => {
-    const tbl = findTable()
-    if (!tbl) return
-    if (target === 'header') {
-      tbl.querySelectorAll('th').forEach(th => { th.style.backgroundColor = color === 'transparent' ? '' : color })
-    } else {
-      tbl.querySelectorAll('td').forEach(td => { td.style.backgroundColor = color === 'transparent' ? '' : color })
-    }
+  const addRow = () => {
+    const newData = [...data, Array(data[0]?.length || 3).fill('')]
+    updateAttributes({ data: newData })
   }
 
-  const setRadius = (r) => {
-    const tbl = findTable()
-    if (!tbl) return
-    tbl.style.borderRadius = r
-    tbl.style.overflow = 'hidden'
-    tbl.querySelectorAll('th, td').forEach(c => c.style.borderRadius = '0')
-    const rows = tbl.querySelectorAll('tr')
-    if (rows.length > 0) {
-      const f = rows[0], l = rows[rows.length - 1]
-      const fc = f.querySelector('th, td'), lc = f.querySelector('th:last-child, td:last-child')
-      if (fc) fc.style.borderTopLeftRadius = r
-      if (lc) lc.style.borderTopRightRadius = r
-      if (l !== f) {
-        const fc2 = l.querySelector('th, td'), lc2 = l.querySelector('th:last-child, td:last-child')
-        if (fc2) fc2.style.borderBottomLeftRadius = r
-        if (lc2) lc2.style.borderBottomRightRadius = r
-      }
-    }
+  const addCol = () => {
+    const newData = data.map(row => [...row, ''])
+    const newWidths = [...colWidths, 150]
+    updateAttributes({ data: newData, colWidths: newWidths })
   }
 
-  const cellC = ['transparent', '#dcfce7', '#dbeafe', '#ede9fe', '#fef3c7', '#fee2e2', '#cffafe', '#fce7f3']
-  const headerC = ['#bbf7d0', '#93c5fd', '#c4b5fd', '#fcd34d', '#fca5a5', '#67e8f9', '#f9a8d4', '#f1f5f9']
+  const delRow = () => {
+    if (data.length <= 1) return
+    updateAttributes({ data: data.slice(0, -1) })
+  }
+
+  const delCol = () => {
+    if (data[0]?.length <= 1) return
+    updateAttributes({ data: data.map(row => row.slice(0, -1)), colWidths: colWidths.slice(0, -1) })
+  }
+
+  const cellColors = ['transparent', '#dcfce7', '#dbeafe', '#ede9fe', '#fef3c7', '#fee2e2', '#cffafe', '#fce7f3']
+
+  const setCellColor = (r, c, color) => {
+    const newData = data.map(row => [...row])
+    const key = `color_${r}_${c}`
+    if (!newData._colors) newData._colors = {}
+    if (!newData._colors) newData._colors = {}
+    updateAttributes({ data: newData, cellColors: { ...(node.attrs.cellColors || {}), [key]: color } })
+  }
+
+  const cellColorsMap = node.attrs.cellColors || {}
+
+  const setHeaderRow = (color) => {
+    updateAttributes({ headerBg: color })
+  }
 
   return (
-    <div style={{ marginBottom: '4px' }}>
-      <div style={{ display: 'flex', gap: '3px', padding: '5px 8px', borderRadius: '8px', background: 'rgba(34,197,94,0.05)', border: '1px solid var(--glass-border)', alignItems: 'center', flexWrap: 'wrap' }}>
-        <span style={{ fontSize: '9px', color: '#22c55e', fontFamily: "var(--font-code)", fontWeight: '600', marginRight: '4px' }}>TABLE</span>
-        <TBtn tip="Add row" onClick={() => editor.chain().focus().addRowAfter().run()}>+R</TBtn>
-        <TBtn tip="Add column" onClick={() => editor.chain().focus().addColumnAfter().run()}>+C</TBtn>
-        <TBtn tip="Delete row" onClick={() => editor.chain().focus().deleteRow().run()} color="#f59e0b">-R</TBtn>
-        <TBtn tip="Delete column" onClick={() => editor.chain().focus().deleteColumn().run()} color="#f59e0b">-C</TBtn>
-        <TBtn tip="Merge" onClick={() => editor.chain().focus().mergeCells().run()}>Merge</TBtn>
-        <TBtn tip="Split" onClick={() => { try { editor.chain().focus().splitCell().run() } catch(e) {} }}>Split</TBtn>
-        <div style={{ width: '1px', height: '14px', background: 'var(--glass-border)', margin: '0 2px' }} />
-        {cellC.map((c, i) => <button key={i} title={c === 'transparent' ? 'Clear cell' : c} onMouseDown={e => e.preventDefault()} onClick={(e) => { e.preventDefault(); applyColor(c, 'cell') }} style={{ width: '14px', height: '14px', borderRadius: '3px', border: '1px solid var(--glass-border)', background: c === 'transparent' ? 'var(--bg)' : c, cursor: 'pointer' }} />)}
-        <input type="color" value="#ffffff" title="Custom cell color" onMouseDown={e => e.preventDefault()} onChange={e => applyColor(e.target.value + '33', 'cell')} style={{ width: '16px', height: '14px', border: '1px solid var(--glass-border)', borderRadius: '3px', cursor: 'pointer', padding: 0 }} />
-        <div style={{ width: '1px', height: '14px', background: 'var(--glass-border)', margin: '0 2px' }} />
-        {headerC.map((c, i) => <button key={i} title={c} onMouseDown={e => e.preventDefault()} onClick={(e) => { e.preventDefault(); applyColor(c, 'header') }} style={{ width: '14px', height: '14px', borderRadius: '3px', border: '1px solid var(--glass-border)', background: c, cursor: 'pointer' }} />)}
-        <input type="color" value="#22c55e" title="Custom header color" onMouseDown={e => e.preventDefault()} onChange={e => applyColor(e.target.value + '44', 'header')} style={{ width: '16px', height: '14px', border: '1px solid var(--glass-border)', borderRadius: '3px', cursor: 'pointer', padding: 0 }} />
-        <div style={{ width: '1px', height: '14px', background: 'var(--glass-border)', margin: '0 2px' }} />
-        {['0px', '6px', '10px', '16px'].map(r => <button key={r} title={`R:${r}`} onMouseDown={e => e.preventDefault()} onClick={(e) => { e.preventDefault(); setRadius(r) }} style={{ padding: '2px 5px', fontSize: '8px', borderRadius: '3px', border: '1px solid var(--glass-border)', background: 'transparent', color: 'var(--text-muted)', cursor: 'pointer', fontFamily: "var(--font-code)" }}>{r}</button>)}
-        <TBtn tip="Delete" onClick={() => editor.chain().focus().deleteTable().run()} color="#ef4444">✕</TBtn>
+    <NodeViewWrapper>
+      <div style={{ margin: '1.5em 0' }} contentEditable={false}>
+        {/* Toolbar */}
+        <div style={{ display: 'flex', gap: '3px', padding: '6px 10px', borderRadius: '8px 8px 0 0', background: 'rgba(34,197,94,0.05)', border: '1px solid var(--glass-border)', alignItems: 'center', flexWrap: 'wrap' }}>
+          <span style={{ fontSize: '9px', color: '#22c55e', fontFamily: "var(--font-code)", fontWeight: '600', marginRight: '4px' }}>TABLE</span>
+          <button title="Add row" onMouseDown={e => e.preventDefault()} onClick={(e) => { e.preventDefault(); addRow() }} style={{ padding: '3px 8px', borderRadius: '4px', border: '1px solid var(--glass-border)', background: 'transparent', color: 'var(--text)', fontSize: '10px', cursor: 'pointer', fontFamily: "var(--font-code)" }}>+Row</button>
+          <button title="Add column" onMouseDown={e => e.preventDefault()} onClick={(e) => { e.preventDefault(); addCol() }} style={{ padding: '3px 8px', borderRadius: '4px', border: '1px solid var(--glass-border)', background: 'transparent', color: 'var(--text)', fontSize: '10px', cursor: 'pointer', fontFamily: "var(--font-code)" }}>+Col</button>
+          <button title="Delete last row" onMouseDown={e => e.preventDefault()} onClick={(e) => { e.preventDefault(); delRow() }} style={{ padding: '3px 8px', borderRadius: '4px', border: '1px solid var(--glass-border)', background: 'transparent', color: '#f59e0b', fontSize: '10px', cursor: 'pointer', fontFamily: "var(--font-code)" }}>-Row</button>
+          <button title="Delete last column" onMouseDown={e => e.preventDefault()} onClick={(e) => { e.preventDefault(); delCol() }} style={{ padding: '3px 8px', borderRadius: '4px', border: '1px solid var(--glass-border)', background: 'transparent', color: '#f59e0b', fontSize: '10px', cursor: 'pointer', fontFamily: "var(--font-code)" }}>-Col</button>
+          <div style={{ width: '1px', height: '14px', background: 'var(--glass-border)', margin: '0 4px' }} />
+          <span style={{ fontSize: '9px', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>Header:</span>
+          {['#22c55e', '#3b82f6', '#a855f7', '#f59e0b', '#ef4444', '#06b6d4', '#ec4899', '#64748b'].map(c => (
+            <button key={c} title={c} onMouseDown={e => e.preventDefault()} onClick={(e) => { e.preventDefault(); setHeaderRow(c) }} style={{ width: '14px', height: '14px', borderRadius: '3px', border: `2px solid ${headerBg === c ? '#fff' : 'var(--glass-border)'}`, background: c, cursor: 'pointer' }} />
+          ))}
+          <input type="color" value={headerBg} title="Custom header color" onMouseDown={e => e.preventDefault()} onChange={e => setHeaderRow(e.target.value)} style={{ width: '16px', height: '14px', border: '1px solid var(--glass-border)', borderRadius: '3px', cursor: 'pointer', padding: 0 }} />
+          <div style={{ width: '1px', height: '14px', background: 'var(--glass-border)', margin: '0 4px' }} />
+          <span style={{ fontSize: '9px', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>Radius:</span>
+          {['0px', '6px', '10px', '16px'].map(r => (
+            <button key={r} title={`Radius: ${r}`} onMouseDown={e => e.preventDefault()} onClick={(e) => { e.preventDefault(); updateAttributes({ tableRadius: r }) }} style={{ padding: '2px 5px', fontSize: '9px', borderRadius: '3px', border: `1px solid ${tableRadius === r ? '#22c55e' : 'var(--glass-border)'}`, background: tableRadius === r ? 'rgba(34,197,94,0.15)' : 'transparent', color: tableRadius === r ? '#22c55e' : 'var(--text-muted)', cursor: 'pointer', fontFamily: "var(--font-code)" }}>{r}</button>
+          ))}
+          <div style={{ width: '1px', height: '14px', background: 'var(--glass-border)', margin: '0 4px' }} />
+          <button title="Delete table" onMouseDown={e => e.preventDefault()} onClick={(e) => { e.preventDefault(); deleteNode() }} style={{ padding: '3px 8px', borderRadius: '4px', border: '1px solid rgba(239,68,68,0.3)', background: 'transparent', color: '#ef4444', fontSize: '10px', cursor: 'pointer', fontFamily: "var(--font-code)" }}>Delete</button>
+        </div>
+        {/* Table */}
+        <div style={{ overflow: 'auto', border: '1px solid var(--glass-border)', borderRadius: tableRadius }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead>
+              <tr>
+                {data[0]?.map((_, c) => (
+                  <th key={c} style={{ background: headerBg, color: '#fff', padding: '10px 14px', fontSize: '13px', fontWeight: '600', textAlign: 'left', borderRight: c < (data[0]?.length - 1) ? '1px solid rgba(255,255,255,0.2)' : 'none', minWidth: colWidths[c] || 150, position: 'relative' }}>
+                    <input type="text" value={data[0][c]} onChange={e => updateCell(0, c, e.target.value)} style={{ width: '100%', background: 'transparent', border: 'none', color: '#fff', fontSize: '13px', fontWeight: '600', outline: 'none', fontFamily: "inherit" }} />
+                    <div style={{ position: 'absolute', right: 0, top: 0, bottom: 0, width: '4px', cursor: 'col-resize', background: 'transparent' }} onMouseDown={(e) => {
+                      e.preventDefault()
+                      const startX = e.clientX
+                      const startW = colWidths[c] || 150
+                      const onMove = (ev) => { const nw = Math.max(60, startW + (ev.clientX - startX)); const nw2 = [...colWidths]; nw2[c] = nw; updateAttributes({ colWidths: nw2 }) }
+                      const onUp = () => { document.removeEventListener('mousemove', onMove); document.removeEventListener('mouseup', onUp) }
+                      document.addEventListener('mousemove', onMove); document.addEventListener('mouseup', onUp)
+                    }} />
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {data.slice(1).map((row, r) => (
+                <tr key={r}>
+                  {row.map((cell, c) => {
+                    const cellKey = `${r + 1}_${c}`
+                    const bg = cellColorsMap[cellKey] || 'transparent'
+                    return (
+                      <td key={c} style={{ padding: '8px 14px', borderRight: c < (row.length - 1) ? '1px solid var(--glass-border)' : 'none', borderBottom: r < (data.length - 2) ? '1px solid var(--glass-border)' : 'none', background: bg, minWidth: colWidths[c] || 150, position: 'relative' }}
+                        onClick={() => setSelectedCell(selectedCell === cellKey ? null : cellKey)}>
+                        <input type="text" value={cell} onChange={e => updateCell(r + 1, c, e.target.value)} style={{ width: '100%', background: 'transparent', border: 'none', color: 'var(--text)', fontSize: '13px', outline: 'none', fontFamily: "inherit" }} />
+                        {selectedCell === cellKey && (
+                          <div style={{ position: 'absolute', top: -2, right: -2, display: 'flex', gap: '2px', zIndex: 10, background: 'var(--bg)', border: '1px solid var(--glass-border)', borderRadius: '4px', padding: '2px' }}>
+                            {cellColors.map(clr => (
+                              <button key={clr} title={clr === 'transparent' ? 'Clear' : clr} onMouseDown={e => e.preventDefault()} onClick={(e) => { e.preventDefault(); setCellColor(r + 1, c, clr) }} style={{ width: '14px', height: '14px', borderRadius: '2px', border: '1px solid var(--glass-border)', background: clr === 'transparent' ? 'var(--bg)' : clr, cursor: 'pointer' }} />
+                            ))}
+                            <input type="color" value="#fff" title="Custom" onMouseDown={e => e.preventDefault()} onChange={e => setCellColor(r + 1, c, e.target.value + '33')} style={{ width: '14px', height: '14px', border: '1px solid var(--glass-border)', borderRadius: '2px', cursor: 'pointer', padding: 0 }} />
+                          </div>
+                        )}
+                      </td>
+                    )
+                  })}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
-    </div>
+    </NodeViewWrapper>
   )
 }
+
+export const ExcelTable = Node.create({
+  name: 'excelTable', group: 'block', atom: true,
+  addAttributes() {
+    return {
+      data: { default: [['Header 1', 'Header 2', 'Header 3'], ['', '', ''], ['', '', '']] },
+      colWidths: { default: [150, 150, 150] },
+      headerBg: { default: '#22c55e' },
+      tableRadius: { default: '8px' },
+      cellColors: { default: {} }
+    }
+  },
+  parseHTML() { return [{ tag: 'div[data-excel-table]' }] },
+  renderHTML({ HTMLAttributes }) { return ['div', mergeAttributes(HTMLAttributes, { 'data-excel-table': '' })] },
+  addNodeView() { return ReactNodeViewRenderer(ExcelTableComponent) }
+})

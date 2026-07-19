@@ -8,13 +8,12 @@ import Highlight from '@tiptap/extension-highlight'
 import Link from '@tiptap/extension-link'
 import Youtube from '@tiptap/extension-youtube'
 import Blockquote from '@tiptap/extension-blockquote'
-import { Table, TableRow, TableCell, TableHeader } from '@tiptap/extension-table'
 import { TextStyle } from '@tiptap/extension-text-style'
 import { Color } from '@tiptap/extension-color'
 import FontFamily from '@tiptap/extension-font-family'
 import Dropcursor from '@tiptap/extension-dropcursor'
 import Gapcursor from '@tiptap/extension-gapcursor'
-import { CardBlock, ColumnsBlock, GridBlock, ResizableImage, ResizableVideo, Callout, Spacer, TableControlsInline } from './CustomExtensions'
+import { CardBlock, ColumnsBlock, GridBlock, ResizableImage, ResizableVideo, Callout, Spacer, ExcelTable } from './CustomExtensions'
 import { useState, useCallback, useEffect, useRef } from 'react'
 import { renderContent } from '../../utils/renderContent'
 import FormatBoldIcon from '@mui/icons-material/FormatBold'
@@ -223,18 +222,7 @@ export function BlogEditor({ initialContent = {}, onSave, saving }) {
       Dropcursor.configure({ color: '#22c55e', width: 2 }),
       Gapcursor,
       Blockquote,
-      Table.configure({
-        resizable: true,
-        HTMLAttributes: { class: 'tiptap-table' },
-      }),
-      TableRow,
-      TableCell.configure({
-        HTMLAttributes: { class: 'tiptap-table-cell' },
-      }),
-      TableHeader.configure({
-        HTMLAttributes: { class: 'tiptap-table-header' },
-      }),
-      CardBlock, ColumnsBlock, GridBlock, ResizableImage, ResizableVideo, Callout, Spacer
+      CardBlock, ColumnsBlock, GridBlock, ExcelTable, ResizableImage, ResizableVideo, Callout, Spacer
     ],
     content: initialContent.content || '',
     editorProps: {
@@ -289,7 +277,7 @@ export function BlogEditor({ initialContent = {}, onSave, saving }) {
       case 'image': setMediaModal({ open: true, type: 'image' }); break
       case 'youtube': setMediaModal({ open: true, type: 'video' }); break
       case 'hr': editor.chain().focus().setHorizontalRule().run(); break
-      case 'table': editor.chain().focus().insertTable({ rows: 3, cols: 3 }).run(); break
+      case 'table': editor.chain().focus().insertContent({ type: 'excelTable', attrs: { data: [['Header 1', 'Header 2', 'Header 3'], ['', '', ''], ['', '', '']], colWidths: [150, 150, 150], headerBg: '#22c55e', tableRadius: '8px', cellColors: {} } }).run(); break
       case 'codeblock': editor.chain().focus().toggleCodeBlock().run(); break
     }
   }
@@ -576,7 +564,6 @@ export function BlogEditor({ initialContent = {}, onSave, saving }) {
           <div className="blog-content" dangerouslySetInnerHTML={{ __html: renderContent(editor.getJSON()) }} />
         ) : (
           <div className="liquid-glass" style={{ borderRadius: '14px', overflow: 'hidden', border: '1px solid var(--glass-border)', position: 'relative' }}>
-            <TableControlsInline editor={editor} />
             <EditorContent editor={editor} />
           </div>
         )}
