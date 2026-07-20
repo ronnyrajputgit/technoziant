@@ -31,29 +31,28 @@ import FeedbackIcon from '@mui/icons-material/Feedback'
 
 const sidebarLinks = [
   { path: '/dashboard', label: 'Overview', icon: <ArticleIcon sx={{ fontSize: 18 }} /> },
-  { path: '/dashboard/editor', label: 'New Blog', icon: <AddIcon sx={{ fontSize: 18 }} /> },
-  { group: 'Blog Management', icon: <FolderIcon sx={{ fontSize: 18 }} />, children: [
+  { group: 'Blog', icon: <FolderIcon sx={{ fontSize: 18 }} />, children: [
     { path: '/dashboard', label: 'All Blogs', icon: <ArticleIcon sx={{ fontSize: 16 }} /> },
-    { path: '/dashboard/editor', label: 'Create Blog', icon: <AddIcon sx={{ fontSize: 16 }} /> },
+    { path: '/dashboard/editor', label: 'Create New Blog', icon: <AddIcon sx={{ fontSize: 16 }} /> },
   ]},
-  { group: 'Content', icon: <InventoryIcon sx={{ fontSize: 18 }} />, children: [
-    { path: '/dashboard/cms/featured_projects', label: 'Featured Projects', icon: <WorkIcon sx={{ fontSize: 16 }} /> },
-    { path: '/dashboard/cms/services', label: 'Services', icon: <ConstructionIcon sx={{ fontSize: 16 }} /> },
-    { path: '/dashboard/cms/industries', label: 'Industries', icon: <FactoryIcon sx={{ fontSize: 16 }} /> },
-    { path: '/dashboard/cms/tech_stack', label: 'Tech Stack', icon: <MemoryIcon sx={{ fontSize: 16 }} /> },
-    { path: '/dashboard/cms/why_choose', label: 'Why Choose Us', icon: <ThumbUpIcon sx={{ fontSize: 16 }} /> },
-    { path: '/dashboard/cms/work_items', label: 'Work Items', icon: <WorkIcon sx={{ fontSize: 16 }} /> },
-    { path: '/dashboard/cms/footer_content', label: 'Footer Content', icon: <FooterIcon sx={{ fontSize: 16 }} /> },
+  { group: 'Home Page Sections', icon: <WorkIcon sx={{ fontSize: 18 }} />, children: [
+    { path: '/dashboard/cms/featured_projects', label: 'Featured Projects (Home)', icon: <WorkIcon sx={{ fontSize: 16 }} /> },
+    { path: '/dashboard/cms/services', label: 'Services (Home + Services Page)', icon: <ConstructionIcon sx={{ fontSize: 16 }} /> },
+    { path: '/dashboard/cms/industries', label: 'Industries We Serve (Home)', icon: <FactoryIcon sx={{ fontSize: 16 }} /> },
+    { path: '/dashboard/cms/tech_stack', label: 'Tech Stack (Home + Services)', icon: <MemoryIcon sx={{ fontSize: 16 }} /> },
+    { path: '/dashboard/cms/why_choose', label: 'Why Choose Us (Home)', icon: <ThumbUpIcon sx={{ fontSize: 16 }} /> },
+    { path: '/dashboard/cms/work_items', label: 'Work / Portfolio (Work Page)', icon: <WorkIcon sx={{ fontSize: 16 }} /> },
   ]},
-  { group: 'Team & Social', icon: <GroupsIcon sx={{ fontSize: 18 }} />, children: [
-    { path: '/dashboard/cms/team_members', label: 'Team Members', icon: <GroupsIcon sx={{ fontSize: 16 }} /> },
-    { path: '/dashboard/cms/testimonials', label: 'Testimonials', icon: <FormatQuoteIcon sx={{ fontSize: 16 }} /> },
-    { path: '/dashboard/cms/stats', label: 'Stats', icon: <BarChartIcon sx={{ fontSize: 16 }} /> },
-    { path: '/dashboard/cms/awards', label: 'Awards', icon: <EmojiEventsIcon sx={{ fontSize: 16 }} /> },
+  { group: 'About Page', icon: <InfoIcon sx={{ fontSize: 18 }} />, children: [
+    { path: '/dashboard/cms/team_members', label: 'Team Members (About Page)', icon: <GroupsIcon sx={{ fontSize: 16 }} /> },
+    { path: '/dashboard/cms/stats', label: 'Stats Counter (About Page)', icon: <BarChartIcon sx={{ fontSize: 16 }} /> },
+    { path: '/dashboard/cms/awards', label: 'Awards (About Page)', icon: <EmojiEventsIcon sx={{ fontSize: 16 }} /> },
+    { path: '/dashboard/cms/testimonials', label: 'Client Testimonials (Home + About)', icon: <FormatQuoteIcon sx={{ fontSize: 16 }} /> },
   ]},
-  { group: 'System', icon: <SettingsIcon sx={{ fontSize: 18 }} />, children: [
-    { path: '/dashboard/feedback', label: 'Feedback', icon: <FeedbackIcon sx={{ fontSize: 16 }} /> },
-    { path: '/dashboard/settings', label: 'Site Settings', icon: <SettingsIcon sx={{ fontSize: 16 }} /> },
+  { group: 'Footer & Settings', icon: <SettingsIcon sx={{ fontSize: 18 }} />, children: [
+    { path: '/dashboard/cms/footer_content', label: 'Footer Links & Info', icon: <FooterIcon sx={{ fontSize: 16 }} /> },
+    { path: '/dashboard/settings', label: 'Site Settings (Contact, Social)', icon: <SettingsIcon sx={{ fontSize: 16 }} /> },
+    { path: '/dashboard/feedback', label: 'User Feedback & Reviews', icon: <FeedbackIcon sx={{ fontSize: 16 }} /> },
   ]},
 ]
 
