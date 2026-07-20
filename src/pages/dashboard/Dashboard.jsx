@@ -1,59 +1,111 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useApp } from '../../context/AppContext'
 import { api } from '../../utils/api'
+import VisibilityIcon from '@mui/icons-material/Visibility'
+import EditIcon from '@mui/icons-material/Edit'
+import DeleteIcon from '@mui/icons-material/Delete'
+import AddIcon from '@mui/icons-material/Add'
+import SearchIcon from '@mui/icons-material/Search'
+import ArrowBackIcon from '@mui/icons-material/ArrowBack'
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
+import SortIcon from '@mui/icons-material/Sort'
+import ArticleIcon from '@mui/icons-material/Article'
+import PublishIcon from '@mui/icons-material/Publish'
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff'
 
 const sidebarLinks = [
-  { path: '/dashboard', label: 'Overview', icon: '📊' },
-  { path: '/dashboard/editor', label: 'New Blog', icon: '✏️' },
-  { path: '/blog', label: 'View Blog', icon: '👁', external: true },
+  { path: '/dashboard', label: 'Overview', icon: <ArticleIcon sx={{ fontSize: 18 }} /> },
+  { path: '/dashboard/editor', label: 'New Blog', icon: <AddIcon sx={{ fontSize: 18 }} /> },
+  { path: '/blog', label: 'View Blog', icon: <VisibilityIcon sx={{ fontSize: 18 }} />, external: true },
   { path: '/', label: 'Home', icon: '🏠', external: true },
 ]
 
-function Sidebar({ open, onClose }) {
+function ConfirmDialog({ open, title, message, onConfirm, onCancel, danger }) {
+  if (!open) return null
+  return (
+    <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }} onClick={onCancel}>
+      <div className="liquid-glass" style={{ width: '100%', maxWidth: '400px', borderRadius: '16px', overflow: 'hidden', boxShadow: '0 25px 60px rgba(0,0,0,0.5)' }} onClick={e => e.stopPropagation()}>
+        <div style={{ padding: '24px', textAlign: 'center' }}>
+          <div style={{ width: '50px', height: '50px', borderRadius: '50%', background: danger ? 'rgba(239,68,68,0.15)' : 'rgba(59,130,246,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 14px' }}>
+            <span style={{ fontSize: '24px' }}>{danger ? '🗑️' : '⚠️'}</span>
+          </div>
+          <h3 style={{ fontSize: '16px', fontWeight: '700', color: 'var(--text)', marginBottom: '6px' }}>{title}</h3>
+          <p style={{ fontSize: '13px', color: 'var(--text-muted)', fontFamily: 'var(--font-code)', marginBottom: '20px', lineHeight: 1.5 }}>{message}</p>
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <button onClick={onCancel} style={{ flex: 1, padding: '10px', borderRadius: '10px', border: '1px solid var(--glass-border)', background: 'transparent', color: 'var(--text)', fontSize: '13px', fontWeight: '500', cursor: 'pointer', fontFamily: 'var(--font-code)' }}>Cancel</button>
+            <button onClick={onConfirm} style={{ flex: 1, padding: '10px', borderRadius: '10px', border: 'none', background: danger ? 'linear-gradient(135deg, #ef4444, #dc2626)' : 'linear-gradient(135deg, #22c55e, #16a34a)', color: '#fff', fontSize: '13px', fontWeight: '600', cursor: 'pointer', fontFamily: 'var(--font-code)' }}>{danger ? 'Delete' : 'Confirm'}</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function Sidebar({ open, onToggle }) {
   const { user, logout } = useApp()
   const navigate = useNavigate()
   const location = useLocation()
 
   return (
-    <>
-      {open && <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 40, display: 'none' }} className="sidebar-overlay" />}
-      <aside style={{ width: open ? '240px' : '0', minWidth: open ? '240px' : '0', background: 'var(--bg-2)', borderRight: '1px solid var(--glass-border)', height: '100vh', position: 'sticky', top: 0, overflow: 'hidden', transition: 'all 0.3s', zIndex: 50, display: 'flex', flexDirection: 'column' }}>
-        <div style={{ padding: '20px 16px', borderBottom: '1px solid var(--glass-border)' }}>
-          <div style={{ fontSize: '16px', fontWeight: '700', fontFamily: 'var(--font-h)', marginBottom: '4px' }}>Dashboard</div>
+    <aside style={{ width: open ? '240px' : '60px', minWidth: open ? '240px' : '60px', background: 'var(--bg-2)', borderRight: '1px solid var(--glass-border)', height: '100vh', position: 'sticky', top: 0, overflow: 'hidden', transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)', zIndex: 50, display: 'flex', flexDirection: 'column' }}>
+      {/* Header */}
+      <div style={{ padding: open ? '20px 16px' : '20px 0', borderBottom: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center', justifyContent: open ? 'space-between' : 'center', transition: 'all 0.3s' }}>
+        {open && <div>
+          <div style={{ fontSize: '16px', fontWeight: '700', fontFamily: 'var(--font-h)' }}>Dashboard</div>
           <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>{user?.name || 'Admin'}</div>
+        </div>}
+        <button onClick={onToggle} style={{ padding: '6px', borderRadius: '6px', border: '1px solid var(--glass-border)', background: 'transparent', color: 'var(--text)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'transform 0.3s', transform: open ? 'rotate(0deg)' : 'rotate(180deg)' }}>
+          <ArrowBackIcon sx={{ fontSize: 16 }} />
+        </button>
+      </div>
+
+      {/* User Avatar */}
+      {open && (
+        <div style={{ padding: '16px', display: 'flex', alignItems: 'center', gap: '10px', borderBottom: '1px solid var(--glass-border)' }}>
+          <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'linear-gradient(135deg, #22c55e, #16a34a)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', fontWeight: '700', color: '#fff', flexShrink: 0 }}>
+            {(user?.name || 'A')[0].toUpperCase()}
+          </div>
+          <div style={{ overflow: 'hidden' }}>
+            <div style={{ fontSize: '13px', fontWeight: '600', color: 'var(--text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{user?.name || 'Admin'}</div>
+            <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: "var(--font-code)", whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{user?.email || ''}</div>
+          </div>
         </div>
-        <nav style={{ flex: 1, padding: '12px 8px', overflowY: 'auto' }}>
-          {sidebarLinks.map(link => {
-            const isActive = !link.external && location.pathname === link.path
-            if (link.external) {
-              return (
-                <a key={link.path} href={link.path} target={link.path === '/' ? '_self' : '_blank'} rel="noopener"
-                  style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 12px', borderRadius: '8px', fontSize: '13px', color: 'var(--text-muted)', textDecoration: 'none', marginBottom: '2px', transition: 'all 0.15s' }}
-                  onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.04)'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
-                  <span>{link.icon}</span><span>{link.label}</span>
-                </a>
-              )
-            }
+      )}
+
+      {/* Nav */}
+      <nav style={{ flex: 1, padding: '12px 8px', overflowY: 'auto' }}>
+        {sidebarLinks.map(link => {
+          const isActive = !link.external && location.pathname === link.path
+          if (link.external) {
             return (
-              <Link key={link.path} to={link.path}
-                style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 12px', borderRadius: '8px', fontSize: '13px', color: isActive ? '#22c55e' : 'var(--text)', textDecoration: 'none', marginBottom: '2px', background: isActive ? 'rgba(34,197,94,0.08)' : 'transparent', fontWeight: isActive ? '600' : '400', transition: 'all 0.15s' }}
-                onMouseEnter={e => !isActive && (e.currentTarget.style.background = 'rgba(255,255,255,0.04)')} onMouseLeave={e => !isActive && (e.currentTarget.style.background = 'transparent')}>
-                <span>{link.icon}</span><span>{link.label}</span>
-              </Link>
+              <a key={link.path} href={link.path} target={link.path === '/' ? '_self' : '_blank'} rel="noopener"
+                title={link.label}
+                style={{ display: 'flex', alignItems: 'center', gap: open ? '10px' : '0', justifyContent: open ? 'flex-start' : 'center', padding: open ? '10px 12px' : '10px', borderRadius: '8px', fontSize: '13px', color: 'var(--text-muted)', textDecoration: 'none', marginBottom: '2px', transition: 'all 0.15s' }}
+                onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.04)'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+                <span>{link.icon}</span>{open && <span>{link.label}</span>}
+              </a>
             )
-          })}
-        </nav>
-        <div style={{ padding: '12px 8px', borderTop: '1px solid var(--glass-border)' }}>
-          <button onClick={() => { logout(); navigate('/') }}
-            style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 12px', borderRadius: '8px', fontSize: '13px', color: '#ef4444', width: '100%', cursor: 'pointer', border: 'none', background: 'transparent', fontFamily: "var(--font-code)" }}
-            onMouseEnter={e => e.currentTarget.style.background = 'rgba(239,68,68,0.08)'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
-            <span>🚪</span><span>Logout</span>
-          </button>
-        </div>
-      </aside>
-      <style>{`@media (max-width: 768px) { .sidebar-overlay { display: block !important; } }`}</style>
-    </>
+          }
+          return (
+            <Link key={link.path} to={link.path} title={link.label}
+              style={{ display: 'flex', alignItems: 'center', gap: open ? '10px' : '0', justifyContent: open ? 'flex-start' : 'center', padding: open ? '10px 12px' : '10px', borderRadius: '8px', fontSize: '13px', color: isActive ? '#22c55e' : 'var(--text)', textDecoration: 'none', marginBottom: '2px', background: isActive ? 'rgba(34,197,94,0.08)' : 'transparent', fontWeight: isActive ? '600' : '400', transition: 'all 0.15s' }}
+              onMouseEnter={e => !isActive && (e.currentTarget.style.background = 'rgba(255,255,255,0.04)')} onMouseLeave={e => !isActive && (e.currentTarget.style.background = 'transparent')}>
+              <span>{link.icon}</span>{open && <span>{link.label}</span>}
+            </Link>
+          )
+        })}
+      </nav>
+
+      {/* Logout */}
+      <div style={{ padding: '12px 8px', borderTop: '1px solid var(--glass-border)' }}>
+        <button onClick={() => { logout(); navigate('/') }} title="Logout"
+          style={{ display: 'flex', alignItems: 'center', gap: open ? '10px' : '0', justifyContent: open ? 'flex-start' : 'center', padding: open ? '10px 12px' : '10px', borderRadius: '8px', fontSize: '13px', color: '#ef4444', width: '100%', cursor: 'pointer', border: 'none', background: 'transparent', fontFamily: "var(--font-code)" }}
+          onMouseEnter={e => e.currentTarget.style.background = 'rgba(239,68,68,0.08)'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+          <span>🚪</span>{open && <span>Logout</span>}
+        </button>
+      </div>
+    </aside>
   )
 }
 
@@ -63,6 +115,9 @@ export function Dashboard() {
   const [loading, setLoading] = useState(true)
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [filter, setFilter] = useState('all')
+  const [search, setSearch] = useState('')
+  const [sortBy, setSortBy] = useState('newest')
+  const [deleteConfirm, setDeleteConfirm] = useState(null)
   const nav = useNavigate()
 
   useEffect(() => {
@@ -71,9 +126,9 @@ export function Dashboard() {
   }, [user, nav])
 
   const handleDelete = async (id) => {
-    if (!confirm('Delete this blog?')) return
     await api.deleteBlog(id)
     setBlogs(blogs.filter(b => b.id !== id))
+    setDeleteConfirm(null)
   }
 
   const togglePublish = async (blog) => {
@@ -81,75 +136,135 @@ export function Dashboard() {
     setBlogs(blogs.map(b => b.id === blog.id ? { ...b, published: updated.published } : b))
   }
 
+  const filteredBlogs = useMemo(() => {
+    let result = blogs
+    if (filter === 'published') result = result.filter(b => b.published)
+    else if (filter === 'drafts') result = result.filter(b => !b.published)
+    if (search.trim()) {
+      const q = search.toLowerCase()
+      result = result.filter(b => b.title?.toLowerCase().includes(q) || b.category?.toLowerCase().includes(q) || b.tags?.some(t => t.toLowerCase().includes(q)))
+    }
+    if (sortBy === 'newest') result = [...result].sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+    else if (sortBy === 'oldest') result = [...result].sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
+    else if (sortBy === 'title') result = [...result].sort((a, b) => a.title.localeCompare(b.title))
+    return result
+  }, [blogs, filter, search, sortBy])
+
   if (!user) return null
 
   const published = blogs.filter(b => b.published).length
   const drafts = blogs.filter(b => !b.published).length
-  const filteredBlogs = filter === 'all' ? blogs : filter === 'published' ? blogs.filter(b => b.published) : blogs.filter(b => !b.published)
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh' }}>
-      <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <ConfirmDialog open={!!deleteConfirm} title="Delete Blog?" message={`"${deleteConfirm?.title}" will be permanently deleted.`} onConfirm={() => handleDelete(deleteConfirm.id)} onCancel={() => setDeleteConfirm(null)} danger />
+      <Sidebar open={sidebarOpen} onToggle={() => setSidebarOpen(!sidebarOpen)} />
       <main style={{ flex: 1, paddingTop: '20px', paddingBottom: '40px', overflow: 'auto' }}>
         <div style={{ padding: '0 clamp(16px, 4vw, 32px)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '28px', flexWrap: 'wrap', gap: '12px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <button onClick={() => setSidebarOpen(!sidebarOpen)} style={{ padding: '8px', borderRadius: '8px', border: '1px solid var(--glass-border)', background: 'transparent', color: 'var(--text)', cursor: 'pointer', fontSize: '14px', transition: 'transform 0.3s', transform: sidebarOpen ? 'rotate(0deg)' : 'rotate(180deg)' }}>◀</button>
-              <div>
-                <div style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '4px', fontFamily: "var(--font-code)" }}>overview</div>
-                <h1 style={{ fontSize: 'clamp(22px, 4vw, 32px)', fontWeight: '700' }}>Welcome, {user.name}</h1>
-              </div>
+          {/* Header */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '12px' }}>
+            <div>
+              <div style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '4px', fontFamily: "var(--font-code)" }}>overview</div>
+              <h1 style={{ fontSize: 'clamp(22px, 4vw, 32px)', fontWeight: '700' }}>Welcome, {user.name}</h1>
             </div>
-            <Link to="/dashboard/editor" style={{ padding: '10px 20px', borderRadius: '8px', border: 'none', fontSize: '12px', fontWeight: '600', color: '#fff', cursor: 'pointer', background: 'linear-gradient(135deg, #22c55e, #16a34a)', textDecoration: 'none', fontFamily: "var(--font-code)" }}>+ New Blog</Link>
+            <Link to="/dashboard/editor" style={{ padding: '10px 20px', borderRadius: '8px', border: 'none', fontSize: '12px', fontWeight: '600', color: '#fff', cursor: 'pointer', background: 'linear-gradient(135deg, #22c55e, #16a34a)', textDecoration: 'none', fontFamily: "var(--font-code)", display: 'flex', alignItems: 'center', gap: '6px' }}><AddIcon sx={{ fontSize: 16 }} /> New Blog</Link>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '10px', marginBottom: '28px' }}>
+          {/* Stats */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '10px', marginBottom: '24px' }}>
             {[
-              { label: 'Total', value: blogs.length, color: '#4f8eff' },
-              { label: 'Published', value: published, color: '#22c55e' },
-              { label: 'Drafts', value: drafts, color: '#f59e0b' }
+              { label: 'Total', value: blogs.length, color: '#4f8eff', bg: 'rgba(79,142,255,0.1)' },
+              { label: 'Published', value: published, color: '#22c55e', bg: 'rgba(34,197,94,0.1)' },
+              { label: 'Drafts', value: drafts, color: '#f59e0b', bg: 'rgba(245,158,11,0.1)' }
             ].map((s, i) => (
-              <div key={i} className="liquid-glass" style={{ padding: '18px', borderRadius: '10px' }}>
-                <div style={{ fontSize: '26px', fontWeight: '700', color: s.color, fontFamily: 'var(--font-h)' }}>{s.value}</div>
+              <div key={i} className="liquid-glass" style={{ padding: '16px', borderRadius: '10px' }}>
+                <div style={{ fontSize: '24px', fontWeight: '700', color: s.color, fontFamily: 'var(--font-h)' }}>{s.value}</div>
                 <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>{s.label}</div>
               </div>
             ))}
           </div>
 
-          <div style={{ display: 'flex', gap: '6px', marginBottom: '16px' }}>
-            {['all', 'published', 'drafts'].map(f => (
-              <button key={f} onClick={() => setFilter(f)} style={{ padding: '6px 14px', borderRadius: '6px', fontSize: '11px', fontWeight: '500', cursor: 'pointer', fontFamily: "var(--font-code)", textTransform: 'capitalize', border: '1px solid var(--glass-border)', background: filter === f ? 'rgba(34,197,94,0.15)' : 'transparent', color: filter === f ? '#22c55e' : 'var(--text-muted)' }}>
-                {f}
-              </button>
-            ))}
+          {/* Search & Filter Bar */}
+          <div style={{ display: 'flex', gap: '8px', marginBottom: '16px', flexWrap: 'wrap', alignItems: 'center' }}>
+            <div style={{ position: 'relative', flex: '1 1 200px' }}>
+              <SearchIcon sx={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', fontSize: 16, color: 'var(--text-muted)' }} />
+              <input type="text" value={search} onChange={e => setSearch(e.target.value)} placeholder="Search blogs..."
+                style={{ width: '100%', padding: '8px 12px 8px 34px', borderRadius: '8px', border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.03)', color: 'var(--text)', fontSize: '12px', outline: 'none', fontFamily: "var(--font-code)", boxSizing: 'border-box' }} />
+            </div>
+            <div style={{ display: 'flex', gap: '4px' }}>
+              {['all', 'published', 'drafts'].map(f => (
+                <button key={f} onClick={() => setFilter(f)} style={{ padding: '6px 12px', borderRadius: '6px', fontSize: '11px', fontWeight: '500', cursor: 'pointer', fontFamily: "var(--font-code)", textTransform: 'capitalize', border: '1px solid var(--glass-border)', background: filter === f ? 'rgba(34,197,94,0.15)' : 'transparent', color: filter === f ? '#22c55e' : 'var(--text-muted)' }}>
+                  {f}
+                </button>
+              ))}
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <SortIcon sx={{ fontSize: 14, color: 'var(--text-muted)' }} />
+              <select value={sortBy} onChange={e => setSortBy(e.target.value)} style={{ padding: '6px 8px', borderRadius: '6px', border: '1px solid var(--glass-border)', background: 'transparent', color: 'var(--text)', fontSize: '11px', fontFamily: "var(--font-code)", cursor: 'pointer', outline: 'none' }}>
+                <option value="newest">Newest</option>
+                <option value="oldest">Oldest</option>
+                <option value="title">Title A-Z</option>
+              </select>
+            </div>
           </div>
 
+          {/* Blog Grid */}
           {loading ? (
             <div style={{ textAlign: 'center', padding: '60px', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>Loading...</div>
           ) : filteredBlogs.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '60px' }}>
-              <p style={{ color: 'var(--text-muted)', marginBottom: '16px', fontFamily: "var(--font-code)" }}>No blogs {filter !== 'all' ? `(${filter})` : ''} yet.</p>
+              <p style={{ color: 'var(--text-muted)', marginBottom: '16px', fontFamily: "var(--font-code)" }}>No blogs {filter !== 'all' ? `(${filter})` : ''} {search ? `matching "${search}"` : ''} found.</p>
               <Link to="/dashboard/editor" style={{ padding: '10px 20px', borderRadius: '8px', border: 'none', fontSize: '13px', fontWeight: '600', color: '#fff', cursor: 'pointer', background: 'linear-gradient(135deg, #22c55e, #16a34a)', textDecoration: 'none', fontFamily: "var(--font-code)" }}>+ Create Blog</Link>
             </div>
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '12px' }}>
               {filteredBlogs.map(blog => (
-                <div key={blog.id} className="liquid-glass" style={{ padding: '14px 18px', borderRadius: '10px', display: 'grid', gridTemplateColumns: '1fr auto auto auto', gap: '12px', alignItems: 'center' }}>
-                  <div>
-                    <h3 style={{ fontSize: '14px', fontWeight: '600', marginBottom: '3px' }}>{blog.title}</h3>
-                    <div style={{ display: 'flex', gap: '10px', fontSize: '10px', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>
-                      <span>{blog.category || 'Uncategorized'}</span><span>{new Date(blog.created_at).toLocaleDateString()}</span>
+                <div key={blog.id} className="liquid-glass" style={{ borderRadius: '12px', overflow: 'hidden', display: 'flex', flexDirection: 'column', transition: 'transform 0.2s, box-shadow 0.2s' }}
+                  onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 8px 25px rgba(0,0,0,0.3)' }}
+                  onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none' }}>
+                  {/* Cover Image */}
+                  {blog.cover_image ? (
+                    <div style={{ height: '140px', overflow: 'hidden', position: 'relative' }}>
+                      <img src={blog.cover_image} alt={blog.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      <div style={{ position: 'absolute', top: '8px', right: '8px' }}>
+                        <span style={{ fontSize: '9px', padding: '3px 10px', borderRadius: '100px', fontWeight: '600', fontFamily: "var(--font-code)", background: blog.published ? 'rgba(34,197,94,0.9)' : 'rgba(245,158,11,0.9)', color: '#fff', backdropFilter: 'blur(4px)' }}>
+                          {blog.published ? 'Live' : 'Draft'}
+                        </span>
+                      </div>
                     </div>
-                  </div>
-                  <span style={{ fontSize: '9px', padding: '3px 10px', borderRadius: '100px', fontWeight: '600', fontFamily: "var(--font-code)", background: blog.published ? 'rgba(34,197,94,0.15)' : 'rgba(245,158,11,0.15)', color: blog.published ? '#22c55e' : '#f59e0b' }}>
-                    {blog.published ? 'Live' : 'Draft'}
-                  </span>
-                  <button onClick={() => togglePublish(blog)} style={{ fontSize: '10px', padding: '5px 12px', borderRadius: '6px', border: '1px solid var(--glass-border)', background: 'transparent', color: 'var(--text)', cursor: 'pointer', fontFamily: "var(--font-code)" }}>
-                    {blog.published ? 'Unpublish' : 'Publish'}
-                  </button>
-                  <div style={{ display: 'flex', gap: '4px' }}>
-                    <Link to={`/dashboard/editor/${blog.id}`} style={{ fontSize: '10px', padding: '5px 12px', borderRadius: '6px', background: 'rgba(79,142,255,0.15)', color: '#4f8eff', textDecoration: 'none', fontFamily: "var(--font-code)" }}>Edit</Link>
-                    <button onClick={() => handleDelete(blog.id)} style={{ fontSize: '10px', padding: '5px 12px', borderRadius: '6px', background: 'rgba(239,68,68,0.15)', color: '#ef4444', border: 'none', cursor: 'pointer', fontFamily: "var(--font-code)" }}>Del</button>
+                  ) : (
+                    <div style={{ height: '100px', background: 'linear-gradient(135deg, rgba(34,197,94,0.1), rgba(59,130,246,0.1))', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
+                      <ArticleIcon sx={{ fontSize: 40, color: 'var(--text-muted)', opacity: 0.3 }} />
+                      <div style={{ position: 'absolute', top: '8px', right: '8px' }}>
+                        <span style={{ fontSize: '9px', padding: '3px 10px', borderRadius: '100px', fontWeight: '600', fontFamily: "var(--font-code)", background: blog.published ? 'rgba(34,197,94,0.9)' : 'rgba(245,158,11,0.9)', color: '#fff' }}>
+                          {blog.published ? 'Live' : 'Draft'}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Content */}
+                  <div style={{ padding: '14px', flex: 1, display: 'flex', flexDirection: 'column' }}>
+                    {blog.category && <span style={{ fontSize: '9px', fontWeight: '600', color: '#22c55e', fontFamily: "var(--font-code)", textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px' }}>{blog.category}</span>}
+                    <h3 style={{ fontSize: '14px', fontWeight: '600', lineHeight: 1.3, marginBottom: '6px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{blog.title}</h3>
+                    {blog.excerpt && <p style={{ fontSize: '11px', lineHeight: 1.5, color: 'var(--text-muted)', marginBottom: '10px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{blog.excerpt}</p>}
+                    <div style={{ marginTop: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '10px', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>
+                      <span>{new Date(blog.created_at).toLocaleDateString()}</span>
+                      <div style={{ display: 'flex', gap: '4px' }}>
+                        <a href={`/blog/${blog.slug}`} target="_blank" rel="noopener" title="View blog" style={{ padding: '4px 8px', borderRadius: '6px', background: 'rgba(34,197,94,0.1)', color: '#22c55e', cursor: 'pointer', display: 'flex', alignItems: 'center', textDecoration: 'none', border: 'none' }}>
+                          <VisibilityIcon sx={{ fontSize: 14 }} />
+                        </a>
+                        <Link to={`/dashboard/editor/${blog.id}`} title="Edit" style={{ padding: '4px 8px', borderRadius: '6px', background: 'rgba(79,142,255,0.1)', color: '#4f8eff', cursor: 'pointer', display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
+                          <EditIcon sx={{ fontSize: 14 }} />
+                        </Link>
+                        <button onClick={() => togglePublish(blog)} title={blog.published ? 'Unpublish' : 'Publish'} style={{ padding: '4px 8px', borderRadius: '6px', background: blog.published ? 'rgba(245,158,11,0.1)' : 'rgba(34,197,94,0.1)', color: blog.published ? '#f59e0b' : '#22c55e', cursor: 'pointer', border: 'none', display: 'flex', alignItems: 'center' }}>
+                          {blog.published ? <VisibilityOffIcon sx={{ fontSize: 14 }} /> : <PublishIcon sx={{ fontSize: 14 }} />}
+                        </button>
+                        <button onClick={() => setDeleteConfirm(blog)} title="Delete" style={{ padding: '4px 8px', borderRadius: '6px', background: 'rgba(239,68,68,0.1)', color: '#ef4444', cursor: 'pointer', border: 'none', display: 'flex', alignItems: 'center' }}>
+                          <DeleteIcon sx={{ fontSize: 14 }} />
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               ))}

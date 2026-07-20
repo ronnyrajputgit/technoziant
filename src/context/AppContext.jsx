@@ -7,12 +7,13 @@ const AppContext = createContext()
 export function AppProvider({ children }) {
   const [cursorType, setCursorType] = useState('default')
   const [cursorText, setCursorText] = useState('')
-  const [theme, setTheme] = useState('dark')
+  const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'dark')
   const [user, setUser] = useState(null)
   const [authLoading, setAuthLoading] = useState(true)
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme)
+    localStorage.setItem('theme', theme)
   }, [theme])
 
   useEffect(() => {
