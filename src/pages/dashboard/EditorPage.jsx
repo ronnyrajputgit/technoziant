@@ -56,6 +56,7 @@ export function EditorPage() {
   const [loading, setLoading] = useState(!!id)
   const [error, setError] = useState(null)
   const [saved, setSaved] = useState(null)
+  const [createdId, setCreatedId] = useState(null)
 
   useEffect(() => {
     if (!user) { navigate('/login'); return }
@@ -72,8 +73,13 @@ export function EditorPage() {
     const action = data.published ? 'publish' : 'draft'
     setSaving(action)
     try {
-      if (id) await api.updateBlog(id, data)
-      else await api.createBlog(data)
+      const currentId = id || createdId
+      if (currentId) {
+        await api.updateBlog(currentId, data)
+      } else {
+        const result = await api.createBlog(data)
+        setCreatedId(result.id)
+      }
       if (data.published) {
         setSaved('published')
         setTimeout(() => navigate('/dashboard'), 1000)
