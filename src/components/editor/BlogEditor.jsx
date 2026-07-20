@@ -450,17 +450,11 @@ export function BlogEditor({ initialContent = {}, onSave, saving }) {
       {/* EDITOR CONTENT */}
       <div style={{ paddingTop: '100px', maxWidth: '900px', margin: '0 auto', padding: '100px clamp(16px, 4vw, 40px) 100px' }}>
         <div style={{ marginBottom: '20px' }}>
-          <label style={{ display: 'block', fontSize: '11px', fontWeight: '600', color: errors.title ? '#ef4444' : 'var(--text-muted)', fontFamily: "var(--font-code)", marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Blog Title *</label>
-          <input type="text" value={title} onChange={e => { setTitle(e.target.value); if (errors.title) setErrors(prev => ({ ...prev, title: null })) }} placeholder="Enter your blog title..."
-            style={{ width: '100%', padding: '14px 16px', borderRadius: '10px', border: `2px solid ${errors.title ? '#ef4444' : 'var(--glass-border)'}`, background: 'rgba(255,255,255,0.03)', color: 'var(--text)', fontSize: 'clamp(20px, 4vw, 28px)', fontWeight: '700', outline: 'none', fontFamily: 'var(--font-h)', boxSizing: 'border-box', transition: 'all 0.2s' }}
-            onFocus={e => e.target.style.borderColor = errors.title ? '#ef4444' : '#22c55e'}
-            onBlur={e => e.target.style.borderColor = errors.title ? '#ef4444' : 'var(--glass-border)'} />
-          {errors.title && (
-            <div style={{ marginTop: '6px', padding: '6px 12px', borderRadius: '8px', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <span style={{ fontSize: '12px' }}>⚠️</span>
-              <span style={{ fontSize: '12px', color: '#ef4444', fontFamily: "var(--font-code)" }}>{errors.title}</span>
-            </div>
-          )}
+          <label style={{ display: 'block', fontSize: '11px', fontWeight: '600', color: 'var(--text-muted)', fontFamily: "var(--font-code)", marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Blog Title *</label>
+          <input type="text" value={title} onChange={e => setTitle(e.target.value)} placeholder="Enter your blog title..."
+            style={{ width: '100%', padding: '14px 16px', borderRadius: '10px', border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.03)', color: 'var(--text)', fontSize: 'clamp(20px, 4vw, 28px)', fontWeight: '700', outline: 'none', fontFamily: 'var(--font-h)', boxSizing: 'border-box', transition: 'all 0.2s' }}
+            onFocus={e => e.target.style.borderColor = '#22c55e'}
+            onBlur={e => e.target.style.borderColor = 'var(--glass-border)'} />
         </div>
 
         <div className="liquid-glass" style={{ borderRadius: '14px', padding: '20px', marginBottom: '20px', border: '1px solid var(--glass-border)' }}>
@@ -479,24 +473,9 @@ export function BlogEditor({ initialContent = {}, onSave, saving }) {
               <label style={{ display: 'block', fontSize: '11px', fontWeight: '600', color: 'var(--text-muted)', fontFamily: "var(--font-code)", marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Category</label>
               <input type="text" value={category} onChange={e => setCategory(e.target.value)} placeholder="e.g. Technology, Design..."
                 style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.03)', color: 'var(--text)', fontSize: '13px', outline: 'none', fontFamily: "var(--font-code)", boxSizing: 'border-box' }} />
-      </div>
-
-      {/* Title Error Dialog */}
-      {showTitleError && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }} onClick={() => setShowTitleError(false)}>
-          <div className="liquid-glass" style={{ width: '100%', maxWidth: '400px', borderRadius: '16px', overflow: 'hidden', boxShadow: '0 25px 60px rgba(0,0,0,0.5)' }} onClick={e => e.stopPropagation()}>
-            <div style={{ padding: '24px', textAlign: 'center' }}>
-              <div style={{ width: '60px', height: '60px', borderRadius: '50%', background: 'rgba(239,68,68,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
-                <span style={{ fontSize: '28px' }}>⚠️</span>
-              </div>
-              <h3 style={{ fontSize: '18px', fontWeight: '700', color: 'var(--text)', marginBottom: '8px' }}>Title is Required</h3>
-              <p style={{ fontSize: '13px', color: 'var(--text-muted)', fontFamily: 'var(--font-code)', marginBottom: '20px', lineHeight: 1.5 }}>Please enter a blog title before publishing.</p>
-              <button onClick={() => setShowTitleError(false)} style={{ width: '100%', padding: '12px', borderRadius: '10px', border: 'none', background: 'linear-gradient(135deg, #22c55e, #16a34a)', color: '#fff', fontSize: '14px', fontWeight: '600', cursor: 'pointer', fontFamily: 'var(--font-code)' }}>Got it</button>
             </div>
           </div>
-        </div>
-      )}
-    </div>
+
           <div style={{ marginBottom: '16px' }}>
             <label style={{ display: 'block', fontSize: '11px', fontWeight: '600', color: 'var(--text-muted)', fontFamily: "var(--font-code)", marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Tags</label>
             <input type="text" value={tags} onChange={e => setTags(e.target.value)} placeholder="react, nextjs, javascript..."
@@ -596,6 +575,22 @@ export function BlogEditor({ initialContent = {}, onSave, saving }) {
           </div>
         )}
       </div>
+
+      {/* Title Error Dialog */}
+      {showTitleError && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }} onClick={() => setShowTitleError(false)}>
+          <div className="liquid-glass" style={{ width: '100%', maxWidth: '400px', borderRadius: '16px', overflow: 'hidden', boxShadow: '0 25px 60px rgba(0,0,0,0.5)' }} onClick={e => e.stopPropagation()}>
+            <div style={{ padding: '24px', textAlign: 'center' }}>
+              <div style={{ width: '60px', height: '60px', borderRadius: '50%', background: 'rgba(239,68,68,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+                <span style={{ fontSize: '28px' }}>⚠️</span>
+              </div>
+              <h3 style={{ fontSize: '18px', fontWeight: '700', color: 'var(--text)', marginBottom: '8px' }}>Title is Required</h3>
+              <p style={{ fontSize: '13px', color: 'var(--text-muted)', fontFamily: 'var(--font-code)', marginBottom: '20px', lineHeight: 1.5 }}>Please enter a blog title before publishing.</p>
+              <button onClick={() => setShowTitleError(false)} style={{ width: '100%', padding: '12px', borderRadius: '10px', border: 'none', background: 'linear-gradient(135deg, #22c55e, #16a34a)', color: '#fff', fontSize: '14px', fontWeight: '600', cursor: 'pointer', fontFamily: 'var(--font-code)' }}>Got it</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
