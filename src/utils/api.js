@@ -17,10 +17,24 @@ export const api = {
   login: (email, password) => apiFetch('/auth/login', { method: 'POST', body: JSON.stringify({ email, password }) }),
   register: (email, password, name) => apiFetch('/auth/register', { method: 'POST', body: JSON.stringify({ email, password, name }) }),
   me: () => apiFetch('/auth/me'),
+
   getBlogs: () => apiFetch('/blogs/all'),
   getPublishedBlogs: (params) => apiFetch(`/blogs?${new URLSearchParams(params || {})}`),
   getBlog: (slug) => apiFetch(`/blogs/${slug}`),
   createBlog: (data) => apiFetch('/blogs', { method: 'POST', body: JSON.stringify(data) }),
   updateBlog: (id, data) => apiFetch(`/blogs/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
   deleteBlog: (id) => apiFetch(`/blogs/${id}`, { method: 'DELETE' }),
+
+  getContent: (table) => apiFetch(`/content/${table}`),
+  createContent: (table, data) => apiFetch(`/content/${table}`, { method: 'POST', body: JSON.stringify(data) }),
+  updateContent: (table, id, data) => apiFetch(`/content/${table}/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+  deleteContent: (table, id) => apiFetch(`/content/${table}/${id}`, { method: 'DELETE' }),
+
+  submitFeedback: (data) => apiFetch('/feedback', { method: 'POST', body: JSON.stringify(data) }),
+  getFeedback: () => apiFetch('/feedback'),
+  updateFeedback: (id, data) => apiFetch(`/feedback/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+  deleteFeedback: (id) => apiFetch(`/feedback/${id}`, { method: 'DELETE' }),
+
+  getSettings: () => apiFetch('/settings'),
+  updateSettings: (data) => apiFetch('/settings', { method: 'PUT', body: JSON.stringify(data) }),
 }

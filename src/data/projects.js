@@ -71,3 +71,5 @@ export const faqData = [
   { question: 'What technologies do you specialize in?', answer: 'We specialize in React, Next.js, React Native, Flutter, Node.js, and cloud technologies. Our team stays current with the latest frameworks and tools to deliver optimal solutions.' },
   { question: 'Do you provide ongoing support?', answer: 'Yes, we offer comprehensive support and maintenance packages. This includes bug fixes, performance monitoring, security updates, and feature enhancements as needed.' },
 ]
+
+

@@ -1,4 +1,4 @@
-import { useLocation, Route, Routes as RouterRoutes } from 'react-router-dom'
+import { useLocation, Route, Routes as RouterRoutes, useParams } from 'react-router-dom'
 import { Home } from '../../pages/Home'
 import { About } from '../../pages/About'
 import { Services } from '../../pages/Services'
@@ -15,8 +15,16 @@ import { ServiceDetail } from '../../pages/ServiceDetail'
 import { SolutionDetail } from '../../pages/SolutionDetail'
 import { ProcessDetail } from '../../pages/ProcessDetail'
 import { Login } from '../../pages/Login'
-import { Dashboard } from '../../pages/dashboard/Dashboard'
+import { Dashboard, DashboardLayout } from '../../pages/dashboard/Dashboard'
 import { EditorPage } from '../../pages/dashboard/EditorPage'
+import { CMSPage } from '../../pages/dashboard/CMSPage'
+import { FeedbackPage } from '../../pages/dashboard/FeedbackPage'
+import { SettingsPage } from '../../pages/dashboard/SettingsPage'
+
+function CMSRoute() {
+  const { table } = useParams()
+  return <CMSPage table={table} />
+}
 
 export function Routes() {
   const location = useLocation()
@@ -38,9 +46,14 @@ export function Routes() {
       <Route path="/blog" element={<Blog />} />
       <Route path="/blog/:slug" element={<BlogPost />} />
       <Route path="/login" element={<Login />} />
-      <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/dashboard/editor" element={<EditorPage />} />
       <Route path="/dashboard/editor/:id" element={<EditorPage />} />
+      <Route path="/dashboard" element={<DashboardLayout />}>
+        <Route index element={<Dashboard />} />
+        <Route path="cms/:table" element={<CMSRoute />} />
+        <Route path="feedback" element={<FeedbackPage />} />
+        <Route path="settings" element={<SettingsPage />} />
+      </Route>
       <Route path="*" element={<Home />} />
     </RouterRoutes>
   )

@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
-import { Link, useNavigate, useLocation } from 'react-router-dom'
+import { Link, useNavigate, useLocation, Outlet } from 'react-router-dom'
 import { useApp } from '../../context/AppContext'
 import { api } from '../../utils/api'
 import VisibilityIcon from '@mui/icons-material/Visibility'
@@ -13,10 +13,41 @@ import SortIcon from '@mui/icons-material/Sort'
 import ArticleIcon from '@mui/icons-material/Article'
 import PublishIcon from '@mui/icons-material/Publish'
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff'
+import FolderIcon from '@mui/icons-material/Folder'
+import WorkIcon from '@mui/icons-material/Work'
+import ConstructionIcon from '@mui/icons-material/Construction'
+import FactoryIcon from '@mui/icons-material/Factory'
+import MemoryIcon from '@mui/icons-material/Memory'
+import FormatQuoteIcon from '@mui/icons-material/FormatQuote'
+import ThumbUpIcon from '@mui/icons-material/ThumbUp'
+import GroupsIcon from '@mui/icons-material/Groups'
+import BarChartIcon from '@mui/icons-material/BarChart'
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents'
+import InfoIcon from '@mui/icons-material/Info'
+import InventoryIcon from '@mui/icons-material/Inventory'
+import FooterIcon from '@mui/icons-material/Web'
+import SettingsIcon from '@mui/icons-material/Settings'
+import FeedbackIcon from '@mui/icons-material/Feedback'
 
 const sidebarLinks = [
   { path: '/dashboard', label: 'Overview', icon: <ArticleIcon sx={{ fontSize: 18 }} /> },
   { path: '/dashboard/editor', label: 'New Blog', icon: <AddIcon sx={{ fontSize: 18 }} /> },
+  { divider: true, label: 'Content Management' },
+  { path: '/dashboard/cms/featured_projects', label: 'Featured Projects', icon: <WorkIcon sx={{ fontSize: 18 }} /> },
+  { path: '/dashboard/cms/services', label: 'Services', icon: <ConstructionIcon sx={{ fontSize: 18 }} /> },
+  { path: '/dashboard/cms/industries', label: 'Industries', icon: <FactoryIcon sx={{ fontSize: 18 }} /> },
+  { path: '/dashboard/cms/tech_stack', label: 'Tech Stack', icon: <MemoryIcon sx={{ fontSize: 18 }} /> },
+  { path: '/dashboard/cms/testimonials', label: 'Testimonials', icon: <FormatQuoteIcon sx={{ fontSize: 18 }} /> },
+  { path: '/dashboard/cms/why_choose_us', label: 'Why Choose Us', icon: <ThumbUpIcon sx={{ fontSize: 18 }} /> },
+  { path: '/dashboard/cms/team_members', label: 'Team Members', icon: <GroupsIcon sx={{ fontSize: 18 }} /> },
+  { path: '/dashboard/cms/stats', label: 'Stats', icon: <BarChartIcon sx={{ fontSize: 18 }} /> },
+  { path: '/dashboard/cms/awards', label: 'Awards', icon: <EmojiEventsIcon sx={{ fontSize: 18 }} /> },
+  { path: '/dashboard/cms/about_content', label: 'About Content', icon: <InfoIcon sx={{ fontSize: 18 }} /> },
+  { path: '/dashboard/cms/work_items', label: 'Work Items', icon: <InventoryIcon sx={{ fontSize: 18 }} /> },
+  { path: '/dashboard/cms/footer_content', label: 'Footer Content', icon: <FooterIcon sx={{ fontSize: 18 }} /> },
+  { divider: true, label: 'System' },
+  { path: '/dashboard/feedback', label: 'Feedback', icon: <FeedbackIcon sx={{ fontSize: 18 }} /> },
+  { path: '/dashboard/settings', label: 'Site Settings', icon: <SettingsIcon sx={{ fontSize: 18 }} /> },
   { path: '/blog', label: 'View Blog', icon: <VisibilityIcon sx={{ fontSize: 18 }} />, external: true },
   { path: '/', label: 'Home', icon: '🏠', external: true },
 ]
@@ -75,8 +106,15 @@ function Sidebar({ open, onToggle }) {
 
       {/* Nav */}
       <nav style={{ flex: 1, padding: '12px 8px', overflowY: 'auto' }}>
-        {sidebarLinks.map(link => {
-          const isActive = !link.external && location.pathname === link.path
+        {sidebarLinks.map((link, idx) => {
+          if (link.divider) {
+            return open ? (
+              <div key={`div-${idx}`} style={{ fontSize: '9px', fontWeight: '600', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', padding: '16px 12px 6px', fontFamily: 'var(--font-code)' }}>{link.label}</div>
+            ) : (
+              <div key={`div-${idx}`} style={{ height: '1px', background: 'var(--glass-border)', margin: '8px 4px' }} />
+            )
+          }
+          const isActive = !link.external && (location.pathname === link.path || (link.path.startsWith('/dashboard/cms/') && location.pathname.startsWith(link.path)))
           if (link.external) {
             return (
               <a key={link.path} href={link.path} target={link.path === '/' ? '_self' : '_blank'} rel="noopener"
@@ -109,11 +147,33 @@ function Sidebar({ open, onToggle }) {
   )
 }
 
+export function DashboardLayout() {
+  const { user } = useApp()
+  const [sidebarOpen, setSidebarOpen] = useState(true)
+  const nav = useNavigate()
+
+  useEffect(() => {
+    if (!user) nav('/login')
+  }, [user, nav])
+
+  if (!user) return null
+
+  return (
+    <div style={{ display: 'flex', minHeight: '100vh' }}>
+      <Sidebar open={sidebarOpen} onToggle={() => setSidebarOpen(!sidebarOpen)} />
+      <main style={{ flex: 1, paddingTop: '20px', paddingBottom: '40px', overflow: 'auto' }}>
+        <div style={{ padding: '0 clamp(16px, 4vw, 32px)' }}>
+          <Outlet />
+        </div>
+      </main>
+    </div>
+  )
+}
+
 export function Dashboard() {
   const { user } = useApp()
   const [blogs, setBlogs] = useState([])
   const [loading, setLoading] = useState(true)
-  const [sidebarOpen, setSidebarOpen] = useState(true)
   const [filter, setFilter] = useState('all')
   const [search, setSearch] = useState('')
   const [sortBy, setSortBy] = useState('newest')
@@ -156,11 +216,8 @@ export function Dashboard() {
   const drafts = blogs.filter(b => !b.published).length
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh' }}>
+    <>
       <ConfirmDialog open={!!deleteConfirm} title="Delete Blog?" message={`"${deleteConfirm?.title}" will be permanently deleted.`} onConfirm={() => handleDelete(deleteConfirm.id)} onCancel={() => setDeleteConfirm(null)} danger />
-      <Sidebar open={sidebarOpen} onToggle={() => setSidebarOpen(!sidebarOpen)} />
-      <main style={{ flex: 1, paddingTop: '20px', paddingBottom: '40px', overflow: 'auto' }}>
-        <div style={{ padding: '0 clamp(16px, 4vw, 32px)' }}>
           {/* Header */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '12px' }}>
             <div>
@@ -270,8 +327,6 @@ export function Dashboard() {
               ))}
             </div>
           )}
-        </div>
-      </main>
-    </div>
+    </>
   )
 }
