@@ -20,7 +20,7 @@ const CMS_TABLES = {
     { key: 'link', label: 'Link', type: 'text' },
     { key: 'category', label: 'Category', type: 'text' },
     { key: 'visible', label: 'Visible', type: 'checkbox' },
-    { key: 'sort_order', label: 'Sort Order', type: 'number' },
+    { key: 'display_order', label: 'Sort Order', type: 'number' },
   ]},
   services: { label: 'Services', fields: [
     { key: 'title', label: 'Title', type: 'text', required: true },
@@ -30,7 +30,7 @@ const CMS_TABLES = {
     { key: 'icon', label: 'Icon', type: 'text' },
     { key: 'image_url', label: 'Image URL', type: 'image' },
     { key: 'visible', label: 'Visible', type: 'checkbox' },
-    { key: 'sort_order', label: 'Sort Order', type: 'number' },
+    { key: 'display_order', label: 'Sort Order', type: 'number' },
   ]},
   industries: { label: 'Industries', fields: [
     { key: 'title', label: 'Title', type: 'text', required: true },
@@ -38,14 +38,14 @@ const CMS_TABLES = {
     { key: 'description', label: 'Description', type: 'textarea' },
     { key: 'image_url', label: 'Image URL', type: 'image' },
     { key: 'visible', label: 'Visible', type: 'checkbox' },
-    { key: 'sort_order', label: 'Sort Order', type: 'number' },
+    { key: 'display_order', label: 'Sort Order', type: 'number' },
   ]},
   tech_stack: { label: 'Tech Stack', fields: [
     { key: 'name', label: 'Name', type: 'text', required: true },
     { key: 'category', label: 'Category', type: 'text' },
     { key: 'icon_url', label: 'Icon URL', type: 'image' },
     { key: 'visible', label: 'Visible', type: 'checkbox' },
-    { key: 'sort_order', label: 'Sort Order', type: 'number' },
+    { key: 'display_order', label: 'Sort Order', type: 'number' },
   ]},
   testimonials: { label: 'Testimonials', fields: [
     { key: 'client_name', label: 'Client Name', type: 'text', required: true },
@@ -54,14 +54,14 @@ const CMS_TABLES = {
     { key: 'avatar_url', label: 'Avatar URL', type: 'image' },
     { key: 'rating', label: 'Rating', type: 'number' },
     { key: 'visible', label: 'Visible', type: 'checkbox' },
-    { key: 'sort_order', label: 'Sort Order', type: 'number' },
+    { key: 'display_order', label: 'Sort Order', type: 'number' },
   ]},
   why_choose_us: { label: 'Why Choose Us', fields: [
     { key: 'title', label: 'Title', type: 'text', required: true },
     { key: 'description', label: 'Description', type: 'textarea' },
     { key: 'icon', label: 'Icon', type: 'text' },
     { key: 'visible', label: 'Visible', type: 'checkbox' },
-    { key: 'sort_order', label: 'Sort Order', type: 'number' },
+    { key: 'display_order', label: 'Sort Order', type: 'number' },
   ]},
   team_members: { label: 'Team Members', fields: [
     { key: 'name', label: 'Name', type: 'text', required: true },
@@ -71,14 +71,14 @@ const CMS_TABLES = {
     { key: 'linkedin', label: 'LinkedIn', type: 'text' },
     { key: 'twitter', label: 'Twitter', type: 'text' },
     { key: 'visible', label: 'Visible', type: 'checkbox' },
-    { key: 'sort_order', label: 'Sort Order', type: 'number' },
+    { key: 'display_order', label: 'Sort Order', type: 'number' },
   ]},
   stats: { label: 'Stats', fields: [
     { key: 'label', label: 'Label', type: 'text', required: true },
     { key: 'value', label: 'Value', type: 'text', required: true },
     { key: 'suffix', label: 'Suffix', type: 'text' },
     { key: 'visible', label: 'Visible', type: 'checkbox' },
-    { key: 'sort_order', label: 'Sort Order', type: 'number' },
+    { key: 'display_order', label: 'Sort Order', type: 'number' },
   ]},
   awards: { label: 'Awards', fields: [
     { key: 'title', label: 'Title', type: 'text', required: true },
@@ -87,7 +87,7 @@ const CMS_TABLES = {
     { key: 'description', label: 'Description', type: 'textarea' },
     { key: 'image_url', label: 'Image URL', type: 'image' },
     { key: 'visible', label: 'Visible', type: 'checkbox' },
-    { key: 'sort_order', label: 'Sort Order', type: 'number' },
+    { key: 'display_order', label: 'Sort Order', type: 'number' },
   ]},
   about_content: { label: 'About Content', fields: [
     { key: 'section', label: 'Section', type: 'text', required: true },
@@ -95,7 +95,7 @@ const CMS_TABLES = {
     { key: 'content', label: 'Content', type: 'textarea' },
     { key: 'image_url', label: 'Image URL', type: 'image' },
     { key: 'visible', label: 'Visible', type: 'checkbox' },
-    { key: 'sort_order', label: 'Sort Order', type: 'number' },
+    { key: 'display_order', label: 'Sort Order', type: 'number' },
   ]},
   work_items: { label: 'Work Items', fields: [
     { key: 'title', label: 'Title', type: 'text', required: true },
@@ -105,7 +105,7 @@ const CMS_TABLES = {
     { key: 'link', label: 'Link', type: 'text' },
     { key: 'category', label: 'Category', type: 'text' },
     { key: 'visible', label: 'Visible', type: 'checkbox' },
-    { key: 'sort_order', label: 'Sort Order', type: 'number' },
+    { key: 'display_order', label: 'Sort Order', type: 'number' },
   ]},
   footer_content: { label: 'Footer Content', fields: [
     { key: 'section', label: 'Section', type: 'text', required: true },
@@ -113,7 +113,7 @@ const CMS_TABLES = {
     { key: 'content', label: 'Content', type: 'textarea' },
     { key: 'link', label: 'Link', type: 'text' },
     { key: 'visible', label: 'Visible', type: 'checkbox' },
-    { key: 'sort_order', label: 'Sort Order', type: 'number' },
+    { key: 'display_order', label: 'Sort Order', type: 'number' },
   ]},
 }
 
@@ -246,7 +246,7 @@ export function CMSPage({ table }) {
       const searchFields = config.fields.filter(f => f.type === 'text' || f.type === 'textarea').map(f => f.key)
       result = result.filter(i => searchFields.some(k => String(i[k] || '').toLowerCase().includes(q)))
     }
-    return [...result].sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
+    return [...result].sort((a, b) => (a.display_order ?? 0) - (b.display_order ?? 0))
   }, [items, filterVisible, search, config])
 
   const handleSave = async (formData) => {
@@ -295,10 +295,10 @@ export function CMSPage({ table }) {
     const swapIdx = direction === 'up' ? idx - 1 : idx + 1
     if (swapIdx < 0 || swapIdx >= items.length) return
     const a = items[idx], b = items[swapIdx]
-    const aOrder = a.sort_order ?? 0, bOrder = b.sort_order ?? 0
+    const aOrder = a.display_order ?? 0, bOrder = b.display_order ?? 0
     try {
-      await api.updateContent(table, a.id, { sort_order: bOrder })
-      await api.updateContent(table, b.id, { sort_order: aOrder })
+      await api.updateContent(table, a.id, { display_order: bOrder })
+      await api.updateContent(table, b.id, { display_order: aOrder })
       loadItems()
     } catch (e) {
       setError(e.message)

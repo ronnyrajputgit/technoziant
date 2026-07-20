@@ -41,7 +41,7 @@ const sidebarLinks = [
     { path: '/dashboard/cms/services', label: 'Services', icon: <ConstructionIcon sx={{ fontSize: 16 }} /> },
     { path: '/dashboard/cms/industries', label: 'Industries', icon: <FactoryIcon sx={{ fontSize: 16 }} /> },
     { path: '/dashboard/cms/tech_stack', label: 'Tech Stack', icon: <MemoryIcon sx={{ fontSize: 16 }} /> },
-    { path: '/dashboard/cms/why_choose_us', label: 'Why Choose Us', icon: <ThumbUpIcon sx={{ fontSize: 16 }} /> },
+    { path: '/dashboard/cms/why_choose', label: 'Why Choose Us', icon: <ThumbUpIcon sx={{ fontSize: 16 }} /> },
     { path: '/dashboard/cms/work_items', label: 'Work Items', icon: <WorkIcon sx={{ fontSize: 16 }} /> },
     { path: '/dashboard/cms/footer_content', label: 'Footer Content', icon: <FooterIcon sx={{ fontSize: 16 }} /> },
   ]},
@@ -90,6 +90,14 @@ function Sidebar({ open, onToggle }) {
 
   const isGroupActive = (children) => children?.some(c => location.pathname === c.path)
 
+  useEffect(() => {
+    sidebarLinks.forEach(item => {
+      if (item.children && isGroupActive(item.children)) {
+        setExpandedGroups(prev => ({ ...prev, [item.group]: true }))
+      }
+    })
+  }, [location.pathname])
+
   return (
     <aside style={{ width: open ? '240px' : '60px', minWidth: open ? '240px' : '60px', background: 'var(--bg-2)', borderRight: '1px solid var(--glass-border)', height: '100vh', position: 'sticky', top: 0, overflow: 'hidden', transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)', zIndex: 50, display: 'flex', flexDirection: 'column' }}>
       {/* Header */}
@@ -126,7 +134,7 @@ function Sidebar({ open, onToggle }) {
               <div key={idx}>
                 <button
                   title={item.group}
-                  onClick={() => open && toggleGroup(item.group)}
+                  onClick={(e) => { e.stopPropagation(); if (open) toggleGroup(item.group) }}
                   style={{ display: 'flex', alignItems: 'center', gap: open ? '8px' : '0', justifyContent: open ? 'flex-start' : 'center', padding: open ? '8px 10px' : '8px', borderRadius: '8px', fontSize: '12px', fontWeight: '600', color: isActive ? '#22c55e' : 'var(--text-muted)', width: '100%', cursor: 'pointer', border: 'none', background: isActive ? 'rgba(34,197,94,0.08)' : 'transparent', transition: 'all 0.15s', textAlign: 'left' }}>
                   <span style={{ transition: 'transform 0.2s', transform: isExpanded ? 'rotate(90deg)' : 'rotate(0deg)', display: 'flex' }}>{item.icon}</span>
                   {open && <>
