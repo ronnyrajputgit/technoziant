@@ -30,13 +30,6 @@ import SettingsIcon from '@mui/icons-material/Settings'
 import FeedbackIcon from '@mui/icons-material/Feedback'
 
 const sidebarLinks = [
-  { path: '/', label: 'Home', icon: '🏠' },
-  { path: '/work', label: 'Work', icon: <WorkIcon sx={{ fontSize: 18 }} /> },
-  { path: '/services', label: 'Services', icon: <ConstructionIcon sx={{ fontSize: 18 }} /> },
-  { path: '/about', label: 'About', icon: <GroupsIcon sx={{ fontSize: 18 }} /> },
-  { path: '/blog', label: 'Blog', icon: <ArticleIcon sx={{ fontSize: 18 }} /> },
-  { path: '/contact', label: 'Contact', icon: <FeedbackIcon sx={{ fontSize: 18 }} /> },
-  { divider: true, label: 'Dashboard' },
   { path: '/dashboard', label: 'Overview', icon: <ArticleIcon sx={{ fontSize: 18 }} /> },
   { group: 'Blog Management', icon: <FolderIcon sx={{ fontSize: 18 }} />, children: [
     { path: '/dashboard', label: 'All Blogs', icon: <ArticleIcon sx={{ fontSize: 16 }} /> },
