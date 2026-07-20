@@ -4,13 +4,10 @@ import SearchIcon from '@mui/icons-material/Search'
 import AddIcon from '@mui/icons-material/Add'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
+import CloseIcon from '@mui/icons-material/Close'
 import VisibilityIcon from '@mui/icons-material/Visibility'
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff'
-import CloseIcon from '@mui/icons-material/Close'
 import SaveIcon from '@mui/icons-material/Save'
-import DragIndicatorIcon from '@mui/icons-material/DragIndicator'
-import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward'
-import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward'
 
 const CMS_TABLES = {
   featured_projects: { label: 'Featured Projects', fields: [
@@ -282,30 +279,20 @@ export function CMSPage({ table }) {
     }
   }
 
-  const moveItem = async (item, direction) => {
-    const idx = items.findIndex(i => i.id === item.id)
-    if (idx === -1) return
-    const swapIdx = direction === 'up' ? idx - 1 : idx + 1
-    if (swapIdx < 0 || swapIdx >= items.length) return
-    const a = items[idx], b = items[swapIdx]
-    const aOrder = a.display_order ?? 0, bOrder = b.display_order ?? 0
-    try {
-      await api.updateContent(table, a.id, { display_order: bOrder })
-      await api.updateContent(table, b.id, { display_order: aOrder })
-      loadItems()
-    } catch (e) {
-      setError(e.message)
-    }
-  }
-
   const getPreview = (item) => {
-    const field = config.fields.find(f => f.type === 'text' || f.type === 'textarea')
-    return field ? String(item[field.key] || '').slice(0, 80) : ''
+    const field = config.fields.find(f => f.type === 'textarea')
+    if (field && item[field.key]) return String(item[field.key]).slice(0, 80)
+    const descField = config.fields.find(f => f.key === 'description' || f.key === 'bio' || f.key === 'feedback')
+    if (descField && item[descField.key]) return String(item[descField.key]).slice(0, 80)
+    return ''
   }
 
   const getNameField = (item) => {
-    const field = config.fields.find(f => f.key === 'title' || f.key === 'name' || f.key === 'label' || f.key === 'client_name' || f.key === 'section')
-    return field ? item[field.key] : `Item #${item.id}`
+    const field = config.fields.find(f => f.key === 'title' || f.key === 'name' || f.key === 'label' || f.key === 'client_name' || f.key === 'section' || f.key === 'key')
+    if (field && item[field.key]) return item[field.key]
+    if (item.title) return item.title
+    if (item.name) return item.name
+    return `Item #${item.id}`
   }
 
   return (
@@ -358,15 +345,12 @@ export function CMSPage({ table }) {
             <div key={item.id} className="liquid-glass" style={{ padding: '12px 16px', borderRadius: '10px', display: 'flex', alignItems: 'center', gap: '12px', transition: 'all 0.15s' }}
               onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.04)'}
               onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
-              <DragIndicatorIcon sx={{ fontSize: 16, color: 'var(--text-muted)', opacity: 0.4, cursor: 'grab' }} />
               <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', flex: 1, minWidth: 0 }}>
                 <div style={{ fontSize: '13px', fontWeight: '600', color: 'var(--text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{getNameField(item)}</div>
-                <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'var(--font-code)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{getPreview(item) || 'No description'}</div>
+                {getPreview(item) && <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'var(--font-code)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{getPreview(item)}</div>}
               </div>
               {item.visible === false && <span style={{ fontSize: '9px', padding: '2px 8px', borderRadius: '100px', background: 'rgba(245,158,11,0.15)', color: '#f59e0b', fontWeight: '600', fontFamily: 'var(--font-code)' }}>Hidden</span>}
               <div style={{ display: 'flex', gap: '4px', flexShrink: 0 }}>
-                <button onClick={() => moveItem(item, 'up')} disabled={idx === 0} title="Move up" style={{ padding: '4px', borderRadius: '4px', background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: idx === 0 ? 'default' : 'pointer', opacity: idx === 0 ? 0.3 : 1 }}><ArrowUpwardIcon sx={{ fontSize: 14 }} /></button>
-                <button onClick={() => moveItem(item, 'down')} disabled={idx === filteredItems.length - 1} title="Move down" style={{ padding: '4px', borderRadius: '4px', background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: idx === filteredItems.length - 1 ? 'default' : 'pointer', opacity: idx === filteredItems.length - 1 ? 0.3 : 1 }}><ArrowDownwardIcon sx={{ fontSize: 14 }} /></button>
                 <button onClick={() => toggleVisible(item)} title={item.visible === false ? 'Show' : 'Hide'} style={{ padding: '4px 8px', borderRadius: '6px', background: item.visible === false ? 'rgba(245,158,11,0.1)' : 'rgba(34,197,94,0.1)', color: item.visible === false ? '#f59e0b' : '#22c55e', cursor: 'pointer', border: 'none', display: 'flex', alignItems: 'center' }}>
                   {item.visible === false ? <VisibilityOffIcon sx={{ fontSize: 14 }} /> : <VisibilityIcon sx={{ fontSize: 14 }} />}
                 </button>
