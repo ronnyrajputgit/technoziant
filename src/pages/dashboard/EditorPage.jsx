@@ -55,7 +55,7 @@ export function EditorPage() {
   const [saving, setSaving] = useState(null)
   const [loading, setLoading] = useState(!!id)
   const [error, setError] = useState(null)
-  const [success, setSuccess] = useState(null)
+  const [saved, setSaved] = useState(null)
 
   useEffect(() => {
     if (!user) { navigate('/login'); return }
@@ -75,9 +75,11 @@ export function EditorPage() {
       if (id) await api.updateBlog(id, data)
       else await api.createBlog(data)
       if (data.published) {
-        navigate('/dashboard')
+        setSaved('published')
+        setTimeout(() => navigate('/dashboard'), 1000)
       } else {
-        setSuccess('Draft saved successfully!')
+        setSaved('drafted')
+        setTimeout(() => setSaved(null), 2000)
       }
     } catch (err) {
       const msg = err.message || 'Something went wrong'
@@ -96,7 +98,6 @@ export function EditorPage() {
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh' }}>
-      <SuccessDialog message={success} onClose={() => setSuccess(null)} />
       {error && (
         <div style={{ position: 'fixed', top: '80px', left: '280px', right: '20px', zIndex: 9999, padding: '10px 16px', borderRadius: '10px', background: 'rgba(239,68,68,0.15)', border: '1px solid rgba(239,68,68,0.3)', backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', gap: '10px' }}>
           <span style={{ fontSize: '14px' }}>⚠️</span>
@@ -132,7 +133,7 @@ export function EditorPage() {
       </aside>
       <main style={{ flex: 1, overflow: 'auto' }}>
         {loading ? <p style={{ textAlign: 'center', fontFamily: "var(--font-code)", color: 'var(--text-muted)', paddingTop: '40px' }}>Loading...</p> : (
-          <BlogEditor initialContent={blogData} onSave={handleSave} saving={saving} />
+          <BlogEditor initialContent={blogData} onSave={handleSave} saving={saving} saved={saved} />
         )}
       </main>
     </div>
