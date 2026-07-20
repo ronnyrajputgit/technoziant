@@ -1,288 +1,129 @@
-import { useState, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { motion, useInView } from 'framer-motion'
 import { TextReveal } from '../components/ui/TextReveal'
 import { GlowCard } from '../components/ui/Cards'
-import { awards } from '../data/projects'
 import { useApp } from '../context/AppContext'
 import { Footer } from '../components/layout/Footer'
 import { LeaderModal } from '../components/ui/LeaderModal'
-import sumanImg from '../assets/images/Suman.jpeg'
-import sahilImg from '../assets/images/Shahil.jpeg'
+import { api } from '../utils/api'
 
-const team = [
-  {
-    name: 'Suman Kumar Sah',
-    role: 'Founder',
-    image: sumanImg,
-    color: '#4f8eff',
-    gradient: 'linear-gradient(135deg, #4f8eff, #06d6a0)',
-    bio: 'Visionary founder leading Technoziant with a mission to deliver world-class technology solutions.',
-    achievements: ['Visionary Leader', 'Strategic Thinker', 'Innovation Driver']
-  },
-  {
-    name: 'Shahil Kumar Sharma',
-    role: 'Co-founder & CEO',
-    image: sahilImg,
-    color: '#a855f7',
-    gradient: 'linear-gradient(135deg, #a855f7, #f472b6)',
-    bio: 'Chief Executive Officer driving the company\'s vision and growth strategy. Expert in business development and scaling digital enterprises.',
-    achievements: ['Business Strategist', 'Growth Expert', 'Team Builder']
-  },
-  {
-    name: 'Ronny',
-    role: 'CTO',
-    image: 'https://ui-avatars.com/api/?name=Ronny&background=06d6a0&color=fff&size=400&bold=true',
-    color: '#06d6a0',
-    gradient: 'linear-gradient(135deg, #06d6a0, #22d3ee)',
-    bio: 'Chief Technology Officer overseeing all technical operations. Expert in system architecture, scalable infrastructure, and cutting-edge technology implementations.',
-    achievements: ['Tech Architect', 'System Design', 'Innovation Lead']
-  },
-  {
-    name: 'Avnish',
-    role: 'CMO',
-    image: 'https://ui-avatars.com/api/?name=Avnish&background=f472b6&color=fff&size=400&bold=true',
-    color: '#f472b6',
-    gradient: 'linear-gradient(135deg, #f472b6, #a855f7)',
-    bio: 'Chief Marketing Officer driving brand strategy and digital marketing initiatives. Expert in growth marketing, brand building, and community development.',
-    achievements: ['Brand Builder', 'Growth Hacker', 'Digital Strategist']
-  }
+const teamGradients = [
+  'linear-gradient(135deg, #4f8eff, #06d6a0)',
+  'linear-gradient(135deg, #a855f7, #f472b6)',
+  'linear-gradient(135deg, #06d6a0, #22d3ee)',
+  'linear-gradient(135deg, #f472b6, #a855f7)',
 ]
 
-const stats = [
-  { value: '4', label: 'Team Members', icon: '👥' },
-  { value: '20+', label: 'Years Combined', icon: '📅' },
-  { value: '100+', label: 'Projects Led', icon: '🚀' },
-  { value: '10+', label: 'Awards Won', icon: '🏆' }
-]
-
-function TeamCard({ member, index, onClick }) {
-  const ref = useRef(null)
-  const isInView = useInView(ref, { once: true, margin: '-20px' })
-  const { setCursorType } = useApp()
-
-  return (
-    <motion.div ref={ref}
-      initial={{ opacity: 0, y: 40, scale: 0.95 }}
-      animate={isInView ? { opacity: 1, y: 0, scale: 1 } : {}}
-      transition={{ duration: 0.6, delay: index * 0.1, ease: [0.16, 1, 0.3, 1] }}>
-      <GlowCard glowColor={member.color} style={{ padding: 0, overflow: 'hidden', height: '100%', cursor: 'pointer' }}
-        onClick={() => onClick(member)}
-        onMouseEnter={() => setCursorType('hover')}
-        onMouseLeave={() => setCursorType('default')}>
-
-        {/* Image */}
-        <div style={{ position: 'relative', width: '100%', aspectRatio: '4/3', overflow: 'hidden', background: 'rgba(255,255,255,0.03)' }}>
-          <img src={member.image} alt={member.name}
-            style={{
-              position: 'absolute', top: 0, left: 0,
-              width: '100%', height: '100%',
-              objectFit: 'cover', objectPosition: 'center top'
-            }}
-            onError={e => { e.target.style.display = 'none' }} />
-          <div style={{
-            position: 'absolute', inset: 0,
-            background: 'linear-gradient(to top, var(--bg) 0%, rgba(0,0,0,0.3) 50%, transparent 100%)'
-          }} />
-          <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '3px', background: member.gradient }} />
-          <div style={{
-            position: 'absolute', top: '12px', left: '12px', opacity: 0.2,
-            fontSize: '36px', fontWeight: '900', fontFamily: 'var(--font-h)',
-            lineHeight: 1, color: 'var(--text)'
-          }}>
-            {String(index + 1).padStart(2, '0')}
-          </div>
-          {/* View badge */}
-          <div className="view-indicator" style={{
-            position: 'absolute', bottom: '10px', right: '10px', opacity: 0, transition: 'opacity 0.3s'
-          }}>
-            <span className="liquid-glass-strong" style={{
-              padding: '5px 12px', borderRadius: '100px',
-              fontSize: '9px', fontWeight: '600', color: 'var(--text)'
-            }}>
-              View ↗
-            </span>
-          </div>
-        </div>
-
-        {/* Content */}
-        <div style={{ padding: '18px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', marginBottom: '8px' }}>
-            <h3 style={{ fontSize: '16px', fontWeight: '700', fontFamily: 'var(--font-h)', margin: 0 }}>
-              <span style={{
-                background: member.gradient,
-                WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text'
-              }}>
-                {member.name}
-              </span>
-            </h3>
-            <span style={{
-              fontSize: '10px', padding: '3px 10px', borderRadius: '100px',
-              background: `${member.color}15`, color: member.color,
-              fontWeight: '600', letterSpacing: '0.02em',
-              border: `1px solid ${member.color}25`
-            }}>
-              {member.role}
-            </span>
-          </div>
-
-          <p style={{ fontSize: '12px', lineHeight: 1.6, color: 'var(--text-muted)', marginBottom: '12px' }}>
-            {member.bio}
-          </p>
-
-          <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
-            {member.achievements.map(a => (
-              <span key={a} className="liquid-glass" style={{
-                padding: '3px 8px', borderRadius: '100px',
-                fontSize: '9px', color: member.color, fontWeight: '500'
-              }}>
-                {a}
-              </span>
-            ))}
-          </div>
-        </div>
-      </GlowCard>
-    </motion.div>
-  )
-}
+const teamColors = ['#4f8eff', '#a855f7', '#06d6a0', '#f472b6']
 
 export function About() {
   const { setCursorType } = useApp()
-  const [selectedMember, setSelectedMember] = useState(null)
-  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [selectedLeader, setSelectedLeader] = useState(null)
+  const [team, setTeam] = useState([])
+  const [stats, setStats] = useState([])
+  const [awards, setAwards] = useState([])
+  const [loading, setLoading] = useState(true)
 
-  const openMember = (member) => {
-    setSelectedMember(member)
-    setIsModalOpen(true)
-  }
+  useEffect(() => {
+    Promise.all([
+      api.getContent('team_members', { visible: 'true' }).catch(() => []),
+      api.getContent('stats', { visible: 'true' }).catch(() => []),
+      api.getContent('awards', { visible: 'true' }).catch(() => [])
+    ]).then(([teamData, statsData, awardsData]) => {
+      setTeam((teamData || []).map((m, i) => ({
+        ...m,
+        color: teamColors[i % teamColors.length],
+        gradient: teamGradients[i % teamGradients.length],
+        achievements: m.social_links ? [m.social_links.title, m.social_links.subtitle, m.social_links.badge].filter(Boolean) : []
+      })))
+      setStats(statsData || [])
+      setAwards(awardsData || [])
+    }).finally(() => setLoading(false))
+  }, [])
 
-  const closeMember = () => {
-    setIsModalOpen(false)
-    setSelectedMember(null)
-  }
+  if (loading) return <main style={{ paddingTop: '110px', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><p style={{ fontFamily: "var(--font-code)", color: 'var(--text-muted)' }}>Loading...</p></main>
 
   return (
-    <main style={{ paddingTop: '110px', minHeight: '100vh' }}>
+    <main style={{ paddingTop: '100px', minHeight: '100vh' }}>
       {/* Hero Section */}
-      <section className="container">
-        <TextReveal><div style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '12px' }}>About Us</div></TextReveal>
-        <TextReveal delay={0.1}><h1 style={{ fontSize: 'clamp(44px, 8vw, 100px)', fontWeight: '700', lineHeight: 0.95, marginBottom: '16px' }}>We are a team<br />of <span className="text-gradient">passionate</span><br />makers</h1></TextReveal>
-        <TextReveal delay={0.2}><p style={{ fontSize: '15px', lineHeight: 1.8, color: 'var(--text-muted)', maxWidth: '520px', marginBottom: '50px' }}>Founded with a vision to deliver world-class technology solutions, Technoziant blends innovation, art & technology as an in-house team of passionate makers. Our industry-leading approach consistently delivers award-winning work through quality & performance.</p></TextReveal>
-
-        {/* Stats */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '12px', marginBottom: '80px' }}>
-          {stats.map((s, i) => (
-            <TextReveal key={i} delay={0.3 + i * 0.1}>
-              <div className="liquid-glass" style={{ padding: '20px', borderRadius: '16px', textAlign: 'center' }}>
-                <span style={{ fontSize: '20px', marginBottom: '6px', display: 'block' }}>{s.icon}</span>
-                <div style={{ fontSize: '24px', fontWeight: '700', fontFamily: 'var(--font-h)' }}><span className="text-gradient">{s.value}</span></div>
-                <div style={{ fontSize: '10px', color: 'var(--text-muted)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>{s.label}</div>
-              </div>
-            </TextReveal>
-          ))}
+      <section className="section">
+        <div className="container">
+          <TextReveal><div style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '8px', fontFamily: "var(--font-code)" }}>about us</div></TextReveal>
+          <TextReveal delay={0.1}><h1 style={{ fontSize: 'clamp(32px, 6vw, 56px)', fontWeight: '700', lineHeight: 1.1, marginBottom: '16px' }}>We craft <span className="text-gradient">digital experiences</span></h1></TextReveal>
+          <TextReveal delay={0.2}><p style={{ fontSize: '16px', lineHeight: 1.7, color: 'var(--text-muted)', maxWidth: '600px' }}>Founded with a vision to deliver world-class technology solutions, Technoziant blends innovation, art & technology as an in-house team of passionate makers.</p></TextReveal>
         </div>
       </section>
 
-      {/* Mission Section */}
-      <section className="section" style={{ borderTop: '1px solid var(--glass-border)' }}>
-        <div className="container">
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '40px' }}>
-            <div>
-              <TextReveal><h2 style={{ fontSize: 'clamp(28px, 4vw, 40px)', fontWeight: '700', marginBottom: '16px' }}>Our <span className="text-gradient">Mission</span></h2></TextReveal>
-              <TextReveal delay={0.1}><p style={{ fontSize: '14px', lineHeight: 1.8, color: 'var(--text-muted)' }}>
-                To empower businesses with cutting-edge technology solutions that drive growth, efficiency, and innovation. We believe in creating digital experiences that make a real impact.
-              </p></TextReveal>
-            </div>
-            <div>
-              <TextReveal><h2 style={{ fontSize: 'clamp(28px, 4vw, 40px)', fontWeight: '700', marginBottom: '16px' }}>Our <span className="text-gradient">Vision</span></h2></TextReveal>
-              <TextReveal delay={0.1}><p style={{ fontSize: '14px', lineHeight: 1.8, color: 'var(--text-muted)' }}>
-                To be the leading technology partner for businesses worldwide, known for our innovation, quality, and commitment to excellence. We envision a future where technology transforms every aspect of business.
-              </p></TextReveal>
+      {/* Stats */}
+      {stats.length > 0 && (
+        <section className="section" style={{ borderTop: '1px solid var(--glass-border)' }}>
+          <div className="container">
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '16px' }}>
+              {stats.map((s, i) => (
+                <div key={s.id || i} className="liquid-glass" style={{ padding: '24px', borderRadius: '12px', textAlign: 'center' }}>
+                  <div style={{ fontSize: '32px', fontWeight: '700', color: teamColors[i % teamColors.length], fontFamily: 'var(--font-h)' }}>{s.value}</div>
+                  <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontFamily: "var(--font-code)", marginTop: '4px' }}>{s.label}</div>
+                </div>
+              ))}
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Team Section */}
-      <section className="section" style={{ borderTop: '1px solid var(--glass-border)' }}>
-        <div className="container">
-          <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-            <TextReveal><div style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '12px' }}>Our Team</div></TextReveal>
-            <TextReveal delay={0.1}><h2 style={{ fontSize: 'clamp(34px, 5vw, 64px)', fontWeight: '700', lineHeight: 1 }}>Meet the <span className="text-gradient">Leaders</span></h2></TextReveal>
-            <TextReveal delay={0.2}><p style={{ fontSize: '14px', color: 'var(--text-muted)', maxWidth: '500px', margin: '12px auto 0', lineHeight: 1.7 }}>
-              The visionary minds behind Technoziant who drive our innovation and success.
-            </p></TextReveal>
+      {team.length > 0 && (
+        <section className="section" style={{ borderTop: '1px solid var(--glass-border)' }}>
+          <div className="container">
+            <TextReveal><div style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '8px', fontFamily: "var(--font-code)" }}>our team</div></TextReveal>
+            <TextReveal delay={0.1}><h2 style={{ fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: '700', lineHeight: 1, marginBottom: '32px' }}>Meet the <span className="text-gradient">leaders</span></h2></TextReveal>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '16px' }}>
+              {team.map((member, i) => (
+                <GlowCard key={member.id || i} color={member.color}>
+                  <div onClick={() => { setSelectedLeader(member); setCursorType('pointer') }} style={{ cursor: 'pointer', padding: '20px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '14px' }}>
+                      <div style={{ width: '60px', height: '60px', borderRadius: '50%', overflow: 'hidden', border: `2px solid ${member.color}`, flexShrink: 0 }}>
+                        <img src={member.image} alt={member.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      </div>
+                      <div>
+                        <h3 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '2px' }}>{member.name}</h3>
+                        <p style={{ fontSize: '11px', color: member.color, fontFamily: "var(--font-code)" }}>{member.role}</p>
+                      </div>
+                    </div>
+                    <p style={{ fontSize: '12px', lineHeight: 1.6, color: 'var(--text-muted)', marginBottom: '12px' }}>{member.bio}</p>
+                    <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
+                      {member.achievements.map((a, j) => (
+                        <span key={j} className="liquid-glass" style={{ padding: '3px 8px', borderRadius: '4px', fontSize: '9px', color: member.color, fontFamily: "var(--font-code)" }}>{a}</span>
+                      ))}
+                    </div>
+                  </div>
+                </GlowCard>
+              ))}
+            </div>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px' }}>
-            {team.map((member, i) => <TeamCard key={i} member={member} index={i} onClick={openMember} />)}
-          </div>
-          <div style={{ textAlign: 'center', marginTop: '32px' }}>
-            <Link to="/leaders" onMouseEnter={() => setCursorType('hover')} onMouseLeave={() => setCursorType('default')}
-              style={{ fontSize: '13px', color: 'var(--accent)', fontWeight: '500' }}>
-              Meet Our Full Leadership Team →
-            </Link>
-          </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Awards Section */}
-      <section className="section" style={{ borderTop: '1px solid var(--glass-border)' }}>
-        <div className="container">
-          <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-            <TextReveal><div style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '8px', fontFamily: "var(--font-code)" }}>achievements</div></TextReveal>
-            <TextReveal delay={0.1}><h2 style={{ fontSize: 'clamp(34px, 5vw, 64px)', fontWeight: '700', lineHeight: 1 }}>Our <span className="text-gradient">Awards</span></h2></TextReveal>
-            <TextReveal delay={0.2}><p style={{ fontSize: '13px', color: 'var(--text-muted)', maxWidth: '500px', margin: '12px auto 0', lineHeight: 1.6 }}>
-              Recognized by industry leaders for our commitment to design excellence and innovation.
-            </p></TextReveal>
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '12px' }}>
-            {awards.map((a, i) => (
-              <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-                transition={{ delay: i * 0.05, duration: 0.5 }}
-                whileHover={{ y: -4, boxShadow: '0 8px 30px rgba(79,142,255,0.1)' }}
-                className="liquid-glass" style={{ padding: '20px', borderRadius: '12px', cursor: 'default', transition: 'all 0.3s' }}>
-                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '14px' }}>
-                  <div style={{ fontSize: '28px', flexShrink: 0 }}>{a.icon}</div>
-                  <div>
-                    <div style={{ fontSize: '18px', fontWeight: '700', fontFamily: 'var(--font-h)', marginBottom: '2px' }}>
-                      <span className="text-gradient">{a.count}x</span>
-                    </div>
-                    <div style={{ fontSize: '13px', fontWeight: '600', color: 'var(--text)', marginBottom: '4px' }}>{a.name}</div>
-                    <div style={{ fontSize: '11px', color: 'var(--text-muted)', lineHeight: 1.5, marginBottom: '6px' }}>{a.description}</div>
-                    <div style={{ fontSize: '9px', color: 'var(--text-muted)', fontFamily: "var(--font-code)", opacity: 0.6 }}>{a.year}</div>
-                  </div>
+      {awards.length > 0 && (
+        <section className="section" style={{ borderTop: '1px solid var(--glass-border)' }}>
+          <div className="container">
+            <TextReveal><div style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '8px', fontFamily: "var(--font-code)" }}>awards</div></TextReveal>
+            <TextReveal delay={0.1}><h2 style={{ fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: '700', lineHeight: 1, marginBottom: '32px' }}>Our <span className="text-gradient">achievements</span></h2></TextReveal>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '12px' }}>
+              {awards.map((award, i) => (
+                <div key={award.id || i} className="liquid-glass" style={{ padding: '16px', borderRadius: '12px', textAlign: 'center' }}>
+                  <div style={{ fontSize: '28px', marginBottom: '8px' }}>{award.icon || '🏆'}</div>
+                  <h3 style={{ fontSize: '14px', fontWeight: '600', marginBottom: '4px' }}>{award.title}</h3>
+                  {award.year && <p style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>{award.year}</p>}
                 </div>
-              </motion.div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
-      {/* CTA Section */}
-      <section className="section" style={{ borderTop: '1px solid var(--glass-border)', textAlign: 'center' }}>
-        <div className="container">
-          <h2 style={{ fontSize: 'clamp(26px, 4vw, 40px)', fontWeight: '700', marginBottom: '12px' }}>
-            Want to Join Our <span className="text-gradient">Team</span>?
-          </h2>
-          <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '24px', maxWidth: '360px', margin: '0 auto 24px' }}>
-            We're always looking for talented individuals to join our mission.
-          </p>
-          <a href="/careers" onMouseEnter={() => setCursorType('hover')} onMouseLeave={() => setCursorType('default')}
-            className="liquid-glass-strong" style={{
-              display: 'inline-block', padding: '14px 36px', borderRadius: '100px',
-              fontSize: '13px', fontWeight: '600', color: 'var(--text)', textDecoration: 'none'
-            }}>
-            View Open Positions →
-          </a>
-        </div>
-      </section>
-
-      <LeaderModal leader={selectedMember} isOpen={isModalOpen} onClose={closeMember} />
-
+      {selectedLeader && <LeaderModal leader={selectedLeader} isOpen={!!selectedLeader} onClose={() => setSelectedLeader(null)} />}
       <Footer />
-
-      <style>{`.view-indicator { opacity: 0 !important; } div:hover > .view-indicator { opacity: 1 !important; }`}</style>
     </main>
   )
 }
