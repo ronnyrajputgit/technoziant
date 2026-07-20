@@ -15,10 +15,14 @@ import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward'
 const CMS_TABLES = {
   featured_projects: { label: 'Featured Projects', fields: [
     { key: 'title', label: 'Title', type: 'text', required: true },
+    { key: 'subtitle', label: 'Subtitle', type: 'text' },
     { key: 'description', label: 'Description', type: 'textarea' },
-    { key: 'image_url', label: 'Image URL', type: 'image' },
+    { key: 'image', label: 'Image URL', type: 'image' },
     { key: 'link', label: 'Link', type: 'text' },
+    { key: 'tech', label: 'Technologies (comma separated)', type: 'text' },
     { key: 'category', label: 'Category', type: 'text' },
+    { key: 'client', label: 'Client', type: 'text' },
+    { key: 'year', label: 'Year', type: 'text' },
     { key: 'visible', label: 'Visible', type: 'checkbox' },
     { key: 'display_order', label: 'Sort Order', type: 'number' },
   ]},

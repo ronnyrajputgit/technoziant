@@ -1,7 +1,7 @@
-import { useRef, useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
-import { projects } from '../../data/projects'
+import { api } from '../../utils/api'
 import { useApp } from '../../context/AppContext'
 import { TextReveal } from '../ui/TextReveal'
 import { WaterDropCard } from '../ui/Cards'
@@ -23,26 +23,29 @@ const autoScrollStyle = `
   }
 `
 
+const projectColors = ['#4f8eff', '#a855f7', '#06d6a0', '#f472b6', '#fbbf24', '#ef4444', '#22d3ee', '#10b981']
+
 function ProjectCard({ p, hovered, setHovered, setCursorType, openProject }) {
+  const color = p.color || projectColors[(p.id || 0) % projectColors.length]
   return (
-    <WaterDropCard color={p.color} style={{ minWidth: '280px', maxWidth: '320px', flex: '0 0 auto', padding: 0 }}>
+    <WaterDropCard color={color} style={{ minWidth: '280px', maxWidth: '320px', flex: '0 0 auto', padding: 0 }}>
       <div onClick={() => openProject(p)} style={{ display: 'block', cursor: 'pointer' }}>
         <div onMouseEnter={() => { setHovered(p.id); setCursorType('project') }} onMouseLeave={() => { setHovered(null); setCursorType('default') }}
           style={{ position: 'relative', aspectRatio: '16/10', overflow: 'hidden', borderRadius: '12px 12px 0 0' }}>
           <motion.img src={p.image} alt={p.title} animate={{ scale: hovered === p.id ? 1.05 : 1 }} transition={{ duration: 0.6, ease: [0.76, 0, 0.24, 1] }}
             style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: hovered === p.id ? 1 : 0 }}
-            style={{ position: 'absolute', inset: 0, background: `${p.color}20`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            style={{ position: 'absolute', inset: 0, background: `${color}20`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <span className="liquid-glass-strong" style={{ padding: '6px 16px', borderRadius: '6px', fontSize: '10px', fontWeight: '600', color: 'var(--text)', fontFamily: "var(--font-code)" }}>{'>'} view</span>
           </motion.div>
         </div>
         <div style={{ padding: '14px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-            <div><h3 style={{ fontSize: '14px', fontWeight: '600', marginBottom: '1px' }}>{p.title}</h3><p style={{ fontSize: '9px', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>{p.subtitle}</p></div>
-            <span style={{ fontSize: '9px', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>{p.year}</span>
+            <div><h3 style={{ fontSize: '14px', fontWeight: '600', marginBottom: '1px' }}>{p.title}</h3><p style={{ fontSize: '9px', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>{p.subtitle || p.description?.substring(0, 40)}</p></div>
+            <span style={{ fontSize: '9px', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>{p.year || ''}</span>
           </div>
           <div style={{ display: 'flex', gap: '3px', flexWrap: 'wrap' }}>
-            {p.tags.slice(0, 3).map(t => <span key={t} className="liquid-glass" style={{ padding: '2px 6px', fontSize: '8px', fontWeight: '500', borderRadius: '3px', color: p.color, fontFamily: "var(--font-code)" }}>{t}</span>)}
+            {(p.tech || p.tags || []).slice(0, 3).map((t, i) => <span key={i} className="liquid-glass" style={{ padding: '2px 6px', fontSize: '8px', fontWeight: '500', borderRadius: '3px', color, fontFamily: "var(--font-code)" }}>{t}</span>)}
           </div>
         </div>
       </div>
@@ -55,14 +58,35 @@ export function FeaturedProjects() {
   const { setCursorType } = useApp()
   const [hovered, setHovered] = useState(null)
   const [selectedProject, setSelectedProject] = useState(null)
-  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(null)
+  const [projects, setProjects] = useState([])
+
+  useEffect(() => {
+    api.getContent('featured_projects', { visible: 'true' }).then(data => {
+      const formatted = (data || []).map(p => ({
+        id: p.id,
+        title: p.title,
+        subtitle: p.subtitle || p.description?.substring(0, 40),
+        description: p.description,
+        year: p.year || '',
+        color: projectColors[(p.id || 0) % projectColors.length],
+        image: p.image,
+        tags: p.tech || [],
+        category: p.category,
+        client: p.client || ''
+      }))
+      setProjects(formatted)
+    }).catch(() => {})
+  }, [])
 
   const openProject = (project) => {
     setSelectedProject(project)
     setIsModalOpen(true)
   }
 
-  const featuredProjects = projects.slice(0, 5)
+  const displayProjects = projects.length > 0 ? projects : []
+
+  if (displayProjects.length === 0) return null
 
   return (
     <section ref={ref} className="section" style={{ borderTop: '1px solid var(--glass-border)', overflow: 'hidden' }}>
@@ -76,10 +100,10 @@ export function FeaturedProjects() {
       </div>
       <div style={{ overflow: 'hidden', paddingBottom: '8px', paddingLeft: 'clamp(20px, 5vw, 80px)', paddingRight: 'clamp(20px, 5vw, 80px)' }}>
         <div className="auto-scroll-track">
-          {featuredProjects.map(p => (
+          {displayProjects.map(p => (
             <ProjectCard key={p.id} p={p} hovered={hovered} setHovered={setHovered} setCursorType={setCursorType} openProject={openProject} />
           ))}
-          {featuredProjects.map(p => (
+          {displayProjects.map(p => (
             <ProjectCard key={`dup-${p.id}`} p={p} hovered={hovered} setHovered={setHovered} setCursorType={setCursorType} openProject={openProject} />
           ))}
         </div>

@@ -66,8 +66,10 @@ module.exports = function(pool) {
     if (conditions.length > 0) query += ` WHERE ${conditions.join(' AND ')}`
     if (table === 'site_settings') {
       query += ' ORDER BY key'
-    } else {
+    } else if (TABLES_WITH_UPDATED_AT.includes(table)) {
       query += ' ORDER BY display_order ASC, created_at DESC'
+    } else {
+      query += ' ORDER BY created_at DESC'
     }
     pool.query(query, params, (err, result) => {
       if (err) return res.status(500).json({ error: err.message })
