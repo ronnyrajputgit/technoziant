@@ -118,20 +118,19 @@ export function Blog() {
                     </div>
                     <h3 style={{ fontSize: '13px', fontWeight: '600', lineHeight: 1.3, marginBottom: '4px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{post.title}</h3>
                     {post.excerpt && <p style={{ fontSize: '11px', lineHeight: 1.4, color: 'var(--text-muted)', display: '-webkit-box', WebkitLineClamp: expandedId === post.id ? 10 : 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', marginBottom: '6px' }}>{post.excerpt}</p>}
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginTop: '6px' }}>
+                      <div style={{ display: 'flex', gap: '3px', flexWrap: 'wrap', maxWidth: '60%' }}>
                         {post.tags && post.tags.slice(0, 2).map(t => (
-                          <span key={t} style={{ padding: '1px 6px', borderRadius: '4px', fontSize: '8px', background: 'rgba(255,255,255,0.05)', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>#{t}</span>
+                          <span key={t} style={{ padding: '1px 5px', borderRadius: '3px', fontSize: '8px', background: 'rgba(255,255,255,0.05)', color: 'var(--text-muted)', fontFamily: "var(--font-code)", whiteSpace: 'nowrap' }}>#{t}</span>
                         ))}
                       </div>
-                      <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
-                        <button onClick={(e) => { e.stopPropagation(); setExpandedId(expandedId === post.id ? null : post.id) }} title={expandedId === post.id ? 'Show less' : 'View more'}
-                          style={{ padding: '3px 6px', borderRadius: '4px', border: '1px solid var(--glass-border)', background: 'transparent', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '10px', display: 'flex', alignItems: 'center', gap: '2px', fontFamily: "var(--font-code)" }}>
-                          {expandedId === post.id ? <ExpandLessIcon sx={{ fontSize: 12 }} /> : <ExpandMoreIcon sx={{ fontSize: 12 }} />}
-                          {expandedId === post.id ? 'Less' : 'More'}
+                      <div style={{ display: 'flex', gap: '3px', alignItems: 'center', flexShrink: 0 }}>
+                        <button onClick={(e) => { e.stopPropagation(); setExpandedId(expandedId === post.id ? null : post.id) }} title={expandedId === post.id ? 'Less' : 'More'}
+                          style={{ padding: '2px 6px', borderRadius: '4px', border: '1px solid var(--glass-border)', background: 'transparent', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '9px', display: 'flex', alignItems: 'center', gap: '2px', fontFamily: "var(--font-code)" }}>
+                          {expandedId === post.id ? <ExpandLessIcon sx={{ fontSize: 10 }} /> : <ExpandMoreIcon sx={{ fontSize: 10 }} />}
                         </button>
-                        <Link to={`/blog/${post.slug}`} title="Read full article" onClick={e => e.stopPropagation()}
-                          style={{ padding: '3px 8px', borderRadius: '4px', border: '1px solid rgba(34,197,94,0.3)', background: 'rgba(34,197,94,0.1)', color: '#22c55e', fontSize: '10px', cursor: 'pointer', fontFamily: "var(--font-code)", textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '3px' }}>
+                        <Link to={`/blog/${post.slug}`} title="Read" onClick={e => e.stopPropagation()}
+                          style={{ padding: '2px 8px', borderRadius: '4px', border: '1px solid rgba(34,197,94,0.3)', background: 'rgba(34,197,94,0.1)', color: '#22c55e', fontSize: '9px', cursor: 'pointer', fontFamily: "var(--font-code)", textDecoration: 'none', whiteSpace: 'nowrap' }}>
                           Read →
                         </Link>
                       </div>
