@@ -30,6 +30,13 @@ import SettingsIcon from '@mui/icons-material/Settings'
 import FeedbackIcon from '@mui/icons-material/Feedback'
 
 const sidebarLinks = [
+  { path: '/', label: 'Home', icon: '🏠' },
+  { path: '/work', label: 'Work', icon: '💼' },
+  { path: '/services', label: 'Services', icon: '⚡' },
+  { path: '/about', label: 'About', icon: '👥' },
+  { path: '/blog', label: 'Blog', icon: '📝' },
+  { path: '/contact', label: 'Contact', icon: '✉️' },
+  { divider: true, label: 'Management' },
   { path: '/dashboard', label: 'Overview', icon: <ArticleIcon sx={{ fontSize: 18 }} /> },
   { group: 'Blog Management', icon: <FolderIcon sx={{ fontSize: 18 }} />, children: [
     { path: '/dashboard', label: 'All Blogs', icon: <ArticleIcon sx={{ fontSize: 16 }} /> },
@@ -182,9 +189,10 @@ function Sidebar({ open, onToggle }) {
       {/* Logout */}
       <div style={{ padding: open ? '8px' : '8px 4px', borderTop: '1px solid var(--glass-border)' }}>
         <button onClick={() => { logout(); navigate('/') }} title="Logout"
-          style={{ display: 'flex', alignItems: 'center', gap: open ? '10px' : '0', justifyContent: open ? 'flex-start' : 'center', padding: open ? '8px 10px' : '8px', borderRadius: '8px', fontSize: '12px', color: '#ef4444', width: '100%', cursor: 'pointer', border: 'none', background: 'transparent', fontFamily: "var(--font-code)" }}
+          style={{ display: 'flex', alignItems: 'center', gap: open ? '10px' : '0', justifyContent: open ? 'flex-start' : 'center', padding: open ? '10px 12px' : '10px', borderRadius: '8px', fontSize: '12px', color: '#ef4444', width: '100%', cursor: 'pointer', border: 'none', background: 'transparent', fontFamily: "var(--font-code)", transition: 'all 0.15s' }}
           onMouseEnter={e => e.currentTarget.style.background = 'rgba(239,68,68,0.08)'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
-          <span>🚪</span>{open && <span>Logout</span>}
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          {open && <span>Logout</span>}
         </button>
       </div>
     </aside>
