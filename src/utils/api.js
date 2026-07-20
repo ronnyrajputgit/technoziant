@@ -25,7 +25,10 @@ export const api = {
   updateBlog: (id, data) => apiFetch(`/blogs/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
   deleteBlog: (id) => apiFetch(`/blogs/${id}`, { method: 'DELETE' }),
 
-  getContent: (table) => apiFetch(`/content/${table}`),
+  getContent: (table, params) => {
+    const qs = params ? '?' + new URLSearchParams(params).toString() : ''
+    return apiFetch(`/content/${table}${qs}`)
+  },
   createContent: (table, data) => apiFetch(`/content/${table}`, { method: 'POST', body: JSON.stringify(data) }),
   updateContent: (table, id, data) => apiFetch(`/content/${table}/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
   deleteContent: (table, id) => apiFetch(`/content/${table}/${id}`, { method: 'DELETE' }),

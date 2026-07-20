@@ -4,8 +4,9 @@ import { useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { useApp } from '../../context/AppContext'
 import { NetworkAnimation } from '../ui/NetworkAnimation'
+import { api } from '../../utils/api'
 
-const clients = [
+const defaultClients = [
   { name: 'Bloom Corp', type: 'E-Commerce', color: '#22c55e' },
   { name: 'PulseMed', type: 'Healthcare', color: '#3b82f6' },
   { name: 'FinSecure', type: 'Fintech', color: '#a855f7' },
@@ -38,13 +39,27 @@ export function Hero() {
   const y = useTransform(scrollYProgress, [0, 1], [0, 150])
   const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0])
   const [clientIndex, setClientIndex] = useState(0)
+  const [stats, setStats] = useState([])
+  const [settings, setSettings] = useState({})
+
+  useEffect(() => {
+    api.getContent('stats', { visible: 'true' }).then(setStats).catch(() => {})
+    api.getSettings().then(data => {
+      const map = {}
+      data.forEach(s => { map[s.key] = s.value })
+      setSettings(map)
+    }).catch(() => {})
+  }, [])
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setClientIndex(prev => (prev + 1) % clients.length)
+      setClientIndex(prev => (prev + 1) % defaultClients.length)
     }, 3000)
     return () => clearInterval(timer)
   }, [])
+
+  const heroTitle = settings.hero_title?.split('\n') || ['We craft', 'digital', 'products']
+  const heroDesc = settings.hero_description || 'Creative studio blending storytelling, art, and cutting-edge technology to deliver award-winning digital experiences.'
 
   return (
     <section ref={ref} style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', position: 'relative', overflow: 'hidden', paddingTop: '80px', paddingBottom: '40px' }}>
@@ -59,7 +74,7 @@ export function Hero() {
             {/* Left - Text */}
             <div>
               <div style={{ marginBottom: '16px' }}>
-                {['We craft', 'digital', 'products'].map((line, i) => (
+                {heroTitle.map((line, i) => (
                   <div key={i} style={{ overflow: 'hidden', marginBottom: i === 2 ? '0' : '4px' }}>
                     <motion.h1 initial={{ y: '110%' }} animate={{ y: 0 }}
                       transition={{ duration: 1, ease: [0.76, 0, 0.24, 1], delay: 0.3 + i * 0.08 }}
@@ -73,7 +88,7 @@ export function Hero() {
 
               <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }}
                 style={{ fontSize: '15px', color: 'var(--text-muted)', maxWidth: '480px', lineHeight: 1.7, marginBottom: '24px' }}>
-                Creative studio blending storytelling, art, and cutting-edge technology to deliver award-winning digital experiences.
+                {heroDesc}
               </motion.p>
 
               <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.9 }}
@@ -97,19 +112,22 @@ export function Hero() {
               {/* Stats */}
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.1 }}
                 style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
-                {[
-                  { n: '150+', l: 'Projects', color: '#22c55e' },
-                  { n: '50+', l: 'Clients', color: '#3b82f6' },
-                  { n: '12+', l: 'Awards', color: '#a855f7' }
-                ].map((s, i) => (
-                  <motion.div key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.2 + i * 0.1 }}
-                    className="liquid-glass" style={{ padding: '14px 10px', borderRadius: '8px', textAlign: 'center' }}>
-                    <div style={{ fontSize: '22px', fontWeight: '700', fontFamily: 'var(--font-h)', color: s.color }}>
-                      <CountUp target={s.n} />
-                    </div>
-                    <div style={{ fontSize: '9px', color: 'var(--text-muted)', fontFamily: "var(--font-code)", textTransform: 'uppercase', letterSpacing: '0.05em' }}>{s.l}</div>
-                  </motion.div>
-                ))}
+                {(stats.length ? stats.slice(0, 3) : [
+                  { label: 'Projects', value: '150+', icon: '🏆' },
+                  { label: 'Clients', value: '50+', icon: '👥' },
+                  { label: 'Awards', value: '12+', icon: '⭐' }
+                ]).map((s, i) => {
+                  const colors = ['#22c55e', '#3b82f6', '#a855f7']
+                  return (
+                    <motion.div key={s.id || i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.2 + i * 0.1 }}
+                      className="liquid-glass" style={{ padding: '14px 10px', borderRadius: '8px', textAlign: 'center' }}>
+                      <div style={{ fontSize: '22px', fontWeight: '700', fontFamily: 'var(--font-h)', color: colors[i] }}>
+                        <CountUp target={s.value || '0'} />
+                      </div>
+                      <div style={{ fontSize: '9px', color: 'var(--text-muted)', fontFamily: "var(--font-code)", textTransform: 'uppercase', letterSpacing: '0.05em' }}>{s.label}</div>
+                    </motion.div>
+                  )
+                })}
               </motion.div>
             </div>
 
@@ -124,12 +142,12 @@ export function Hero() {
                   transition={{ duration: 0.4 }}
                   style={{ marginBottom: '20px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-                    <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: `${clients[clientIndex].color}15`, border: `1px solid ${clients[clientIndex].color}25`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>
+                    <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: `${defaultClients[clientIndex].color}15`, border: `1px solid ${defaultClients[clientIndex].color}25`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>
                       {clientIndex === 0 ? '🛒' : clientIndex === 1 ? '🏥' : clientIndex === 2 ? '💰' : clientIndex === 3 ? '📊' : '💬'}
                     </div>
                     <div>
-                      <div style={{ fontSize: '18px', fontWeight: '700', fontFamily: 'var(--font-h)' }}>{clients[clientIndex].name}</div>
-                      <div style={{ fontSize: '11px', color: clients[clientIndex].color, fontFamily: "var(--font-code)" }}>{clients[clientIndex].type}</div>
+                      <div style={{ fontSize: '18px', fontWeight: '700', fontFamily: 'var(--font-h)' }}>{defaultClients[clientIndex].name}</div>
+                      <div style={{ fontSize: '11px', color: defaultClients[clientIndex].color, fontFamily: "var(--font-code)" }}>{defaultClients[clientIndex].type}</div>
                     </div>
                   </div>
                 </motion.div>
@@ -137,8 +155,8 @@ export function Hero() {
 
               {/* Dots */}
               <div style={{ display: 'flex', gap: '6px', justifyContent: 'center' }}>
-                {clients.map((_, i) => (
-                  <div key={i} style={{ width: i === clientIndex ? '20px' : '6px', height: '6px', borderRadius: '3px', background: i === clientIndex ? clients[i].color : 'var(--glass-border)', transition: 'all 0.3s' }} />
+                {defaultClients.map((_, i) => (
+                  <div key={i} style={{ width: i === clientIndex ? '20px' : '6px', height: '6px', borderRadius: '3px', background: i === clientIndex ? defaultClients[i].color : 'var(--glass-border)', transition: 'all 0.3s' }} />
                 ))}
               </div>
 

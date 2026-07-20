@@ -1,9 +1,10 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, useInView } from 'framer-motion'
 import { useRef } from 'react'
 import { TextReveal } from '../components/ui/TextReveal'
 import { GlowCard } from '../components/ui/Cards'
 import { Footer } from '../components/layout/Footer'
+import { api } from '../utils/api'
 
 const Icon = ({ d, color = 'currentColor', size = 20 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -22,7 +23,7 @@ const icons = {
   youtube: 'M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19.1c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z M9.75 15.02V8.48l5.75 3.27-5.75 3.27z'
 }
 
-const connectMethods = [
+const defaultConnectMethods = [
   { icon: 'whatsapp', title: 'WhatsApp', value: '+91 9771291336', link: 'https://wa.me/919771291336', color: '#25D366', description: 'Quick chat anytime' },
   { icon: 'email', title: 'Email', value: 'business@technoziant.com', link: 'mailto:business@technoziant.com', color: '#4f8eff', description: 'For detailed inquiries' },
   { icon: 'phone', title: 'Contact Us', value: '+91 8882716189', link: 'tel:+918882716189', color: '#06d6a0', description: 'Mon-Fri 10AM-6PM' },
@@ -31,6 +32,14 @@ const connectMethods = [
   { icon: 'instagram', title: 'Instagram', value: '@technoziant', link: 'https://instagram.com/technoziant', color: '#E4405F', description: 'See our visual work' },
   { icon: 'youtube', title: 'YouTube', value: 'Technoziant', link: 'https://youtube.com/@technoziant', color: '#FF0000', description: 'Watch our tutorials' },
   { icon: 'map', title: 'Office', value: 'Deoghar, Jharkhand', link: 'https://maps.google.com/?q=Deoghar+Jharkhand', color: '#fbbf24', description: 'Visit us 10AM-6PM' }
+]
+
+const defaultOfficeInfo = [
+  { icon: 'map', label: 'address', val: 'Deoghar, Jharkhand, India', color: '#fbbf24' },
+  { icon: 'phone', label: 'hours', val: 'Mon - Fri: 10:00 AM - 6:00 PM', color: '#06d6a0' },
+  { icon: 'email', label: 'general', val: 'business@technoziant.com', color: '#4f8eff' },
+  { icon: 'phone', label: 'contact', val: '+91 8882716189', color: '#a855f7' },
+  { icon: 'whatsapp', label: 'whatsapp', val: '+91 9771291336', color: '#25D366' }
 ]
 
 function ConnectCard({ method, index }) {
@@ -82,6 +91,15 @@ export function Contact() {
   const [f, setF] = useState({ name: '', email: '', company: '', service: '', message: '' })
   const [focus, setFocus] = useState(null)
   const [submitted, setSubmitted] = useState(false)
+  const [settings, setSettings] = useState({})
+
+  useEffect(() => {
+    api.getSettings().then(data => {
+      const map = {}
+      data.forEach(s => { map[s.key] = s.value })
+      setSettings(map)
+    }).catch(() => {})
+  }, [])
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -97,6 +115,12 @@ export function Contact() {
     transition: 'border-color 0.3s', fontFamily: "var(--font-code)"
   })
 
+  const email = settings.contact_email || 'business@technoziant.com'
+  const phone = settings.contact_phone || '+91 8882716189'
+  const whatsapp = settings.contact_whatsapp || '+91 9771291336'
+  const address = settings.contact_address || 'Deoghar, Jharkhand'
+  const hours = settings.contact_hours || 'Mon - Fri: 10:00 AM - 6:00 PM'
+
   return (
     <main style={{ paddingTop: '100px', minHeight: '100vh' }}>
       <section className="container" style={{ marginBottom: '32px' }}>
@@ -108,7 +132,14 @@ export function Contact() {
       <section className="section" style={{ borderTop: '1px solid var(--glass-border)', paddingTop: '32px' }}>
         <div className="container">
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '10px' }}>
-            {connectMethods.map((method, i) => <ConnectCard key={i} method={method} index={i} />)}
+            {defaultConnectMethods.map((method, i) => {
+              const m = { ...method }
+              if (method.icon === 'email') m.value = email
+              if (method.icon === 'phone') m.value = phone
+              if (method.icon === 'whatsapp') m.value = whatsapp
+              if (method.icon === 'map') m.value = address
+              return <ConnectCard key={i} method={m} index={i} />
+            })}
           </div>
         </div>
       </section>
@@ -149,11 +180,11 @@ export function Contact() {
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                 {[
-                  { icon: 'map', label: 'address', val: 'Deoghar, Jharkhand, India', color: '#fbbf24' },
-                  { icon: 'phone', label: 'hours', val: 'Mon - Fri: 10:00 AM - 6:00 PM', color: '#06d6a0' },
-                  { icon: 'email', label: 'general', val: 'business@technoziant.com', color: '#4f8eff' },
-                  { icon: 'phone', label: 'contact', val: '+91 8882716189', color: '#a855f7' },
-                  { icon: 'whatsapp', label: 'whatsapp', val: '+91 9771291336', color: '#25D366' }
+                  { icon: 'map', label: 'address', val: address, color: '#fbbf24' },
+                  { icon: 'phone', label: 'hours', val: hours, color: '#06d6a0' },
+                  { icon: 'email', label: 'general', val: email, color: '#4f8eff' },
+                  { icon: 'phone', label: 'contact', val: phone, color: '#a855f7' },
+                  { icon: 'whatsapp', label: 'whatsapp', val: whatsapp, color: '#25D366' }
                 ].map((item, i) => (
                   <GlowCard key={i} style={{ padding: '12px 14px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>

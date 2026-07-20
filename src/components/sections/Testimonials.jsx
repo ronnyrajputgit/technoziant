@@ -1,8 +1,19 @@
+import { useState, useEffect } from 'react'
 import { TextReveal } from '../ui/TextReveal'
 import { GlowCard } from '../ui/Cards'
-import { testimonials } from '../../data/projects'
+import { api } from '../../utils/api'
 
 export function Testimonials() {
+  const [testimonials, setTestimonials] = useState([])
+
+  useEffect(() => {
+    api.getContent('testimonials').then(data => {
+      setTestimonials(data.filter(t => t.approved))
+    }).catch(() => {})
+  }, [])
+
+  if (!testimonials.length) return null
+
   return (
     <section className="section" style={{ borderTop: '1px solid var(--glass-border)' }}>
       <div className="container">
@@ -15,12 +26,12 @@ export function Testimonials() {
             <GlowCard key={t.id} glowColor="var(--accent)" style={{ padding: '18px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
                 <div className="liquid-glass" style={{ width: '36px', height: '36px', borderRadius: '50%', overflow: 'hidden' }}>
-                  <img src={t.image} alt={t.author} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  {t.avatar ? <img src={t.avatar} alt={t.client_name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: '600' }}>{t.client_name?.[0]}</div>}
                 </div>
-                <div><div style={{ fontSize: '12px', fontWeight: '600' }}>{t.author}</div><div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>{t.company}</div></div>
+                <div><div style={{ fontSize: '12px', fontWeight: '600' }}>{t.client_name}</div><div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>{t.company}</div></div>
               </div>
-              <p style={{ fontSize: '12px', lineHeight: 1.6, color: 'var(--text-muted)', fontStyle: 'italic', marginBottom: '10px' }}>"{t.quote}"</p>
-              <div style={{ display: 'flex', gap: '2px' }}>{[1, 2, 3, 4, 5].map(s => <span key={s} style={{ color: '#fbbf24', fontSize: '10px' }}>★</span>)}</div>
+              <p style={{ fontSize: '12px', lineHeight: 1.6, color: 'var(--text-muted)', fontStyle: 'italic', marginBottom: '10px' }}>"{t.feedback}"</p>
+              <div style={{ display: 'flex', gap: '2px' }}>{[1, 2, 3, 4, 5].map(s => <span key={s} style={{ color: s <= (t.rating || 5) ? '#fbbf24' : 'var(--glass-border)', fontSize: '10px' }}>★</span>)}</div>
             </GlowCard>
           ))}
         </div>

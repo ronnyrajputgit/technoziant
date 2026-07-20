@@ -1,16 +1,20 @@
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { TextReveal } from '../ui/TextReveal'
+import { api } from '../../utils/api'
 
-const advantages = [
-  { icon: '⚡', title: 'Fast Delivery', desc: '99% on-time delivery rate', color: '#22c55e' },
-  { icon: '🔧', title: 'Modern Stack', desc: 'React, Next.js, Node.js, Cloud', color: '#3b82f6' },
-  { icon: '🛡️', title: '24/7 Support', desc: 'Round the clock maintenance', color: '#a855f7' },
-  { icon: '📈', title: 'Scalable', desc: 'Built for growth', color: '#f59e0b' },
-  { icon: '🏆', title: 'Award Winning', desc: '12+ design awards', color: '#ef4444' },
-  { icon: '🤝', title: 'Trusted', desc: '50+ global clients', color: '#06b6d4' }
-]
+const colors = ['#22c55e', '#3b82f6', '#a855f7', '#f59e0b', '#ef4444', '#06b6d4']
+const defaultIcons = ['⚡', '🔧', '🛡️', '📈', '🏆', '🤝']
 
 export function WhyChooseUs() {
+  const [advantages, setAdvantages] = useState([])
+
+  useEffect(() => {
+    api.getContent('why_choose', { visible: 'true' }).then(setAdvantages).catch(() => {})
+  }, [])
+
+  if (!advantages.length) return null
+
   return (
     <section className="section" style={{ borderTop: '1px solid var(--glass-border)' }}>
       <div className="container">
@@ -21,13 +25,13 @@ export function WhyChooseUs() {
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '10px' }}>
           {advantages.map((item, i) => (
-            <motion.div key={i} initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+            <motion.div key={item.id} initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
               transition={{ delay: i * 0.05, duration: 0.4 }}
-              whileHover={{ y: -3, boxShadow: `0 8px 30px ${item.color}15` }}
+              whileHover={{ y: -3, boxShadow: `0 8px 30px ${colors[i % colors.length]}15` }}
               className="liquid-glass" style={{ padding: '18px', borderRadius: '10px', textAlign: 'center' }}>
-              <div style={{ fontSize: '28px', marginBottom: '8px' }}>{item.icon}</div>
-              <div style={{ fontSize: '13px', fontWeight: '600', marginBottom: '4px', color: item.color }}>{item.title}</div>
-              <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{item.desc}</div>
+              <div style={{ fontSize: '28px', marginBottom: '8px' }}>{item.icon || defaultIcons[i % defaultIcons.length]}</div>
+              <div style={{ fontSize: '13px', fontWeight: '600', marginBottom: '4px', color: colors[i % colors.length] }}>{item.title}</div>
+              <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{item.description}</div>
             </motion.div>
           ))}
         </div>

@@ -1,11 +1,11 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { TextReveal } from '../components/ui/TextReveal'
 import { WaterDropCard } from '../components/ui/Cards'
-import { services } from '../data/projects'
 import { useApp } from '../context/AppContext'
 import { Footer } from '../components/layout/Footer'
+import { api } from '../utils/api'
 
 const slugMap = {
   'Web Development': 'web-development',
@@ -25,33 +25,22 @@ const icons = {
   ai: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M12 2a4 4 0 00-4 4v2H6a2 2 0 00-2 2v2a2 2 0 002 2h2v2a4 4 0 008 0v-2h2a2 2 0 002-2v-2a2 2 0 00-2-2h-2V6a4 4 0 00-4-4z"/></svg>
 }
 
-const techStack = [
-  { name: 'React', icon: '⚛️' },
-  { name: 'Next.js', icon: '▲' },
-  { name: 'Node.js', icon: '🟢' },
-  { name: 'TypeScript', icon: '📘' },
-  { name: 'Python', icon: '🐍' },
-  { name: 'Flutter', icon: '💙' },
-  { name: 'AWS', icon: '☁️' },
-  { name: 'Docker', icon: '🐳' },
-  { name: 'PostgreSQL', icon: '🐘' },
-  { name: 'MongoDB', icon: '🍃' },
-  { name: 'GraphQL', icon: '◆' },
-  { name: 'Redis', icon: '🔴' }
-]
-
-const industries = [
-  { name: 'Startups', desc: 'MVP development, rapid prototyping, scaling', icon: '🚀', flow: ['ideate', 'build', 'launch', 'scale'] },
-  { name: 'E-Commerce', desc: 'Marketplaces, payment integration, analytics', icon: '🛒', flow: ['catalog', 'cart', 'checkout', 'revenue'] },
-  { name: 'Healthcare', desc: 'HIPAA compliance, telemedicine, EHR', icon: '🏥', flow: ['patient', 'diagnose', 'treat', 'follow-up'] },
-  { name: 'Finance', desc: 'Fintech, banking, secure transactions', icon: '💰', flow: ['auth', 'transact', 'verify', 'settle'] },
-  { name: 'Education', desc: 'LMS, virtual classrooms, assessment', icon: '📚', flow: ['enroll', 'learn', 'practice', 'certify'] },
-  { name: 'Logistics', desc: 'Fleet tracking, supply chain, optimization', icon: '🚚', flow: ['track', 'route', 'deliver', 'confirm'] }
-]
+const serviceColors = ['#4f8eff', '#a855f7', '#f472b6', '#06d6a0', '#22d3ee', '#fbbf24', '#ef4444']
+const defaultTechIcons = ['⚛️', '▲', '🟢', '📘', '🐍', '💙', '☁️', '🐳', '🐘', '🍃', '◆', '🔴']
+const defaultIndIcons = ['🚀', '🛒', '🏥', '💰', '📚', '🚚', '⚡', '🏗️', '🎮', '📡']
 
 export function Services() {
   const { setCursorType } = useApp()
   const [activeIndustry, setActiveIndustry] = useState(null)
+  const [services, setServices] = useState([])
+  const [industries, setIndustries] = useState([])
+  const [techStack, setTechStack] = useState([])
+
+  useEffect(() => {
+    api.getContent('services', { visible: 'true' }).then(setServices).catch(() => {})
+    api.getContent('industries', { visible: 'true' }).then(setIndustries).catch(() => {})
+    api.getContent('tech_stack', { visible: 'true' }).then(setTechStack).catch(() => {})
+  }, [])
 
   return (
     <main style={{ paddingTop: '100px', minHeight: '100vh' }}>
@@ -63,19 +52,19 @@ export function Services() {
 
       <section className="section" style={{ borderTop: '1px solid var(--glass-border)', paddingTop: 0 }}>
         <div className="container" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          {services.map(s => (
+          {services.map((s, i) => (
             <Link to={`/services/${slugMap[s.title] || s.title.toLowerCase().replace(/\s+/g, '-')}`} key={s.id}>
-              <WaterDropCard color={s.color} style={{ padding: 0 }}>
+              <WaterDropCard color={serviceColors[i % serviceColors.length]} style={{ padding: 0 }}>
                 <div onMouseEnter={() => setCursorType('hover')} onMouseLeave={() => setCursorType('default')}
                   style={{ display: 'grid', gridTemplateColumns: '70px 1fr auto', gap: '14px', padding: '14px', alignItems: 'center' }}>
-                  <div className="liquid-glass" style={{ width: '60px', height: '60px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, color: s.color }}>
-                    {icons[s.icon]}
+                  <div className="liquid-glass" style={{ width: '60px', height: '60px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, color: serviceColors[i % serviceColors.length] }}>
+                    {icons[s.icon] || icons.web}
                   </div>
                   <div>
                     <h3 style={{ fontSize: '15px', fontWeight: '600', marginBottom: '3px' }}>{s.title}</h3>
                     <p style={{ fontSize: '11px', color: 'var(--text-muted)', lineHeight: 1.5 }}>{s.description}</p>
                   </div>
-                  <div className="liquid-glass" style={{ padding: '5px 12px', borderRadius: '6px', fontSize: '10px', color: s.color, fontWeight: '500', whiteSpace: 'nowrap', fontFamily: "var(--font-code)" }}>
+                  <div className="liquid-glass" style={{ padding: '5px 12px', borderRadius: '6px', fontSize: '10px', color: serviceColors[i % serviceColors.length], fontWeight: '500', whiteSpace: 'nowrap', fontFamily: "var(--font-code)" }}>
                     {'->'}
                   </div>
                 </div>
@@ -94,11 +83,11 @@ export function Services() {
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '8px' }}>
             {techStack.map((tech, i) => (
-              <motion.div key={i} initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }}
+              <motion.div key={tech.id} initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }}
                 transition={{ delay: i * 0.03, duration: 0.4 }}
                 whileHover={{ scale: 1.05, y: -2 }}
                 className="liquid-glass" style={{ padding: '14px', borderRadius: '8px', textAlign: 'center', cursor: 'default' }}>
-                <div style={{ fontSize: '22px', marginBottom: '4px' }}>{tech.icon}</div>
+                <div style={{ fontSize: '22px', marginBottom: '4px' }}>{tech.icon || defaultTechIcons[i % defaultTechIcons.length]}</div>
                 <div style={{ fontSize: '10px', fontWeight: '500', fontFamily: "var(--font-code)" }}>{tech.name}</div>
               </motion.div>
             ))}
@@ -112,31 +101,25 @@ export function Services() {
           <div style={{ textAlign: 'center', marginBottom: '32px' }}>
             <TextReveal><div style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '8px', fontFamily: "var(--font-code)" }}>industries</div></TextReveal>
             <TextReveal delay={0.1}><h2 style={{ fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: '700', lineHeight: 1 }}>Industries We <span className="text-gradient">Serve</span></h2></TextReveal>
-            <TextReveal delay={0.2}><p style={{ fontSize: '13px', color: 'var(--text-muted)', maxWidth: '400px', margin: '12px auto 0', lineHeight: 1.6 }}>Click any industry to see the workflow pipeline.</p></TextReveal>
+            <TextReveal delay={0.2}><p style={{ fontSize: '13px', color: 'var(--text-muted)', maxWidth: '400px', margin: '12px auto 0', lineHeight: 1.6 }}>Click any industry to see more details.</p></TextReveal>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '10px' }}>
             {industries.map((industry, i) => (
-              <motion.div key={i} initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+              <motion.div key={industry.id} initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
                 transition={{ delay: i * 0.05, duration: 0.4 }}
                 className="liquid-glass" style={{ padding: '18px', borderRadius: '10px', cursor: 'pointer' }}
-                onClick={() => setActiveIndustry(activeIndustry === i ? null : i)}>
-                <div style={{ fontSize: '24px', marginBottom: '8px' }}>{industry.icon}</div>
-                <div style={{ fontSize: '14px', fontWeight: '600', marginBottom: '4px' }}>{industry.name}</div>
-                <div style={{ fontSize: '11px', color: 'var(--text-muted)', lineHeight: 1.5, marginBottom: '8px' }}>{industry.desc}</div>
+                onClick={() => setActiveIndustry(activeIndustry === industry.id ? null : industry.id)}>
+                <div style={{ fontSize: '24px', marginBottom: '8px' }}>{industry.icon || defaultIndIcons[i % defaultIndIcons.length]}</div>
+                <div style={{ fontSize: '14px', fontWeight: '600', marginBottom: '4px' }}>{industry.title}</div>
+                {industry.description && <div style={{ fontSize: '11px', color: 'var(--text-muted)', lineHeight: 1.5, marginBottom: '8px' }}>{industry.description}</div>}
 
                 <AnimatePresence>
-                  {activeIndustry === i && (
+                  {activeIndustry === industry.id && industry.description && (
                     <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }}
                       transition={{ duration: 0.3 }} style={{ overflow: 'hidden' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flexWrap: 'wrap', marginTop: '8px', paddingTop: '8px', borderTop: '1px solid var(--glass-border)' }}>
-                        {industry.flow.map((step, j) => (
-                          <motion.div key={j} initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: j * 0.1 }}
-                            style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                            <span style={{ fontSize: '9px', padding: '3px 8px', borderRadius: '4px', background: 'rgba(34,197,94,0.1)', color: '#22c55e', fontFamily: "var(--font-code)" }}>{step}</span>
-                            {j < industry.flow.length - 1 && <span style={{ fontSize: '8px', color: 'var(--text-muted)' }}>→</span>}
-                          </motion.div>
-                        ))}
+                      <div style={{ paddingTop: '8px', borderTop: '1px solid var(--glass-border)' }}>
+                        <p style={{ fontSize: '11px', color: 'var(--text-muted)', lineHeight: 1.5 }}>{industry.description}</p>
                       </div>
                     </motion.div>
                   )}
