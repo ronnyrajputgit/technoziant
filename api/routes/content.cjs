@@ -7,7 +7,7 @@ const TABLES_WITH_CATEGORY = [
 
 const TABLES_WITH_UPDATED_AT = [
   'site_settings', 'featured_projects', 'services', 'industries', 'tech_stack',
-  'testimonials', 'why_choose', 'team_members', 'stats', 'awards',
+  'why_choose', 'team_members', 'stats', 'awards',
   'about_content', 'footer_content', 'work_items'
 ]
 
@@ -16,7 +16,7 @@ const TABLES_WITH_VISIBLE = [
   'team_members', 'stats', 'awards', 'footer_content', 'work_items'
 ]
 
-const TABLES = [...TABLES_WITH_UPDATED_AT, 'feedback_submissions']
+const TABLES = [...TABLES_WITH_UPDATED_AT, 'feedback_submissions', 'testimonials']
 
 function authMiddleware(req, res, next) {
   const token = req.headers.authorization?.split(' ')[1]
