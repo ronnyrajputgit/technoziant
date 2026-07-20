@@ -30,18 +30,7 @@ import SettingsIcon from '@mui/icons-material/Settings'
 import FeedbackIcon from '@mui/icons-material/Feedback'
 
 const sidebarLinks = [
-  { path: '/', label: 'Home', icon: '🏠' },
-  { path: '/work', label: 'Work', icon: '💼' },
-  { path: '/services', label: 'Services', icon: '⚡' },
-  { path: '/about', label: 'About', icon: '👥' },
-  { path: '/blog', label: 'Blog', icon: '📝' },
-  { path: '/contact', label: 'Contact', icon: '✉️' },
-  { divider: true, label: 'Management' },
   { path: '/dashboard', label: 'Overview', icon: <ArticleIcon sx={{ fontSize: 18 }} /> },
-  { group: 'Blog Management', icon: <FolderIcon sx={{ fontSize: 18 }} />, children: [
-    { path: '/dashboard', label: 'All Blogs', icon: <ArticleIcon sx={{ fontSize: 16 }} /> },
-    { path: '/dashboard/editor', label: 'Create New Blog', icon: <AddIcon sx={{ fontSize: 16 }} /> },
-  ]},
   { group: 'Home Page Sections', icon: <WorkIcon sx={{ fontSize: 18 }} />, children: [
     { path: '/dashboard/cms/featured_projects', label: 'Featured Projects', icon: <WorkIcon sx={{ fontSize: 16 }} /> },
     { path: '/dashboard/cms/services', label: 'Services', icon: <ConstructionIcon sx={{ fontSize: 16 }} /> },
@@ -50,11 +39,22 @@ const sidebarLinks = [
     { path: '/dashboard/cms/why_choose', label: 'Why Choose Us', icon: <ThumbUpIcon sx={{ fontSize: 16 }} /> },
     { path: '/dashboard/cms/work_items', label: 'Work Items', icon: <WorkIcon sx={{ fontSize: 16 }} /> },
   ]},
+  { group: 'Work / Portfolio', icon: <WorkIcon sx={{ fontSize: 18 }} />, children: [
+    { path: '/dashboard/cms/work_items', label: 'Manage Work', icon: <WorkIcon sx={{ fontSize: 16 }} /> },
+  ]},
+  { group: 'Services', icon: <ConstructionIcon sx={{ fontSize: 18 }} />, children: [
+    { path: '/dashboard/cms/services', label: 'Manage Services', icon: <ConstructionIcon sx={{ fontSize: 16 }} /> },
+    { path: '/dashboard/cms/industries', label: 'Industries We Serve', icon: <FactoryIcon sx={{ fontSize: 16 }} /> },
+  ]},
   { group: 'About Page', icon: <InfoIcon sx={{ fontSize: 18 }} />, children: [
     { path: '/dashboard/cms/team_members', label: 'Team Members', icon: <GroupsIcon sx={{ fontSize: 16 }} /> },
     { path: '/dashboard/cms/stats', label: 'Stats Counter', icon: <BarChartIcon sx={{ fontSize: 16 }} /> },
     { path: '/dashboard/cms/awards', label: 'Awards', icon: <EmojiEventsIcon sx={{ fontSize: 16 }} /> },
     { path: '/dashboard/cms/testimonials', label: 'Testimonials', icon: <FormatQuoteIcon sx={{ fontSize: 16 }} /> },
+  ]},
+  { group: 'Blog Management', icon: <FolderIcon sx={{ fontSize: 18 }} />, children: [
+    { path: '/dashboard', label: 'All Blogs', icon: <ArticleIcon sx={{ fontSize: 16 }} /> },
+    { path: '/dashboard/editor', label: 'Create New Blog', icon: <AddIcon sx={{ fontSize: 16 }} /> },
   ]},
   { group: 'Footer & Settings', icon: <SettingsIcon sx={{ fontSize: 18 }} />, children: [
     { path: '/dashboard/cms/footer_content', label: 'Footer Links & Info', icon: <FooterIcon sx={{ fontSize: 16 }} /> },
