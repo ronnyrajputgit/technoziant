@@ -44,7 +44,7 @@ export function BlogPost() {
           </div>
         </div>
 
-        <div className="blog-content" style={{ maxWidth: '900px' }} dangerouslySetInnerHTML={{ __html: renderContent(blog.content) }} />
+        <div className="blog-content" dangerouslySetInnerHTML={{ __html: renderContent(blog.content) }} />
 
         {blog.tags && blog.tags.length > 0 && (
           <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginTop: '40px', paddingTop: '24px', borderTop: '1px solid var(--glass-border)' }}>
