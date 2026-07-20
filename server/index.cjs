@@ -4,6 +4,7 @@ const path = require('path')
 const { initDB, pool } = require('./db.cjs')
 const authRoutes = require('./routes/auth.cjs')
 const blogRoutes = require('./routes/blogs.cjs')
+const contentRoutes = require('../api/routes/content.cjs')
 
 const app = express()
 const PORT = process.env.PORT || 3001
@@ -22,6 +23,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')))
 
 app.use('/api/auth', authRoutes)
 app.use('/api/blogs', blogRoutes)
+app.use('/api/content', contentRoutes(pool))
 
 app.get('/api/health', async (req, res) => {
   try {

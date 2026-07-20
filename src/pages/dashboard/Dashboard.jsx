@@ -32,24 +32,29 @@ import FeedbackIcon from '@mui/icons-material/Feedback'
 const sidebarLinks = [
   { path: '/dashboard', label: 'Overview', icon: <ArticleIcon sx={{ fontSize: 18 }} /> },
   { path: '/dashboard/editor', label: 'New Blog', icon: <AddIcon sx={{ fontSize: 18 }} /> },
-  { divider: true, label: 'Content Management' },
-  { path: '/dashboard/cms/featured_projects', label: 'Featured Projects', icon: <WorkIcon sx={{ fontSize: 18 }} /> },
-  { path: '/dashboard/cms/services', label: 'Services', icon: <ConstructionIcon sx={{ fontSize: 18 }} /> },
-  { path: '/dashboard/cms/industries', label: 'Industries', icon: <FactoryIcon sx={{ fontSize: 18 }} /> },
-  { path: '/dashboard/cms/tech_stack', label: 'Tech Stack', icon: <MemoryIcon sx={{ fontSize: 18 }} /> },
-  { path: '/dashboard/cms/testimonials', label: 'Testimonials', icon: <FormatQuoteIcon sx={{ fontSize: 18 }} /> },
-  { path: '/dashboard/cms/why_choose_us', label: 'Why Choose Us', icon: <ThumbUpIcon sx={{ fontSize: 18 }} /> },
-  { path: '/dashboard/cms/team_members', label: 'Team Members', icon: <GroupsIcon sx={{ fontSize: 18 }} /> },
-  { path: '/dashboard/cms/stats', label: 'Stats', icon: <BarChartIcon sx={{ fontSize: 18 }} /> },
-  { path: '/dashboard/cms/awards', label: 'Awards', icon: <EmojiEventsIcon sx={{ fontSize: 18 }} /> },
-  { path: '/dashboard/cms/about_content', label: 'About Content', icon: <InfoIcon sx={{ fontSize: 18 }} /> },
-  { path: '/dashboard/cms/work_items', label: 'Work Items', icon: <InventoryIcon sx={{ fontSize: 18 }} /> },
-  { path: '/dashboard/cms/footer_content', label: 'Footer Content', icon: <FooterIcon sx={{ fontSize: 18 }} /> },
-  { divider: true, label: 'System' },
-  { path: '/dashboard/feedback', label: 'Feedback', icon: <FeedbackIcon sx={{ fontSize: 18 }} /> },
-  { path: '/dashboard/settings', label: 'Site Settings', icon: <SettingsIcon sx={{ fontSize: 18 }} /> },
-  { path: '/blog', label: 'View Blog', icon: <VisibilityIcon sx={{ fontSize: 18 }} />, external: true },
-  { path: '/', label: 'Home', icon: '🏠', external: true },
+  { group: 'Blog Management', icon: <FolderIcon sx={{ fontSize: 18 }} />, children: [
+    { path: '/dashboard', label: 'All Blogs', icon: <ArticleIcon sx={{ fontSize: 16 }} /> },
+    { path: '/dashboard/editor', label: 'Create Blog', icon: <AddIcon sx={{ fontSize: 16 }} /> },
+  ]},
+  { group: 'Content', icon: <InventoryIcon sx={{ fontSize: 18 }} />, children: [
+    { path: '/dashboard/cms/featured_projects', label: 'Featured Projects', icon: <WorkIcon sx={{ fontSize: 16 }} /> },
+    { path: '/dashboard/cms/services', label: 'Services', icon: <ConstructionIcon sx={{ fontSize: 16 }} /> },
+    { path: '/dashboard/cms/industries', label: 'Industries', icon: <FactoryIcon sx={{ fontSize: 16 }} /> },
+    { path: '/dashboard/cms/tech_stack', label: 'Tech Stack', icon: <MemoryIcon sx={{ fontSize: 16 }} /> },
+    { path: '/dashboard/cms/why_choose_us', label: 'Why Choose Us', icon: <ThumbUpIcon sx={{ fontSize: 16 }} /> },
+    { path: '/dashboard/cms/work_items', label: 'Work Items', icon: <WorkIcon sx={{ fontSize: 16 }} /> },
+    { path: '/dashboard/cms/footer_content', label: 'Footer Content', icon: <FooterIcon sx={{ fontSize: 16 }} /> },
+  ]},
+  { group: 'Team & Social', icon: <GroupsIcon sx={{ fontSize: 18 }} />, children: [
+    { path: '/dashboard/cms/team_members', label: 'Team Members', icon: <GroupsIcon sx={{ fontSize: 16 }} /> },
+    { path: '/dashboard/cms/testimonials', label: 'Testimonials', icon: <FormatQuoteIcon sx={{ fontSize: 16 }} /> },
+    { path: '/dashboard/cms/stats', label: 'Stats', icon: <BarChartIcon sx={{ fontSize: 16 }} /> },
+    { path: '/dashboard/cms/awards', label: 'Awards', icon: <EmojiEventsIcon sx={{ fontSize: 16 }} /> },
+  ]},
+  { group: 'System', icon: <SettingsIcon sx={{ fontSize: 18 }} />, children: [
+    { path: '/dashboard/feedback', label: 'Feedback', icon: <FeedbackIcon sx={{ fontSize: 16 }} /> },
+    { path: '/dashboard/settings', label: 'Site Settings', icon: <SettingsIcon sx={{ fontSize: 16 }} /> },
+  ]},
 ]
 
 function ConfirmDialog({ open, title, message, onConfirm, onCancel, danger }) {
@@ -77,68 +82,83 @@ function Sidebar({ open, onToggle }) {
   const { user, logout } = useApp()
   const navigate = useNavigate()
   const location = useLocation()
+  const [expandedGroups, setExpandedGroups] = useState({})
+
+  const toggleGroup = (group) => {
+    setExpandedGroups(prev => ({ ...prev, [group]: !prev[group] }))
+  }
+
+  const isGroupActive = (children) => children?.some(c => location.pathname === c.path)
 
   return (
     <aside style={{ width: open ? '240px' : '60px', minWidth: open ? '240px' : '60px', background: 'var(--bg-2)', borderRight: '1px solid var(--glass-border)', height: '100vh', position: 'sticky', top: 0, overflow: 'hidden', transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)', zIndex: 50, display: 'flex', flexDirection: 'column' }}>
       {/* Header */}
-      <div style={{ padding: open ? '20px 16px' : '20px 0', borderBottom: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center', justifyContent: open ? 'space-between' : 'center', transition: 'all 0.3s' }}>
+      <div style={{ padding: open ? '16px' : '16px 0', borderBottom: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center', justifyContent: open ? 'space-between' : 'center', transition: 'all 0.3s' }}>
         {open && <div>
-          <div style={{ fontSize: '16px', fontWeight: '700', fontFamily: 'var(--font-h)' }}>Dashboard</div>
-          <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>{user?.name || 'Admin'}</div>
+          <div style={{ fontSize: '15px', fontWeight: '700', fontFamily: 'var(--font-h)' }}>Dashboard</div>
+          <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>{user?.name || 'Admin'}</div>
         </div>}
-        <button onClick={onToggle} style={{ padding: '6px', borderRadius: '6px', border: '1px solid var(--glass-border)', background: 'transparent', color: 'var(--text)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'transform 0.3s', transform: open ? 'rotate(0deg)' : 'rotate(180deg)' }}>
-          <ArrowBackIcon sx={{ fontSize: 16 }} />
+        <button onClick={onToggle} style={{ padding: '6px', borderRadius: '6px', border: '1px solid var(--glass-border)', background: 'transparent', color: 'var(--text)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.3s' }}>
+          {open ? <ArrowBackIcon sx={{ fontSize: 16 }} /> : <ArrowForwardIcon sx={{ fontSize: 16 }} />}
         </button>
       </div>
 
       {/* User Avatar */}
       {open && (
-        <div style={{ padding: '16px', display: 'flex', alignItems: 'center', gap: '10px', borderBottom: '1px solid var(--glass-border)' }}>
-          <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'linear-gradient(135deg, #22c55e, #16a34a)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', fontWeight: '700', color: '#fff', flexShrink: 0 }}>
+        <div style={{ padding: '12px 16px', display: 'flex', alignItems: 'center', gap: '10px', borderBottom: '1px solid var(--glass-border)' }}>
+          <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'linear-gradient(135deg, #22c55e, #16a34a)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '13px', fontWeight: '700', color: '#fff', flexShrink: 0 }}>
             {(user?.name || 'A')[0].toUpperCase()}
           </div>
           <div style={{ overflow: 'hidden' }}>
-            <div style={{ fontSize: '13px', fontWeight: '600', color: 'var(--text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{user?.name || 'Admin'}</div>
-            <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: "var(--font-code)", whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{user?.email || ''}</div>
+            <div style={{ fontSize: '12px', fontWeight: '600', color: 'var(--text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{user?.name || 'Admin'}</div>
+            <div style={{ fontSize: '9px', color: 'var(--text-muted)', fontFamily: "var(--font-code)", whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{user?.email || ''}</div>
           </div>
         </div>
       )}
 
       {/* Nav */}
-      <nav style={{ flex: 1, padding: '12px 8px', overflowY: 'auto' }}>
-        {sidebarLinks.map((link, idx) => {
-          if (link.divider) {
-            return open ? (
-              <div key={`div-${idx}`} style={{ fontSize: '9px', fontWeight: '600', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', padding: '16px 12px 6px', fontFamily: 'var(--font-code)' }}>{link.label}</div>
-            ) : (
-              <div key={`div-${idx}`} style={{ height: '1px', background: 'var(--glass-border)', margin: '8px 4px' }} />
-            )
-          }
-          const isActive = !link.external && (location.pathname === link.path || (link.path.startsWith('/dashboard/cms/') && location.pathname.startsWith(link.path)))
-          if (link.external) {
+      <nav style={{ flex: 1, padding: open ? '8px' : '8px 4px', overflowY: 'auto' }}>
+        {sidebarLinks.map((item, idx) => {
+          if (item.group) {
+            const isActive = isGroupActive(item.children)
+            const isExpanded = expandedGroups[item.group]
             return (
-              <a key={link.path} href={link.path} target={link.path === '/' ? '_self' : '_blank'} rel="noopener"
-                title={link.label}
-                style={{ display: 'flex', alignItems: 'center', gap: open ? '10px' : '0', justifyContent: open ? 'flex-start' : 'center', padding: open ? '10px 12px' : '10px', borderRadius: '8px', fontSize: '13px', color: 'var(--text-muted)', textDecoration: 'none', marginBottom: '2px', transition: 'all 0.15s' }}
-                onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.04)'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
-                <span>{link.icon}</span>{open && <span>{link.label}</span>}
-              </a>
+              <div key={idx}>
+                <button
+                  title={item.group}
+                  onClick={() => open && toggleGroup(item.group)}
+                  style={{ display: 'flex', alignItems: 'center', gap: open ? '8px' : '0', justifyContent: open ? 'flex-start' : 'center', padding: open ? '8px 10px' : '8px', borderRadius: '8px', fontSize: '12px', fontWeight: '600', color: isActive ? '#22c55e' : 'var(--text-muted)', width: '100%', cursor: 'pointer', border: 'none', background: isActive ? 'rgba(34,197,94,0.08)' : 'transparent', transition: 'all 0.15s', textAlign: 'left' }}>
+                  <span style={{ transition: 'transform 0.2s', transform: isExpanded ? 'rotate(90deg)' : 'rotate(0deg)', display: 'flex' }}>{item.icon}</span>
+                  {open && <>
+                    <span style={{ flex: 1 }}>{item.group}</span>
+                    <span style={{ fontSize: '10px', transition: 'transform 0.2s', transform: isExpanded ? 'rotate(90deg)' : 'rotate(0deg)' }}>▶</span>
+                  </>}
+                </button>
+                {open && isExpanded && (
+                  <div style={{ paddingLeft: '12px', marginTop: '2px', marginBottom: '4px' }}>
+                    {item.children.map(child => {
+                      const isActive = location.pathname === child.path
+                      return (
+                        <Link key={child.path} to={child.path}
+                          style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '6px 10px', borderRadius: '6px', fontSize: '12px', color: isActive ? '#22c55e' : 'var(--text)', textDecoration: 'none', marginBottom: '1px', background: isActive ? 'rgba(34,197,94,0.08)' : 'transparent', fontWeight: isActive ? '600' : '400', transition: 'all 0.15s' }}>
+                          <span style={{ color: isActive ? '#22c55e' : 'var(--text-muted)' }}>{child.icon}</span>
+                          <span>{child.label}</span>
+                        </Link>
+                      )
+                    })}
+                  </div>
+                )}
+              </div>
             )
           }
-          return (
-            <Link key={link.path} to={link.path} title={link.label}
-              style={{ display: 'flex', alignItems: 'center', gap: open ? '10px' : '0', justifyContent: open ? 'flex-start' : 'center', padding: open ? '10px 12px' : '10px', borderRadius: '8px', fontSize: '13px', color: isActive ? '#22c55e' : 'var(--text)', textDecoration: 'none', marginBottom: '2px', background: isActive ? 'rgba(34,197,94,0.08)' : 'transparent', fontWeight: isActive ? '600' : '400', transition: 'all 0.15s' }}
-              onMouseEnter={e => !isActive && (e.currentTarget.style.background = 'rgba(255,255,255,0.04)')} onMouseLeave={e => !isActive && (e.currentTarget.style.background = 'transparent')}>
-              <span>{link.icon}</span>{open && <span>{link.label}</span>}
-            </Link>
-          )
+          return null
         })}
       </nav>
 
       {/* Logout */}
-      <div style={{ padding: '12px 8px', borderTop: '1px solid var(--glass-border)' }}>
+      <div style={{ padding: open ? '8px' : '8px 4px', borderTop: '1px solid var(--glass-border)' }}>
         <button onClick={() => { logout(); navigate('/') }} title="Logout"
-          style={{ display: 'flex', alignItems: 'center', gap: open ? '10px' : '0', justifyContent: open ? 'flex-start' : 'center', padding: open ? '10px 12px' : '10px', borderRadius: '8px', fontSize: '13px', color: '#ef4444', width: '100%', cursor: 'pointer', border: 'none', background: 'transparent', fontFamily: "var(--font-code)" }}
+          style={{ display: 'flex', alignItems: 'center', gap: open ? '10px' : '0', justifyContent: open ? 'flex-start' : 'center', padding: open ? '8px 10px' : '8px', borderRadius: '8px', fontSize: '12px', color: '#ef4444', width: '100%', cursor: 'pointer', border: 'none', background: 'transparent', fontFamily: "var(--font-code)" }}
           onMouseEnter={e => e.currentTarget.style.background = 'rgba(239,68,68,0.08)'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
           <span>🚪</span>{open && <span>Logout</span>}
         </button>
