@@ -58,7 +58,7 @@ function TypingLine({ line, delay, isVisible }) {
       display: 'flex',
       alignItems: 'center'
     }}>
-      <span style={{ color: 'rgba(255,255,255,0.15)', marginRight: '16px', userSelect: 'none', fontSize: '11px' }}>
+      <span style={{ color: 'var(--text-muted)', marginRight: '16px', userSelect: 'none', fontSize: '11px', opacity: 0.5 }}>
         {String(codeLines.indexOf(line) + 1).padStart(2, '0')}
       </span>
       <span>
@@ -89,14 +89,14 @@ function buildLineText(line) {
 
 function renderColoredText(text, line) {
   if (!text) return null
-  if (line.type === 'comment') return <span style={{ color: '#6a737d' }}>{text}</span>
-  if (line.type === 'bracket') return <span style={{ color: '#e4eaf5' }}>{text}</span>
+  if (line.type === 'comment') return <span style={{ color: 'var(--text-muted)' }}>{text}</span>
+  if (line.type === 'bracket') return <span style={{ color: 'var(--text)' }}>{text}</span>
 
   const parts = []
   let remaining = text
 
   const keywords = ['import', 'const', 'async', 'function', 'return', 'await']
-  const colors = { keyword: '#c678dd', string: '#98c379', fn: '#61afef', method: '#e5c07b', rest: '#e4eaf5', args: '#e4eaf5' }
+  const colors = { keyword: '#c678dd', string: '#98c379', fn: '#61afef', method: '#e5c07b', rest: 'var(--text)', args: 'var(--text)' }
 
   for (const kw of keywords) {
     if (remaining.startsWith(kw)) {
@@ -112,14 +112,14 @@ function renderColoredText(text, line) {
       const before = remaining.slice(0, strMatch.index)
       const str = strMatch[1]
       const after = remaining.slice(strMatch.index + str.length)
-      parts.push(<span key="before" style={{ color: '#e4eaf5' }}>{before}</span>)
+      parts.push(<span key="before" style={{ color: 'var(--text)' }}>{before}</span>)
       parts.push(<span key="str" style={{ color: colors.string }}>{str}</span>)
-      parts.push(<span key="after" style={{ color: '#e4eaf5' }}>{after}</span>)
+      parts.push(<span key="after" style={{ color: 'var(--text)' }}>{after}</span>)
       return <>{parts}</>
     }
   }
 
-  parts.push(<span key="rest" style={{ color: '#e4eaf5' }}>{remaining}</span>)
+  parts.push(<span key="rest" style={{ color: 'var(--text)' }}>{remaining}</span>)
   return <>{parts}</>
 }
 
@@ -152,14 +152,12 @@ export function TechieSection() {
             borderRadius: '16px',
             position: 'relative',
             overflow: 'hidden',
-            background: 'rgba(0,0,0,0.4)',
-            border: '1px solid rgba(255,255,255,0.06)'
           }}>
             <div style={{ display: 'flex', gap: '6px', marginBottom: '16px' }}>
               <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#ff5f57' }} />
               <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#febc2e' }} />
               <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#28c840' }} />
-              <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)', marginLeft: '10px', fontFamily: 'monospace' }}>workflow.js</span>
+              <span style={{ fontSize: '10px', color: 'var(--text-muted)', marginLeft: '10px', fontFamily: 'monospace' }}>workflow.js</span>
             </div>
             <div style={{ minHeight: '320px' }}>
               {codeLines.map((line, i) => (
