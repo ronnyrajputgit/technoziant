@@ -30,29 +30,36 @@ import SettingsIcon from '@mui/icons-material/Settings'
 import FeedbackIcon from '@mui/icons-material/Feedback'
 
 const sidebarLinks = [
+  { path: '/', label: 'Home', icon: '🏠' },
+  { path: '/work', label: 'Work', icon: <WorkIcon sx={{ fontSize: 18 }} /> },
+  { path: '/services', label: 'Services', icon: <ConstructionIcon sx={{ fontSize: 18 }} /> },
+  { path: '/about', label: 'About', icon: <GroupsIcon sx={{ fontSize: 18 }} /> },
+  { path: '/blog', label: 'Blog', icon: <ArticleIcon sx={{ fontSize: 18 }} /> },
+  { path: '/contact', label: 'Contact', icon: <FeedbackIcon sx={{ fontSize: 18 }} /> },
+  { divider: true, label: 'Dashboard' },
   { path: '/dashboard', label: 'Overview', icon: <ArticleIcon sx={{ fontSize: 18 }} /> },
-  { group: 'Blog', icon: <FolderIcon sx={{ fontSize: 18 }} />, children: [
+  { group: 'Blog Management', icon: <FolderIcon sx={{ fontSize: 18 }} />, children: [
     { path: '/dashboard', label: 'All Blogs', icon: <ArticleIcon sx={{ fontSize: 16 }} /> },
     { path: '/dashboard/editor', label: 'Create New Blog', icon: <AddIcon sx={{ fontSize: 16 }} /> },
   ]},
   { group: 'Home Page Sections', icon: <WorkIcon sx={{ fontSize: 18 }} />, children: [
-    { path: '/dashboard/cms/featured_projects', label: 'Featured Projects (Home)', icon: <WorkIcon sx={{ fontSize: 16 }} /> },
-    { path: '/dashboard/cms/services', label: 'Services (Home + Services Page)', icon: <ConstructionIcon sx={{ fontSize: 16 }} /> },
-    { path: '/dashboard/cms/industries', label: 'Industries We Serve (Home)', icon: <FactoryIcon sx={{ fontSize: 16 }} /> },
-    { path: '/dashboard/cms/tech_stack', label: 'Tech Stack (Home + Services)', icon: <MemoryIcon sx={{ fontSize: 16 }} /> },
-    { path: '/dashboard/cms/why_choose', label: 'Why Choose Us (Home)', icon: <ThumbUpIcon sx={{ fontSize: 16 }} /> },
-    { path: '/dashboard/cms/work_items', label: 'Work / Portfolio (Work Page)', icon: <WorkIcon sx={{ fontSize: 16 }} /> },
+    { path: '/dashboard/cms/featured_projects', label: 'Featured Projects', icon: <WorkIcon sx={{ fontSize: 16 }} /> },
+    { path: '/dashboard/cms/services', label: 'Services', icon: <ConstructionIcon sx={{ fontSize: 16 }} /> },
+    { path: '/dashboard/cms/industries', label: 'Industries', icon: <FactoryIcon sx={{ fontSize: 16 }} /> },
+    { path: '/dashboard/cms/tech_stack', label: 'Tech Stack', icon: <MemoryIcon sx={{ fontSize: 16 }} /> },
+    { path: '/dashboard/cms/why_choose', label: 'Why Choose Us', icon: <ThumbUpIcon sx={{ fontSize: 16 }} /> },
+    { path: '/dashboard/cms/work_items', label: 'Work Items', icon: <WorkIcon sx={{ fontSize: 16 }} /> },
   ]},
   { group: 'About Page', icon: <InfoIcon sx={{ fontSize: 18 }} />, children: [
-    { path: '/dashboard/cms/team_members', label: 'Team Members (About Page)', icon: <GroupsIcon sx={{ fontSize: 16 }} /> },
-    { path: '/dashboard/cms/stats', label: 'Stats Counter (About Page)', icon: <BarChartIcon sx={{ fontSize: 16 }} /> },
-    { path: '/dashboard/cms/awards', label: 'Awards (About Page)', icon: <EmojiEventsIcon sx={{ fontSize: 16 }} /> },
-    { path: '/dashboard/cms/testimonials', label: 'Client Testimonials (Home + About)', icon: <FormatQuoteIcon sx={{ fontSize: 16 }} /> },
+    { path: '/dashboard/cms/team_members', label: 'Team Members', icon: <GroupsIcon sx={{ fontSize: 16 }} /> },
+    { path: '/dashboard/cms/stats', label: 'Stats Counter', icon: <BarChartIcon sx={{ fontSize: 16 }} /> },
+    { path: '/dashboard/cms/awards', label: 'Awards', icon: <EmojiEventsIcon sx={{ fontSize: 16 }} /> },
+    { path: '/dashboard/cms/testimonials', label: 'Testimonials', icon: <FormatQuoteIcon sx={{ fontSize: 16 }} /> },
   ]},
   { group: 'Footer & Settings', icon: <SettingsIcon sx={{ fontSize: 18 }} />, children: [
     { path: '/dashboard/cms/footer_content', label: 'Footer Links & Info', icon: <FooterIcon sx={{ fontSize: 16 }} /> },
-    { path: '/dashboard/settings', label: 'Site Settings (Contact, Social)', icon: <SettingsIcon sx={{ fontSize: 16 }} /> },
-    { path: '/dashboard/feedback', label: 'User Feedback & Reviews', icon: <FeedbackIcon sx={{ fontSize: 16 }} /> },
+    { path: '/dashboard/settings', label: 'Site Settings', icon: <SettingsIcon sx={{ fontSize: 16 }} /> },
+    { path: '/dashboard/feedback', label: 'User Feedback', icon: <FeedbackIcon sx={{ fontSize: 16 }} /> },
   ]},
 ]
 
@@ -126,6 +133,13 @@ function Sidebar({ open, onToggle }) {
       {/* Nav */}
       <nav style={{ flex: 1, padding: open ? '8px' : '8px 4px', overflowY: 'auto' }}>
         {sidebarLinks.map((item, idx) => {
+          if (item.divider && open) {
+            return (
+              <div key={idx} style={{ fontSize: '9px', color: 'var(--text-muted)', fontFamily: "var(--font-code)", textTransform: 'uppercase', letterSpacing: '0.1em', padding: '12px 10px 4px', marginTop: '8px', borderTop: '1px solid var(--glass-border)' }}>
+                {item.label}
+              </div>
+            )
+          }
           if (item.group) {
             const isActive = isGroupActive(item.children)
             const isExpanded = expandedGroups[item.group]
@@ -156,6 +170,16 @@ function Sidebar({ open, onToggle }) {
                   </div>
                 )}
               </div>
+            )
+          }
+          if (item.path) {
+            const isActive = location.pathname === item.path
+            return (
+              <a key={idx} href={item.path} title={item.label}
+                style={{ display: 'flex', alignItems: 'center', gap: open ? '8px' : '0', justifyContent: open ? 'flex-start' : 'center', padding: open ? '8px 10px' : '8px', borderRadius: '8px', fontSize: '12px', color: isActive ? '#22c55e' : 'var(--text)', textDecoration: 'none', marginBottom: '1px', background: isActive ? 'rgba(34,197,94,0.08)' : 'transparent', fontWeight: isActive ? '600' : '400', transition: 'all 0.15s' }}>
+                <span>{typeof item.icon === 'string' ? item.icon : item.icon}</span>
+                {open && <span>{item.label}</span>}
+              </a>
             )
           }
           return null
