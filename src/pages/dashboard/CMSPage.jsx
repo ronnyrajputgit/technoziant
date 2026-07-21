@@ -222,10 +222,22 @@ export function CMSPage({ table }) {
 
   const loadItems = () => {
     setLoading(true)
-    api.getContent(table).then(setItems).catch(e => setError(e.message)).finally(() => setLoading(false))
+    api.getContent(table).then(data => setItems(Array.isArray(data) ? data : [])).catch(e => setError(e.message)).finally(() => setLoading(false))
   }
 
-  useEffect(() => { loadItems() }, [table])
+  useEffect(() => {
+    let cancelled = false
+    const fetch = async () => {
+      setLoading(true)
+      try {
+        const data = await api.getContent(table)
+        if (!cancelled) setItems(Array.isArray(data) ? data : [])
+      } catch (e) { if (!cancelled) setError(e.message) }
+      finally { if (!cancelled) setLoading(false) }
+    }
+    fetch()
+    return () => { cancelled = true }
+  }, [table])
 
   const filteredItems = useMemo(() => {
     let result = items

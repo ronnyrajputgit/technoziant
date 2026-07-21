@@ -24,12 +24,15 @@ export function Footer() {
   const [settings, setSettings] = useState({})
 
   useEffect(() => {
-    api.getContent('footer_content', { visible: 'true' }).then(setFooterData).catch(() => {})
+    let cancelled = false
+    api.getContent('footer_content', { visible: 'true' }).then(data => { if (!cancelled) setFooterData(data || []) }).catch(() => {})
     api.getSettings().then(data => {
+      if (cancelled) return
       const map = {}
-      data.forEach(s => { map[s.key] = s.value })
+      if (Array.isArray(data)) data.forEach(s => { map[s.key] = s.value })
       setSettings(map)
     }).catch(() => {})
+    return () => { cancelled = true }
   }, [])
 
   const servicesList = footerData.filter(f => f.section === 'services')
