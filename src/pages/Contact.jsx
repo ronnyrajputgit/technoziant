@@ -155,12 +155,7 @@ export function Contact() {
     boxSizing: 'border-box'
   })
 
-  const fieldWrap = {
-    border: '1px solid var(--glass-border)',
-    borderRadius: '12px',
-    padding: '14px 18px',
-    background: 'rgba(255,255,255,0.01)'
-  }
+  const fieldWrap = {}
 
   const email = settings.contact_email || 'business@technoziant.com'
   const phone = settings.contact_phone || '+91 8882716189'
@@ -193,11 +188,11 @@ export function Contact() {
 
       <section className="section" style={{ borderTop: '1px solid var(--glass-border)' }}>
         <div className="container">
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '32px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px', alignItems: 'stretch' }}>
             <div>
               <TextReveal><h2 style={{ fontSize: 'clamp(22px, 3vw, 28px)', fontWeight: '700', marginBottom: '8px' }}>Send a Message</h2></TextReveal>
               <TextReveal delay={0.1}><p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '20px', lineHeight: 1.6 }}>Fill out the form and we'll get back to you within 24 hours.</p></TextReveal>
-              <div style={{ position: 'relative' }}>
+              <div style={{ position: 'relative', height: '100%' }}>
                 {/* Border text animation */}
                 <div style={{ position: 'absolute', inset: '-1px', borderRadius: '17px', overflow: 'hidden', pointerEvents: 'none', zIndex: 3 }}>
                   <svg className="border-text-svg" viewBox="0 0 100 100" preserveAspectRatio="none" fill="none">
@@ -221,7 +216,7 @@ export function Contact() {
                     </text>
                   </svg>
                 </div>
-                <form onSubmit={handleSubmit} className="liquid-glass" style={{ padding: '32px 36px', borderRadius: '16px', position: 'relative', zIndex: 2, boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.08), 0 8px 32px rgba(0,0,0,0.3)' }}>
+                <form onSubmit={handleSubmit} className="liquid-glass" style={{ padding: '32px 36px', borderRadius: '16px', position: 'relative', zIndex: 2, boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.08), 0 8px 32px rgba(0,0,0,0.3)', height: '100%', display: 'flex', flexDirection: 'column' }}>
                   {error && (
                   <div style={{ padding: '10px 14px', borderRadius: '8px', background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', color: '#ef4444', fontSize: '12px', fontFamily: 'var(--font-code)', marginBottom: '14px' }}>
                     {error}
@@ -252,9 +247,9 @@ export function Contact() {
                     <input type="text" value={f.service} onChange={e => setF({ ...f, service: e.target.value })} onFocus={() => setFocus('service')} onBlur={() => setFocus(null)} placeholder="Web, Mobile, Design..." style={inp('service')} />
                   </div>
                 </div>
-                <div style={{ ...fieldWrap, marginBottom: '22px' }}>
+                <div style={{ ...fieldWrap, marginBottom: '22px', flex: 1, display: 'flex', flexDirection: 'column' }}>
                   <label style={{ fontSize: '9px', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px', display: 'block', fontFamily: "var(--font-code)" }}>Message *</label>
-                  <textarea value={f.message} onChange={e => setF({ ...f, message: e.target.value })} onFocus={() => setFocus('message')} onBlur={() => setFocus(null)} placeholder="Tell us about your project..." rows={4} required style={{ ...inp('message'), resize: 'vertical' }} />
+                  <textarea value={f.message} onChange={e => setF({ ...f, message: e.target.value })} onFocus={() => setFocus('message')} onBlur={() => setFocus(null)} placeholder="Tell us about your project..." rows={4} required style={{ ...inp('message'), resize: 'vertical', flex: 1 }} />
                 </div>
                 <motion.button type="submit" whileHover={{ scale: loading ? 1 : 1.02 }} whileTap={{ scale: loading ? 1 : 0.98 }}
                   disabled={loading || submitted}
@@ -268,8 +263,9 @@ export function Contact() {
             <div>
               <TextReveal><h2 style={{ fontSize: 'clamp(22px, 3vw, 28px)', fontWeight: '700', marginBottom: '8px' }}>Office Info</h2></TextReveal>
               <TextReveal delay={0.1}><p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '20px', lineHeight: 1.6 }}>Visit us or reach out through any channel.</p></TextReveal>
+              <div className="liquid-glass" style={{ padding: '32px 36px', borderRadius: '16px', boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.08), 0 8px 32px rgba(0,0,0,0.3)', height: '100%', display: 'flex', flexDirection: 'column' }}>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', flex: 1 }}>
                 {[
                   { icon: 'map', label: 'address', val: address, color: '#fbbf24' },
                   { icon: 'phone', label: 'hours', val: hours, color: '#06d6a0' },
@@ -277,7 +273,7 @@ export function Contact() {
                   { icon: 'phone', label: 'contact', val: phone, color: '#a855f7' },
                   { icon: 'whatsapp', label: 'whatsapp', val: whatsapp, color: '#25D366' }
                 ].map((item, i) => (
-                  <GlowCard key={i} style={{ padding: '14px 16px', borderLeft: `3px solid ${item.color}` }}>
+                  <GlowCard key={i} style={{ padding: '16px 18px', borderLeft: `3px solid ${item.color}` }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                       <div style={{ width: '36px', height: '36px', borderRadius: '8px', background: `${item.color}10`, border: `1px solid ${item.color}20`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                         <Icon d={icons[item.icon]} color={item.color} size={16} />
