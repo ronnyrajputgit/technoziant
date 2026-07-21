@@ -20,6 +20,7 @@ import { EditorPage } from '../../pages/dashboard/EditorPage'
 import { CMSPage } from '../../pages/dashboard/CMSPage'
 import { FeedbackPage } from '../../pages/dashboard/FeedbackPage'
 import { SettingsPage } from '../../pages/dashboard/SettingsPage'
+import { FeedbackForm } from '../../pages/FeedbackForm'
 
 function CMSRoute() {
   const { table } = useParams()
@@ -45,6 +46,7 @@ export function Routes() {
       <Route path="/careers" element={<Careers />} />
       <Route path="/blog" element={<Blog />} />
       <Route path="/blog/:slug" element={<BlogPost />} />
+      <Route path="/feedback" element={<FeedbackForm />} />
       <Route path="/login" element={<Login />} />
       <Route path="/dashboard/editor" element={<EditorPage />} />
       <Route path="/dashboard/editor/:id" element={<EditorPage />} />

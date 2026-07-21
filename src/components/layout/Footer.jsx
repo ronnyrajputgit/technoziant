@@ -2,6 +2,7 @@ import { useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
 import { useApp } from '../../context/AppContext'
 import { useState, useEffect } from 'react'
+import { QRCodeSVG } from 'qrcode.react'
 import { api } from '../../utils/api'
 
 const defaultSocialLinks = [
@@ -96,6 +97,16 @@ export function Footer() {
                     <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>🕐 10 AM - 6 PM</div>
                   </>
                 )}
+                {/* QR Code for Feedback */}
+                <div style={{ marginTop: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <div style={{ padding: '6px', background: '#fff', borderRadius: '8px', display: 'inline-block' }}>
+                    <QRCodeSVG value={`${typeof window !== 'undefined' ? window.location.origin : 'https://technoziant.com'}/feedback`} size={64} bgColor="#ffffff" fgColor="#0a0e1a" />
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '10px', fontWeight: '600', color: 'var(--text)', fontFamily: "var(--font-code)" }}>Scan for Feedback</div>
+                    <div style={{ fontSize: '9px', color: 'var(--text-muted)' }}>Rate & review us</div>
+                  </div>
+                </div>
               </div>
             </div>
           </motion.div>
