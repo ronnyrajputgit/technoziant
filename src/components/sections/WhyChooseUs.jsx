@@ -29,9 +29,9 @@ export function WhyChooseUs() {
               transition={{ delay: i * 0.05, duration: 0.4 }}
               whileHover={{ y: -3, boxShadow: `0 8px 30px ${colors[i % colors.length]}15` }}
               className="liquid-glass" style={{ padding: '18px', borderRadius: '10px', textAlign: 'center' }}>
-              <div style={{ fontSize: '28px', marginBottom: '8px' }}>{item.icon || defaultIcons[i % defaultIcons.length]}</div>
+              <div style={{ fontSize: '28px', marginBottom: '8px' }}>{item.description || item.icon || defaultIcons[i % defaultIcons.length]}</div>
               <div style={{ fontSize: '13px', fontWeight: '600', marginBottom: '4px', color: colors[i % colors.length] }}>{item.title}</div>
-              <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{item.description}</div>
+              <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{item.icon || item.description}</div>
             </motion.div>
           ))}
         </div>
