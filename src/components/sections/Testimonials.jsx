@@ -8,7 +8,7 @@ export function Testimonials() {
 
   useEffect(() => {
     api.getContent('testimonials').then(data => {
-      setTestimonials(data.filter(t => t.approved))
+      setTestimonials(data.filter(t => t.approved === true || t.approved === 'true'))
     }).catch(() => {})
   }, [])
 
