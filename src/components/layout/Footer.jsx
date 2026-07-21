@@ -97,15 +97,16 @@ export function Footer() {
                     <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>🕐 10 AM - 6 PM</div>
                   </>
                 )}
-                {/* QR Code for Feedback */}
-                <div style={{ marginTop: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <div style={{ padding: '6px', background: '#fff', borderRadius: '8px', display: 'inline-block' }}>
-                    <QRCodeSVG value={`${typeof window !== 'undefined' ? window.location.origin : 'https://technoziant.com'}/feedback`} size={64} bgColor="#ffffff" fgColor="#0a0e1a" />
-                  </div>
-                  <div>
-                    <div style={{ fontSize: '10px', fontWeight: '600', color: 'var(--text)', fontFamily: "var(--font-code)" }}>Scan for Feedback</div>
-                    <div style={{ fontSize: '9px', color: 'var(--text-muted)' }}>Rate & review us</div>
-                  </div>
+              </div>
+
+              {/* Scan for Feedback */}
+              <div>
+                <div style={{ fontSize: '10px', fontWeight: '600', color: 'var(--text)', marginBottom: '10px', fontFamily: "var(--font-code)" }}>scan for feedback</div>
+                <div style={{ padding: '8px', background: '#fff', borderRadius: '8px', display: 'inline-block', marginBottom: '8px' }}>
+                  <QRCodeSVG value={`${typeof window !== 'undefined' ? window.location.origin : 'https://technoziant.com'}/feedback`} size={80} bgColor="#ffffff" fgColor="#0a0e1a" />
+                </div>
+                <div style={{ fontSize: '10px', color: 'var(--text-muted)', lineHeight: 1.5 }}>
+                  Scan QR to give us a star rating and share your feedback.
                 </div>
               </div>
             </div>
