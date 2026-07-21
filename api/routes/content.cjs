@@ -98,7 +98,7 @@ module.exports = function(pool) {
       about_content: ['section', 'title', 'description', 'image'],
       footer_content: ['section', 'title', 'url', 'display_order', 'visible'],
       work_items: ['title', 'description', 'image', 'link', 'category', 'tech', 'display_order', 'visible'],
-      feedback_submissions: ['name', 'email', 'company', 'rating', 'feedback', 'project']
+      feedback_submissions: ['name', 'email', 'company', 'rating', 'feedback', 'project', 'status']
     }
 
     const cols = columns[table]

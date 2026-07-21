@@ -253,6 +253,8 @@ async function ensureDB() {
       feedback TEXT DEFAULT '', project VARCHAR(255) DEFAULT '',
       created_at TIMESTAMP DEFAULT NOW()
     )`)
+    await client.query("ALTER TABLE site_settings ALTER COLUMN value TYPE TEXT").catch(() => {})
+    await client.query("ALTER TABLE feedback_submissions ADD COLUMN IF NOT EXISTS status VARCHAR(50) DEFAULT 'pending'").catch(() => {})
 
     // Seed admin user
     const exists = await client.query('SELECT id FROM users WHERE email = $1', ['admin@technoziant.com'])
