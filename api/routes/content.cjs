@@ -16,7 +16,7 @@ const TABLES_WITH_VISIBLE = [
   'team_members', 'stats', 'awards', 'footer_content', 'work_items'
 ]
 
-const TABLES = [...TABLES_WITH_UPDATED_AT, 'feedback_submissions', 'testimonials']
+const TABLES = [...TABLES_WITH_UPDATED_AT, 'feedback_submissions', 'testimonials', 'database_connections', 'contact_inquiries']
 
 function authMiddleware(req, res, next) {
   const token = req.headers.authorization?.split(' ')[1]
@@ -33,6 +33,65 @@ function authMiddleware(req, res, next) {
 }
 
 module.exports = function(pool) {
+  const inquiryTimestamps = new Map()
+
+  // POST /api/content/inquiry - public contact form submission with spam protection
+  router.post('/inquiry', async (req, res) => {
+    const ip = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || req.socket.remoteAddress || ''
+    const now = Date.now()
+    const lastSubmit = inquiryTimestamps.get(ip) || 0
+    if (now - lastSubmit < 30000) {
+      return res.status(429).json({ error: 'Too many requests. Please wait 30 seconds before submitting again.' })
+    }
+    const { name, email, phone, company, service, message } = req.body
+    if (!name?.trim() || !email?.trim() || !message?.trim()) {
+      return res.status(400).json({ error: 'Name, email, and message are required.' })
+    }
+    if (name.trim().length > 100 || message.trim().length > 2000) {
+      return res.status(400).json({ error: 'Input too long.' })
+    }
+    const spamWords = ['casino', 'viagra', 'lottery', 'crypto invest', 'buy now', 'click here', 'free money', 'nigerian prince']
+    const combined = `${name} ${message}`.toLowerCase()
+    if (spamWords.some(w => combined.includes(w))) {
+      return res.status(400).json({ error: 'Message flagged as spam.' })
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email.trim())) {
+      return res.status(400).json({ error: 'Invalid email address.' })
+    }
+    inquiryTimestamps.set(ip, now)
+    if (inquiryTimestamps.size > 10000) {
+      const oldest = inquiryTimestamps.keys().next().value
+      inquiryTimestamps.delete(oldest)
+    }
+    let location = ''
+    let country = '', region = '', city = ''
+    try {
+      if (ip && ip !== '127.0.0.1' && ip !== '::1' && !ip.startsWith('192.168.') && !ip.startsWith('10.')) {
+        const geoRes = await fetch(`http://ip-api.com/json/${ip}?fields=status,country,regionName,city,lat,lon`)
+        const geo = await geoRes.json()
+        if (geo.status === 'success') {
+          city = geo.city || ''
+          region = geo.regionName || ''
+          country = geo.country || ''
+          location = [city, region, country].filter(Boolean).join(', ')
+        }
+      }
+    } catch {}
+    const clientLocation = req.body.location || ''
+    const clientLat = req.body.latitude || null
+    const clientLon = req.body.longitude || null
+    if (!location && clientLocation) location = clientLocation
+    pool.query(
+      `INSERT INTO contact_inquiries (name, email, phone, company, service, message, ip_address, location, country, region, city, latitude, longitude) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING *`,
+      [name.trim(), email.trim(), phone || '', company || '', service || '', message.trim(), ip, location, country, region, city, clientLat, clientLon],
+      (err, result) => {
+        if (err) return res.status(500).json({ error: 'Failed to submit inquiry.' })
+        res.json({ success: true })
+      }
+    )
+  })
+
   // POST /api/content/feedback - public feedback submission (must be before generic /:table)
   router.post('/feedback', (req, res) => {
     const { name, email, company, rating, feedback, project } = req.body
@@ -43,6 +102,20 @@ module.exports = function(pool) {
       (err, result) => {
         if (err) return res.status(500).json({ error: err.message })
         res.json({ success: true, submission: result.rows[0] })
+      }
+    )
+  })
+
+  // POST /api/content/site_settings - upsert setting (auth, must be before generic /:table)
+  router.post('/site_settings', authMiddleware, (req, res) => {
+    const { key, value } = req.body
+    if (!key) return res.status(400).json({ error: 'Key is required' })
+    pool.query(
+      `INSERT INTO site_settings (key, value) VALUES ($1, $2) ON CONFLICT (key) DO UPDATE SET value = $2, updated_at = NOW() RETURNING *`,
+      [key, String(value ?? '')],
+      (err, result) => {
+        if (err) return res.status(500).json({ error: err.message })
+        res.json(result.rows[0])
       }
     )
   })
@@ -92,13 +165,15 @@ module.exports = function(pool) {
       tech_stack: ['name', 'category', 'icon', 'level', 'display_order', 'visible'],
       testimonials: ['client_name', 'company', 'feedback', 'rating', 'avatar', 'approved'],
       why_choose: ['title', 'description', 'icon', 'display_order', 'visible'],
-      team_members: ['name', 'role', 'image', 'bio', 'social_links', 'display_order', 'visible'],
+      team_members: ['name', 'role', 'image', 'bio', 'achievements', 'stats', 'social_links', 'display_order', 'visible'],
       stats: ['label', 'value', 'icon', 'display_order', 'visible'],
       awards: ['title', 'year', 'icon', 'display_order', 'visible'],
       about_content: ['section', 'title', 'description', 'image'],
       footer_content: ['section', 'title', 'url', 'display_order', 'visible'],
       work_items: ['title', 'description', 'image', 'link', 'category', 'tech', 'display_order', 'visible'],
-      feedback_submissions: ['name', 'email', 'company', 'rating', 'feedback', 'project', 'status']
+      feedback_submissions: ['name', 'email', 'company', 'rating', 'feedback', 'project', 'status'],
+      database_connections: ['name', 'type', 'host', 'port', 'database_name', 'username', 'password', 'ssl', 'is_active', 'status', 'last_tested'],
+      contact_inquiries: ['name', 'email', 'phone', 'company', 'service', 'message', 'ip_address', 'location', 'country', 'region', 'city', 'latitude', 'longitude', 'status', 'reply', 'replied_at']
     }
 
     const cols = columns[table]

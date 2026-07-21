@@ -47,14 +47,7 @@ export const awards = [
   { year: '2024-2026', name: 'German Design Award', count: 4, icon: '🎯', description: 'International design competition winner' },
 ]
 
-export const testimonials = [
-  { id: 1, quote: 'They transformed our digital presence completely. The attention to detail and innovative approach exceeded all expectations.', author: 'David Park', company: 'TechVision CEO', image: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=200&q=80' },
-  { id: 2, quote: 'Working with this team was an absolute pleasure. They delivered a product that truly represents our brand.', author: 'Emma Roberts', company: 'StyleHub Founder', image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&q=80' },
-  { id: 3, quote: 'The performance and design quality is unmatched. Our users love the new experience.', author: 'James Liu', company: 'FinanceApp CTO', image: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=200&q=80' },
-  { id: 4, quote: 'Technoziant built our e-commerce platform from scratch. The AI recommendations increased our sales by 40%.', author: 'Sarah Chen', company: 'Bloom Corp Founder', image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=200&q=80' },
-  { id: 5, quote: 'Their cloud infrastructure setup reduced our costs by 60% while improving performance 10x.', author: 'Mike Johnson', company: 'DataFlow CTO', image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&q=80' },
-  { id: 6, quote: 'The mobile app they built for us has a 4.9 star rating on both App Store and Play Store.', author: 'Priya Sharma', company: 'HealthPlus CEO', image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&q=80' },
-]
+export const testimonials = []
 
 export const processSteps = [
   { step: '01', title: 'Discovery', description: 'We dive deep into your business goals, target audience, and competitive landscape to define the project strategy.', icon: '🔍' },

@@ -34,10 +34,19 @@ export const api = {
   deleteContent: (table, id) => apiFetch(`/content/${table}/${id}`, { method: 'DELETE' }),
 
   submitFeedback: (data) => apiFetch('/content/feedback', { method: 'POST', body: JSON.stringify(data) }),
+  submitInquiry: (data) => apiFetch('/content/inquiry', { method: 'POST', body: JSON.stringify(data) }),
+  getInquiries: () => apiFetch('/content/contact_inquiries'),
   getFeedback: () => apiFetch('/content/feedback_submissions'),
   updateFeedback: (id, data) => apiFetch(`/content/feedback_submissions/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
   deleteFeedback: (id) => apiFetch(`/content/feedback_submissions/${id}`, { method: 'DELETE' }),
 
   getSettings: () => apiFetch('/content/site_settings'),
-  updateSettings: (key, value) => apiFetch('/content/site_settings', { method: 'POST', body: JSON.stringify({ key, value }) }),
+  updateSettings: async (data) => {
+    const results = await Promise.all(
+      Object.entries(data).map(([key, value]) =>
+        apiFetch('/content/site_settings', { method: 'POST', body: JSON.stringify({ key, value: String(value ?? '') }) })
+      )
+    )
+    return results
+  },
 }

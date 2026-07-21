@@ -91,6 +91,8 @@ export function Contact() {
   const [f, setF] = useState({ name: '', email: '', company: '', service: '', message: '' })
   const [focus, setFocus] = useState(null)
   const [submitted, setSubmitted] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
   const [settings, setSettings] = useState({})
 
   useEffect(() => {
@@ -101,11 +103,42 @@ export function Contact() {
     }).catch(() => {})
   }, [])
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    setSubmitted(true)
-    setTimeout(() => setSubmitted(false), 4000)
-    setF({ name: '', email: '', company: '', service: '', message: '' })
+    if (!f.name.trim() || !f.email.trim() || !f.message.trim()) {
+      setError('Please fill in name, email, and message.')
+      return
+    }
+    setLoading(true)
+    setError('')
+    try {
+      let locationData = {}
+      try {
+        const pos = await new Promise((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 5000 })
+        })
+        const { latitude, longitude } = pos.coords
+        locationData = { latitude, longitude }
+        try {
+          const geoRes = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`)
+          const geo = await geoRes.json()
+          if (geo.address) {
+            const city = geo.address.city || geo.address.town || geo.address.village || ''
+            const state = geo.address.state || ''
+            const country = geo.address.country || ''
+            locationData.location = [city, state, country].filter(Boolean).join(', ')
+          }
+        } catch {}
+      } catch {}
+      await api.submitInquiry({ ...f, ...locationData })
+      setSubmitted(true)
+      setF({ name: '', email: '', company: '', service: '', message: '' })
+      setTimeout(() => setSubmitted(false), 5000)
+    } catch (err) {
+      setError(err.message || 'Failed to submit. Please try again.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   const inp = (n) => ({
@@ -146,39 +179,83 @@ export function Contact() {
 
       <section className="section" style={{ borderTop: '1px solid var(--glass-border)' }}>
         <div className="container">
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '32px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '32px' }}>
             <div>
               <TextReveal><h2 style={{ fontSize: 'clamp(22px, 3vw, 28px)', fontWeight: '700', marginBottom: '8px' }}>Send a Message</h2></TextReveal>
               <TextReveal delay={0.1}><p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '20px', lineHeight: 1.6 }}>Fill out the form and we'll get back to you within 24 hours.</p></TextReveal>
-              <form onSubmit={handleSubmit}>
-                {[['name', 'name', 'John Doe', 'text'], ['email', 'email', 'john@example.com', 'email'], ['company', 'company', 'Company Inc', 'text'], ['service', 'service', 'Web, Mobile, Design...', 'text']].map(([n, l, ph, t]) => (
-                  <div key={n} style={{ marginBottom: '14px' }}>
-                    <label style={{ fontSize: '9px', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '4px', display: 'block', fontFamily: "var(--font-code)" }}>{l}</label>
-                    <input type={t} value={f[n]} onChange={e => setF({ ...f, [n]: e.target.value })} onFocus={() => setFocus(n)} onBlur={() => setFocus(null)} placeholder={ph} style={inp(n)} />
-                  </div>
-                ))}
-                <div style={{ marginBottom: '14px' }}>
-                  <label style={{ fontSize: '9px', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '4px', display: 'block', fontFamily: "var(--font-code)" }}>message</label>
-                  <textarea value={f.message} onChange={e => setF({ ...f, message: e.target.value })} onFocus={() => setFocus('message')} onBlur={() => setFocus(null)} placeholder="Tell us about your project..." rows={3} style={{ ...inp('message'), resize: 'none' }} />
+              <div style={{ position: 'relative' }}>
+                {/* Border text animation */}
+                <div style={{ position: 'absolute', inset: '-1px', borderRadius: '17px', overflow: 'hidden', pointerEvents: 'none', zIndex: 3 }}>
+                  <svg className="border-text-svg" viewBox="0 0 100 100" preserveAspectRatio="none" fill="none">
+                    <defs>
+                      <path id="border-marquee" d="M 6,3 L 94,3 A 3,3 0 0 1 97,6 L 97,94 A 3,3 0 0 1 94,97 L 6,97 A 3,3 0 0 1 3,94 L 3,6 A 3,3 0 0 1 6,3 Z" />
+                      <linearGradient id="marquee-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stopColor="#22c55e" />
+                        <stop offset="25%" stopColor="#3b82f6" />
+                        <stop offset="50%" stopColor="#a855f7" />
+                        <stop offset="75%" stopColor="#f59e0b" />
+                        <stop offset="100%" stopColor="#22c55e" />
+                        <animate attributeName="x1" values="-100%;0%;100%" dur="4s" repeatCount="indefinite" />
+                        <animate attributeName="x2" values="0%;100%;200%" dur="4s" repeatCount="indefinite" />
+                      </linearGradient>
+                    </defs>
+                    <text fill="url(#marquee-gradient)" fontSize="3" fontWeight="600" fontFamily="'JetBrains Mono', monospace" letterSpacing="0.1em">
+                      <textPath href="#border-marquee">
+                        {'अगर आप हमारी सेवाओं के बारे में बेहतर जानकारी प्राप्त करना चाहते हैं, तो अभी हमारा Enquiry Form भरें। | If you would like to learn more about our services, please fill out our Enquiry Form now. | अगर आप हमारी सेवाओं के बारे में बेहतर जानकारी प्राप्त करना चाहते हैं, तो अभी हमारा Enquiry Form भरें। | If you would like to learn more about our services, please fill out our Enquiry Form now. | '}
+                        <animate attributeName="startOffset" from="0%" to="100%" dur="35s" repeatCount="indefinite" />
+                      </textPath>
+                    </text>
+                  </svg>
                 </div>
-                {submitted ? (
-                  <div style={{ padding: '12px', borderRadius: '8px', fontSize: '12px', fontWeight: '600', color: '#22c55e', background: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.15)', textAlign: 'center', fontFamily: "var(--font-code)" }}>
-                    ✓ Message sent successfully!
+                <form onSubmit={handleSubmit} className="liquid-glass" style={{ padding: '28px', borderRadius: '16px', position: 'relative', zIndex: 2, boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.08), 0 8px 32px rgba(0,0,0,0.3)' }}>
+                  {error && (
+                  <div style={{ padding: '10px 14px', borderRadius: '8px', background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', color: '#ef4444', fontSize: '12px', fontFamily: 'var(--font-code)', marginBottom: '14px' }}>
+                    {error}
                   </div>
-                ) : (
-                  <motion.button type="submit" whileHover={{ scale: 1.02, boxShadow: '0 0 20px var(--accent)' }} whileTap={{ scale: 0.98 }}
-                    style={{ padding: '12px 28px', borderRadius: '8px', fontSize: '12px', fontWeight: '600', color: '#fff', width: '100%', background: 'linear-gradient(135deg, #22c55e, #16a34a)', fontFamily: "var(--font-code)" }}>
-                    {'>'} send message
-                  </motion.button>
                 )}
+                {submitted && (
+                  <div style={{ padding: '14px', borderRadius: '10px', fontSize: '13px', fontWeight: '600', color: '#22c55e', background: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.2)', textAlign: 'center', fontFamily: "var(--font-code)", marginBottom: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                    <span style={{ fontSize: '18px' }}>✓</span> Message sent successfully!
+                  </div>
+                )}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '14px' }}>
+                  <div>
+                    <label style={{ fontSize: '9px', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px', display: 'block', fontFamily: "var(--font-code)" }}>Name *</label>
+                    <input type="text" value={f.name} onChange={e => setF({ ...f, name: e.target.value })} onFocus={() => setFocus('name')} onBlur={() => setFocus(null)} placeholder="John Doe" required style={{ ...inp('name'), borderColor: focus === 'name' ? '#22c55e' : undefined }} />
+                  </div>
+                  <div>
+                    <label style={{ fontSize: '9px', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px', display: 'block', fontFamily: "var(--font-code)" }}>Email *</label>
+                    <input type="email" value={f.email} onChange={e => setF({ ...f, email: e.target.value })} onFocus={() => setFocus('email')} onBlur={() => setFocus(null)} placeholder="john@example.com" required style={{ ...inp('email'), borderColor: focus === 'email' ? '#22c55e' : undefined }} />
+                  </div>
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '14px' }}>
+                  <div>
+                    <label style={{ fontSize: '9px', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px', display: 'block', fontFamily: "var(--font-code)" }}>Company</label>
+                    <input type="text" value={f.company} onChange={e => setF({ ...f, company: e.target.value })} onFocus={() => setFocus('company')} onBlur={() => setFocus(null)} placeholder="Company Inc" style={{ ...inp('company'), borderColor: focus === 'company' ? '#4f8eff' : undefined }} />
+                  </div>
+                  <div>
+                    <label style={{ fontSize: '9px', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px', display: 'block', fontFamily: "var(--font-code)" }}>Service</label>
+                    <input type="text" value={f.service} onChange={e => setF({ ...f, service: e.target.value })} onFocus={() => setFocus('service')} onBlur={() => setFocus(null)} placeholder="Web, Mobile, Design..." style={{ ...inp('service'), borderColor: focus === 'service' ? '#a855f7' : undefined }} />
+                  </div>
+                </div>
+                <div style={{ marginBottom: '18px' }}>
+                  <label style={{ fontSize: '9px', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px', display: 'block', fontFamily: "var(--font-code)" }}>Message *</label>
+                  <textarea value={f.message} onChange={e => setF({ ...f, message: e.target.value })} onFocus={() => setFocus('message')} onBlur={() => setFocus(null)} placeholder="Tell us about your project..." rows={4} required style={{ ...inp('message'), resize: 'vertical', borderColor: focus === 'message' ? '#f59e0b' : undefined }} />
+                </div>
+                <motion.button type="submit" whileHover={{ scale: loading ? 1 : 1.02 }} whileTap={{ scale: loading ? 1 : 0.98 }}
+                  disabled={loading || submitted}
+                  style={{ padding: '14px 28px', borderRadius: '10px', fontSize: '13px', fontWeight: '600', color: '#fff', width: '100%', background: submitted ? 'rgba(34,197,94,0.2)' : 'linear-gradient(135deg, #22c55e, #16a34a)', fontFamily: "var(--font-code)", opacity: loading ? 0.7 : 1, cursor: loading ? 'not-allowed' : 'pointer', border: 'none', transition: 'all 0.3s', boxShadow: '0 4px 15px rgba(34,197,94,0.3)' }}>
+                  {loading ? 'Sending...' : submitted ? '✓ Sent' : '> send message'}
+                </motion.button>
               </form>
+              </div>
             </div>
 
             <div>
               <TextReveal><h2 style={{ fontSize: 'clamp(22px, 3vw, 28px)', fontWeight: '700', marginBottom: '8px' }}>Office Info</h2></TextReveal>
               <TextReveal delay={0.1}><p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '20px', lineHeight: 1.6 }}>Visit us or reach out through any channel.</p></TextReveal>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 {[
                   { icon: 'map', label: 'address', val: address, color: '#fbbf24' },
                   { icon: 'phone', label: 'hours', val: hours, color: '#06d6a0' },
@@ -186,12 +263,14 @@ export function Contact() {
                   { icon: 'phone', label: 'contact', val: phone, color: '#a855f7' },
                   { icon: 'whatsapp', label: 'whatsapp', val: whatsapp, color: '#25D366' }
                 ].map((item, i) => (
-                  <GlowCard key={i} style={{ padding: '12px 14px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <Icon d={icons[item.icon]} color={item.color} size={16} />
+                  <GlowCard key={i} style={{ padding: '14px 16px', borderLeft: `3px solid ${item.color}` }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <div style={{ width: '36px', height: '36px', borderRadius: '8px', background: `${item.color}10`, border: `1px solid ${item.color}20`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <Icon d={icons[item.icon]} color={item.color} size={16} />
+                      </div>
                       <div>
-                        <div style={{ fontSize: '9px', color: 'var(--text-muted)', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '1px', fontFamily: "var(--font-code)" }}>{item.label}</div>
-                        <div style={{ fontSize: '12px', fontWeight: '500', fontFamily: "var(--font-code)" }}>{item.val}</div>
+                        <div style={{ fontSize: '9px', color: 'var(--text-muted)', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '2px', fontFamily: "var(--font-code)" }}>{item.label}</div>
+                        <div style={{ fontSize: '13px', fontWeight: '500', fontFamily: "var(--font-code)" }}>{item.val}</div>
                       </div>
                     </div>
                   </GlowCard>

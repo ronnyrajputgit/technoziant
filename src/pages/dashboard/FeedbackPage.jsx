@@ -145,7 +145,7 @@ export function FeedbackPage() {
                   </span>
                 </div>
               </div>
-              {item.message && <p style={{ fontSize: '12px', lineHeight: 1.6, color: 'var(--text-muted)', marginBottom: '12px', fontFamily: 'var(--font-code)' }}>{item.message}</p>}
+              {item.feedback && <p style={{ fontSize: '12px', lineHeight: 1.6, color: 'var(--text-muted)', marginBottom: '12px', fontFamily: 'var(--font-code)' }}>{item.feedback}</p>}
               <div style={{ display: 'flex', gap: '6px', justifyContent: 'flex-end' }}>
                 {item.status !== 'approved' && (
                   <button onClick={() => handleApprove(item)} style={{ padding: '5px 12px', borderRadius: '6px', border: 'none', fontSize: '11px', fontWeight: '600', color: '#fff', cursor: 'pointer', background: 'linear-gradient(135deg, #22c55e, #16a34a)', fontFamily: 'var(--font-code)', display: 'flex', alignItems: 'center', gap: '4px' }}>

@@ -2,11 +2,13 @@ import { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useApp } from '../../context/AppContext'
+import { api } from '../../utils/api'
 
 export function Navigation() {
   const [isOpen, setIsOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
+  const [logoSettings, setLogoSettings] = useState({})
   const location = useLocation()
   const { setCursorType, theme, toggleTheme } = useApp()
 
@@ -20,6 +22,15 @@ export function Navigation() {
     check()
     window.addEventListener('resize', check)
     return () => window.removeEventListener('resize', check)
+  }, [])
+  useEffect(() => {
+    api.getSettings().then(data => {
+      const map = {}
+      if (Array.isArray(data)) {
+        data.forEach(s => { map[s.key] = s.value })
+      }
+      setLogoSettings(map)
+    }).catch(() => {})
   }, [])
 
   const links = [
@@ -47,15 +58,29 @@ export function Navigation() {
           }}>
           <Link to="/" onMouseEnter={() => setCursorType('hover')} onMouseLeave={() => setCursorType('default')}
             style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none' }}>
-            <div style={{
-              width: '30px', height: '30px', borderRadius: '8px',
-              background: 'linear-gradient(135deg, #22c55e, #059669)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: '13px', fontWeight: '800', color: '#fff', fontFamily: "var(--font-code)",
-              boxShadow: '0 2px 8px rgba(34,197,94,0.3)'
-            }}>{'>'}</div>
+            {logoSettings.logo_image ? (
+              <img
+                src={logoSettings.logo_image}
+                alt={logoSettings.logo_name || 'Logo'}
+                style={{
+                  height: logoSettings.logo_shape === 'circle' ? '32px' : logoSettings.logo_shape === 'free' && logoSettings.logo_height ? `${Math.min(parseInt(logoSettings.logo_height), 36)}px` : '30px',
+                  width: logoSettings.logo_shape === 'circle' ? '32px' : logoSettings.logo_shape === 'free' && logoSettings.logo_width ? `${Math.min(parseInt(logoSettings.logo_width), 120)}px` : 'auto',
+                  borderRadius: logoSettings.logo_shape === 'circle' ? '50%' : logoSettings.logo_shape === 'free' ? '4px' : '8px',
+                  objectFit: 'cover',
+                }}
+              />
+            ) : (
+              <div style={{
+                width: '30px', height: '30px', borderRadius: '8px',
+                background: 'linear-gradient(135deg, #22c55e, #059669)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: '13px', fontWeight: '800', color: '#fff', fontFamily: "var(--font-code)",
+                boxShadow: '0 2px 8px rgba(34,197,94,0.3)'
+              }}>{'>'}</div>
+            )}
             <span style={{ fontSize: '16px', fontWeight: '700', fontFamily: "var(--font-code)", letterSpacing: '-0.01em', color: 'var(--text)' }}>
-              <span style={{ color: '#22c55e' }}>techno</span><span style={{ color: '#94a3b8' }}>ziant</span>
+              <span style={{ color: '#22c55e' }}>{(logoSettings.logo_name || 'techno').slice(0, 6)}</span>
+              <span style={{ color: '#94a3b8' }}>{(logoSettings.logo_name || 'ziant').slice(6)}</span>
             </span>
           </Link>
 

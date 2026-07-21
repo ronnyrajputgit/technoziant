@@ -18,8 +18,15 @@ import { Login } from '../../pages/Login'
 import { Dashboard, DashboardLayout } from '../../pages/dashboard/Dashboard'
 import { EditorPage } from '../../pages/dashboard/EditorPage'
 import { CMSPage } from '../../pages/dashboard/CMSPage'
+import { FeaturedProjectsPage } from '../../pages/dashboard/FeaturedProjectsPage'
+import { TestimonialsPage } from '../../pages/dashboard/TestimonialsPage'
 import { FeedbackPage } from '../../pages/dashboard/FeedbackPage'
 import { SettingsPage } from '../../pages/dashboard/SettingsPage'
+import { HeaderSettingsPage } from '../../pages/dashboard/HeaderSettingsPage'
+import { ContactSettingsPage } from '../../pages/dashboard/ContactSettingsPage'
+import { FooterSettingsPage } from '../../pages/dashboard/FooterSettingsPage'
+import { DatabaseConnectionsPage } from '../../pages/dashboard/DatabaseConnectionsPage'
+import { InquiriesPage } from '../../pages/dashboard/InquiriesPage'
 import { FeedbackForm } from '../../pages/FeedbackForm'
 
 function CMSRoute() {
@@ -53,8 +60,15 @@ export function Routes() {
       <Route path="/dashboard" element={<DashboardLayout />}>
         <Route index element={<Dashboard />} />
         <Route path="cms/:table" element={<CMSRoute />} />
-        <Route path="feedback" element={<FeedbackPage />} />
+        <Route path="featured-projects" element={<FeaturedProjectsPage />} />
+        <Route path="testimonials" element={<TestimonialsPage />} />
+        <Route path="feedback" element={<TestimonialsPage />} />
         <Route path="settings" element={<SettingsPage />} />
+        <Route path="header" element={<HeaderSettingsPage />} />
+        <Route path="contact-settings" element={<ContactSettingsPage />} />
+        <Route path="footer-links" element={<FooterSettingsPage />} />
+        <Route path="db-connections" element={<DatabaseConnectionsPage />} />
+        <Route path="inquiries" element={<InquiriesPage />} />
       </Route>
       <Route path="*" element={<Home />} />
     </RouterRoutes>

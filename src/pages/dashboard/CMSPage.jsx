@@ -21,21 +21,18 @@ const CMS_TABLES = {
     { key: 'client', label: 'Client', type: 'text' },
     { key: 'year', label: 'Year', type: 'text' },
     { key: 'visible', label: 'Visible', type: 'checkbox' },
-    { key: 'display_order', label: 'Sort Order', type: 'number' },
   ]},
   services: { label: 'Services', fields: [
     { key: 'title', label: 'Title', type: 'text', required: true },
     { key: 'description', label: 'Description', type: 'textarea' },
     { key: 'icon', label: 'Icon', type: 'text' },
     { key: 'visible', label: 'Visible', type: 'checkbox' },
-    { key: 'display_order', label: 'Sort Order', type: 'number' },
   ]},
   industries: { label: 'Industries', fields: [
     { key: 'title', label: 'Title', type: 'text', required: true },
     { key: 'description', label: 'Description', type: 'textarea' },
     { key: 'icon', label: 'Icon', type: 'text' },
     { key: 'visible', label: 'Visible', type: 'checkbox' },
-    { key: 'display_order', label: 'Sort Order', type: 'number' },
   ]},
   tech_stack: { label: 'Tech Stack', fields: [
     { key: 'name', label: 'Name', type: 'text', required: true },
@@ -43,14 +40,13 @@ const CMS_TABLES = {
     { key: 'icon', label: 'Icon', type: 'text' },
     { key: 'level', label: 'Level', type: 'select', options: ['beginner', 'intermediate', 'advanced'] },
     { key: 'visible', label: 'Visible', type: 'checkbox' },
-    { key: 'display_order', label: 'Sort Order', type: 'number' },
   ]},
   testimonials: { label: 'Testimonials', fields: [
     { key: 'client_name', label: 'Client Name', type: 'text', required: true },
-    { key: 'company', label: 'Company', type: 'text' },
-    { key: 'feedback', label: 'Feedback', type: 'textarea' },
+    { key: 'company', label: 'Company / Designation', type: 'text' },
+    { key: 'feedback', label: 'Feedback Quote', type: 'textarea' },
     { key: 'rating', label: 'Rating (1-5)', type: 'number' },
-    { key: 'avatar', label: 'Avatar URL', type: 'image' },
+    { key: 'avatar', label: 'Photo', type: 'image_upload' },
     { key: 'approved', label: 'Approved', type: 'checkbox' },
   ]},
   why_choose_us: { label: 'Why Choose Us', fields: [
@@ -58,29 +54,30 @@ const CMS_TABLES = {
     { key: 'description', label: 'Description', type: 'textarea' },
     { key: 'icon', label: 'Icon', type: 'text' },
     { key: 'visible', label: 'Visible', type: 'checkbox' },
-    { key: 'display_order', label: 'Sort Order', type: 'number' },
   ]},
   team_members: { label: 'Team Members', fields: [
     { key: 'name', label: 'Name', type: 'text', required: true },
     { key: 'role', label: 'Role', type: 'text' },
-    { key: 'image', label: 'Image URL', type: 'image' },
+    { key: 'image', label: 'Image', type: 'image_upload' },
     { key: 'bio', label: 'Bio', type: 'textarea' },
+    { key: 'achievements', label: 'Achievements (comma separated)', type: 'text' },
+    { key: 'stats', label: 'Stats', type: 'stats_list' },
+    { key: 'linkedin', label: 'LinkedIn URL', type: 'text' },
+    { key: 'twitter', label: 'Twitter URL', type: 'text' },
+    { key: 'email', label: 'Email', type: 'text' },
     { key: 'visible', label: 'Visible', type: 'checkbox' },
-    { key: 'display_order', label: 'Sort Order', type: 'number' },
   ]},
   stats: { label: 'Stats', fields: [
     { key: 'label', label: 'Label', type: 'text', required: true },
     { key: 'value', label: 'Value', type: 'text', required: true },
     { key: 'icon', label: 'Icon', type: 'text' },
     { key: 'visible', label: 'Visible', type: 'checkbox' },
-    { key: 'display_order', label: 'Sort Order', type: 'number' },
   ]},
-  awards: { label: 'Awards', fields: [
+  awards: { label: 'Achievements', fields: [
     { key: 'title', label: 'Title', type: 'text', required: true },
     { key: 'year', label: 'Year', type: 'text' },
     { key: 'icon', label: 'Icon', type: 'text' },
     { key: 'visible', label: 'Visible', type: 'checkbox' },
-    { key: 'display_order', label: 'Sort Order', type: 'number' },
   ]},
   about_content: { label: 'About Content', fields: [
     { key: 'section', label: 'Section', type: 'text', required: true },
@@ -96,14 +93,12 @@ const CMS_TABLES = {
     { key: 'link', label: 'Link', type: 'text' },
     { key: 'category', label: 'Category', type: 'text' },
     { key: 'visible', label: 'Visible', type: 'checkbox' },
-    { key: 'display_order', label: 'Sort Order', type: 'number' },
   ]},
   footer_content: { label: 'Footer Content', fields: [
     { key: 'section', label: 'Section', type: 'text', required: true },
     { key: 'title', label: 'Title', type: 'text' },
     { key: 'url', label: 'URL', type: 'text' },
     { key: 'visible', label: 'Visible', type: 'checkbox' },
-    { key: 'display_order', label: 'Sort Order', type: 'number' },
   ]},
 }
 
@@ -117,9 +112,21 @@ function FormModal({ open, onClose, onSave, table, config, item, saving }) {
   const [form, setForm] = useState({})
 
   useEffect(() => {
+    if (open) document.activeElement?.blur()
+  }, [open])
+
+  useEffect(() => {
     if (item) {
       const data = {}
-      config.fields.forEach(f => { data[f.key] = item[f.key] ?? (f.type === 'checkbox' ? false : f.type === 'number' ? 0 : '') })
+      config.fields.forEach(f => { data[f.key] = item[f.key] ?? (f.type === 'checkbox' ? false : f.type === 'number' ? 0 : f.type === 'stats_list' ? [] : '') })
+      if (table === 'team_members') {
+        data.achievements = Array.isArray(item.achievements) ? item.achievements.join(', ') : (item.achievements || '')
+        data.stats = Array.isArray(item.stats) ? item.stats : []
+        const sl = item.social_links || {}
+        data.linkedin = sl.linkedin || ''
+        data.twitter = sl.twitter || ''
+        data.email = sl.email || ''
+      }
       setForm(data)
     } else {
       const data = {}
@@ -166,6 +173,52 @@ function FormModal({ open, onClose, onSave, table, config, item, saving }) {
                         <img src={form[f.key]} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => e.target.style.display = 'none'} />
                       </div>
                     )}
+                  </div>
+                ) : f.type === 'image_upload' ? (
+                  <div>
+                    <input type="text" value={form[f.key] ?? ''} onChange={e => setForm({ ...form, [f.key]: e.target.value })} placeholder="https://... or upload below" style={inputStyle} />
+                    {form[f.key] && (
+                      <div style={{ marginTop: '6px', width: '64px', height: '64px', borderRadius: '8px', overflow: 'hidden', border: '1px solid var(--glass-border)' }}>
+                        <img src={form[f.key]} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => e.target.style.display = 'none'} />
+                      </div>
+                    )}
+                    <div style={{ marginTop: '6px' }}>
+                      <label style={{ display: 'inline-block', padding: '6px 12px', borderRadius: '6px', border: '1px dashed var(--glass-border)', background: 'transparent', color: 'var(--text-muted)', fontSize: '11px', fontFamily: 'var(--font-code)', cursor: 'pointer', transition: 'all 0.2s' }}>
+                        📁 Upload from device
+                        <input type="file" accept="image/*" style={{ display: 'none' }} onChange={e => {
+                          const file = e.target.files[0]
+                          if (!file) return
+                          if (file.size > 2 * 1024 * 1024) { alert('Max 2MB'); return }
+                          const reader = new FileReader()
+                          reader.onload = ev => setForm({ ...form, [f.key]: ev.target.result })
+                          reader.readAsDataURL(file)
+                        }} />
+                      </label>
+                    </div>
+                  </div>
+                ) : f.type === 'stats_list' ? (
+                  <div>
+                    {(form[f.key] || []).map((stat, idx) => (
+                      <div key={idx} style={{ display: 'flex', gap: '6px', alignItems: 'center', marginBottom: '6px' }}>
+                        <input type="text" value={stat.icon || ''} onChange={e => {
+                          const updated = [...(form[f.key] || [])]; updated[idx] = { ...updated[idx], icon: e.target.value }; setForm({ ...form, [f.key]: updated })
+                        }} placeholder="icon" style={{ ...inputStyle, width: '48px', textAlign: 'center', flexShrink: 0 }} />
+                        <input type="text" value={stat.label || ''} onChange={e => {
+                          const updated = [...(form[f.key] || [])]; updated[idx] = { ...updated[idx], label: e.target.value }; setForm({ ...form, [f.key]: updated })
+                        }} placeholder="label" style={{ ...inputStyle, flex: 1 }} />
+                        <input type="text" value={stat.value || ''} onChange={e => {
+                          const updated = [...(form[f.key] || [])]; updated[idx] = { ...updated[idx], value: e.target.value }; setForm({ ...form, [f.key]: updated })
+                        }} placeholder="value" style={{ ...inputStyle, width: '80px', flexShrink: 0 }} />
+                        <button type="button" onClick={() => {
+                          const updated = (form[f.key] || []).filter((_, i) => i !== idx); setForm({ ...form, [f.key]: updated })
+                        }} style={{ padding: '6px', borderRadius: '6px', background: 'rgba(239,68,68,0.1)', color: '#ef4444', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', flexShrink: 0, fontSize: '12px' }}>✕</button>
+                      </div>
+                    ))}
+                    <button type="button" onClick={() => {
+                      const updated = [...(form[f.key] || []), { icon: '', label: '', value: '' }]; setForm({ ...form, [f.key]: updated })
+                    }} style={{ padding: '6px 12px', borderRadius: '6px', border: '1px dashed var(--glass-border)', background: 'transparent', color: 'var(--text-muted)', fontSize: '11px', cursor: 'pointer', fontFamily: 'var(--font-code)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      + Add Stat
+                    </button>
                   </div>
                 ) : f.type === 'number' ? (
                   <input type="number" value={form[f.key] ?? 0} onChange={e => setForm({ ...form, [f.key]: parseInt(e.target.value) || 0 })} required={f.required} style={inputStyle} />
@@ -255,11 +308,26 @@ export function CMSPage({ table }) {
     setSaving(true)
     setError('')
     try {
+      let dataToSend = { ...formData }
+      if (table === 'team_members') {
+        if (typeof dataToSend.achievements === 'string') {
+          dataToSend.achievements = dataToSend.achievements.split(',').map(s => s.trim()).filter(Boolean)
+        }
+        dataToSend.stats = (dataToSend.stats || []).filter(s => s.label || s.value)
+        dataToSend.social_links = {
+          linkedin: dataToSend.linkedin || '',
+          twitter: dataToSend.twitter || '',
+          email: dataToSend.email || ''
+        }
+        delete dataToSend.linkedin
+        delete dataToSend.twitter
+        delete dataToSend.email
+      }
       if (editingItem) {
-        const updated = await api.updateContent(table, editingItem.id, formData)
+        const updated = await api.updateContent(table, editingItem.id, dataToSend)
         setItems(items.map(i => i.id === editingItem.id ? updated : i))
       } else {
-        const created = await api.createContent(table, formData)
+        const created = await api.createContent(table, dataToSend)
         setItems([...items, created])
       }
       setFormOpen(false)
@@ -344,7 +412,7 @@ export function CMSPage({ table }) {
         </button>
       </div>
 
-      {/* Items List */}
+      {/* Items Grid */}
       {loading ? (
         <div style={{ textAlign: 'center', padding: '60px', color: 'var(--text-muted)', fontFamily: 'var(--font-code)' }}>Loading...</div>
       ) : filteredItems.length === 0 ? (
@@ -352,25 +420,27 @@ export function CMSPage({ table }) {
           No items found. {items.length === 0 ? 'Click "Add" to create one.' : 'Try adjusting your search.'}
         </div>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '8px' }}>
           {filteredItems.map((item, idx) => (
-            <div key={item.id} className="liquid-glass" style={{ padding: '12px 16px', borderRadius: '10px', display: 'flex', alignItems: 'center', gap: '12px', transition: 'all 0.15s' }}
+            <div key={item.id} className="liquid-glass" style={{ padding: '10px 12px', borderRadius: '8px', transition: 'all 0.15s', position: 'relative' }}
               onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.04)'}
               onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: '13px', fontWeight: '600', color: 'var(--text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{getNameField(item)}</div>
-                {getPreview(item) && <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'var(--font-code)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{getPreview(item)}</div>}
-              </div>
-              {item.visible === false && <span style={{ fontSize: '9px', padding: '2px 8px', borderRadius: '100px', background: 'rgba(245,158,11,0.15)', color: '#f59e0b', fontWeight: '600', fontFamily: 'var(--font-code)' }}>Hidden</span>}
-              <div style={{ display: 'flex', gap: '4px', flexShrink: 0 }}>
-                <button onClick={() => toggleVisible(item)} title={item.visible === false ? 'Show' : 'Hide'} style={{ padding: '4px 8px', borderRadius: '6px', background: item.visible === false ? 'rgba(245,158,11,0.1)' : 'rgba(34,197,94,0.1)', color: item.visible === false ? '#f59e0b' : '#22c55e', cursor: 'pointer', border: 'none', display: 'flex', alignItems: 'center' }}>
-                  {item.visible === false ? <VisibilityOffIcon sx={{ fontSize: 14 }} /> : <VisibilityIcon sx={{ fontSize: 14 }} />}
+              {item.visible === false && (
+                <div style={{ position: 'absolute', top: '6px', right: '6px' }}>
+                  <span style={{ fontSize: '8px', padding: '1px 6px', borderRadius: '100px', background: 'rgba(245,158,11,0.15)', color: '#f59e0b', fontWeight: '600', fontFamily: 'var(--font-code)' }}>Hidden</span>
+                </div>
+              )}
+              <div style={{ fontSize: '12px', fontWeight: '600', color: 'var(--text)', marginBottom: '2px', paddingRight: item.visible === false ? '50px' : 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{getNameField(item)}</div>
+              {getPreview(item) && <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'var(--font-code)', marginBottom: '8px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{getPreview(item)}</div>}
+              <div style={{ display: 'flex', gap: '3px', justifyContent: 'flex-end' }}>
+                <button onClick={() => toggleVisible(item)} title={item.visible === false ? 'Show' : 'Hide'} style={{ padding: '3px 6px', borderRadius: '4px', background: item.visible === false ? 'rgba(245,158,11,0.1)' : 'rgba(34,197,94,0.1)', color: item.visible === false ? '#f59e0b' : '#22c55e', cursor: 'pointer', border: 'none', display: 'flex', alignItems: 'center' }}>
+                  {item.visible === false ? <VisibilityOffIcon sx={{ fontSize: 12 }} /> : <VisibilityIcon sx={{ fontSize: 12 }} />}
                 </button>
-                <button onClick={() => { setEditingItem(item); setFormOpen(true) }} title="Edit" style={{ padding: '4px 8px', borderRadius: '6px', background: 'rgba(79,142,255,0.1)', color: '#4f8eff', cursor: 'pointer', border: 'none', display: 'flex', alignItems: 'center' }}>
-                  <EditIcon sx={{ fontSize: 14 }} />
+                <button onClick={() => { setEditingItem(item); setFormOpen(true) }} title="Edit" style={{ padding: '3px 6px', borderRadius: '4px', background: 'rgba(79,142,255,0.1)', color: '#4f8eff', cursor: 'pointer', border: 'none', display: 'flex', alignItems: 'center' }}>
+                  <EditIcon sx={{ fontSize: 12 }} />
                 </button>
-                <button onClick={() => setDeleteConfirm(item)} title="Delete" style={{ padding: '4px 8px', borderRadius: '6px', background: 'rgba(239,68,68,0.1)', color: '#ef4444', cursor: 'pointer', border: 'none', display: 'flex', alignItems: 'center' }}>
-                  <DeleteIcon sx={{ fontSize: 14 }} />
+                <button onClick={() => setDeleteConfirm(item)} title="Delete" style={{ padding: '3px 6px', borderRadius: '4px', background: 'rgba(239,68,68,0.1)', color: '#ef4444', cursor: 'pointer', border: 'none', display: 'flex', alignItems: 'center' }}>
+                  <DeleteIcon sx={{ fontSize: 12 }} />
                 </button>
               </div>
             </div>

@@ -190,18 +190,18 @@ async function ensureDB() {
     )`)
     await client.query(`CREATE TABLE IF NOT EXISTS services (
       id SERIAL PRIMARY KEY, title VARCHAR(255) NOT NULL, description TEXT DEFAULT '',
-      icon VARCHAR(50) DEFAULT '', features TEXT[] DEFAULT '{}',
+      icon TEXT DEFAULT '', features TEXT[] DEFAULT '{}',
       display_order INTEGER DEFAULT 0, visible BOOLEAN DEFAULT true,
       created_at TIMESTAMP DEFAULT NOW(), updated_at TIMESTAMP DEFAULT NOW()
     )`)
     await client.query(`CREATE TABLE IF NOT EXISTS industries (
       id SERIAL PRIMARY KEY, title VARCHAR(255) NOT NULL, description TEXT DEFAULT '',
-      icon VARCHAR(50) DEFAULT '', display_order INTEGER DEFAULT 0,
+      icon TEXT DEFAULT '', display_order INTEGER DEFAULT 0,
       visible BOOLEAN DEFAULT true, created_at TIMESTAMP DEFAULT NOW(), updated_at TIMESTAMP DEFAULT NOW()
     )`)
     await client.query(`CREATE TABLE IF NOT EXISTS tech_stack (
       id SERIAL PRIMARY KEY, name VARCHAR(255) NOT NULL, category VARCHAR(100) DEFAULT '',
-      icon VARCHAR(50) DEFAULT '', level VARCHAR(50) DEFAULT 'intermediate',
+      icon TEXT DEFAULT '', level VARCHAR(50) DEFAULT 'intermediate',
       display_order INTEGER DEFAULT 0, visible BOOLEAN DEFAULT true,
       created_at TIMESTAMP DEFAULT NOW(), updated_at TIMESTAMP DEFAULT NOW()
     )`)
@@ -212,7 +212,12 @@ async function ensureDB() {
     )`)
     await client.query(`CREATE TABLE IF NOT EXISTS why_choose (
       id SERIAL PRIMARY KEY, title VARCHAR(255) NOT NULL, description TEXT DEFAULT '',
-      icon VARCHAR(50) DEFAULT '', display_order INTEGER DEFAULT 0,
+      icon TEXT DEFAULT '', display_order INTEGER DEFAULT 0,
+      visible BOOLEAN DEFAULT true, created_at TIMESTAMP DEFAULT NOW(), updated_at TIMESTAMP DEFAULT NOW()
+    )`)
+    await client.query(`CREATE TABLE IF NOT EXISTS why_choose (
+      id SERIAL PRIMARY KEY, title VARCHAR(255) NOT NULL, description TEXT DEFAULT '',
+      icon TEXT DEFAULT '', display_order INTEGER DEFAULT 0,
       visible BOOLEAN DEFAULT true, created_at TIMESTAMP DEFAULT NOW(), updated_at TIMESTAMP DEFAULT NOW()
     )`)
     await client.query(`CREATE TABLE IF NOT EXISTS team_members (
@@ -223,12 +228,12 @@ async function ensureDB() {
     )`)
     await client.query(`CREATE TABLE IF NOT EXISTS stats (
       id SERIAL PRIMARY KEY, label VARCHAR(255) NOT NULL, value VARCHAR(255) DEFAULT '',
-      icon VARCHAR(50) DEFAULT '', display_order INTEGER DEFAULT 0,
+      icon TEXT DEFAULT '', display_order INTEGER DEFAULT 0,
       visible BOOLEAN DEFAULT true, created_at TIMESTAMP DEFAULT NOW(), updated_at TIMESTAMP DEFAULT NOW()
     )`)
     await client.query(`CREATE TABLE IF NOT EXISTS awards (
       id SERIAL PRIMARY KEY, title VARCHAR(255) NOT NULL, year VARCHAR(50) DEFAULT '',
-      icon VARCHAR(50) DEFAULT '', display_order INTEGER DEFAULT 0,
+      icon TEXT DEFAULT '', display_order INTEGER DEFAULT 0,
       visible BOOLEAN DEFAULT true, created_at TIMESTAMP DEFAULT NOW(), updated_at TIMESTAMP DEFAULT NOW()
     )`)
     await client.query(`CREATE TABLE IF NOT EXISTS about_content (
@@ -255,6 +260,37 @@ async function ensureDB() {
     )`)
     await client.query("ALTER TABLE site_settings ALTER COLUMN value TYPE TEXT").catch(() => {})
     await client.query("ALTER TABLE feedback_submissions ADD COLUMN IF NOT EXISTS status VARCHAR(50) DEFAULT 'pending'").catch(() => {})
+    await client.query("ALTER TABLE featured_projects ADD COLUMN IF NOT EXISTS subtitle TEXT DEFAULT ''").catch(() => {})
+    await client.query("ALTER TABLE featured_projects ADD COLUMN IF NOT EXISTS client VARCHAR(255) DEFAULT ''").catch(() => {})
+    await client.query("ALTER TABLE featured_projects ADD COLUMN IF NOT EXISTS year VARCHAR(20) DEFAULT ''").catch(() => {})
+    await client.query("ALTER TABLE featured_projects ADD COLUMN IF NOT EXISTS duration VARCHAR(100) DEFAULT ''").catch(() => {})
+    await client.query("ALTER TABLE featured_projects ADD COLUMN IF NOT EXISTS team VARCHAR(100) DEFAULT ''").catch(() => {})
+    await client.query("ALTER TABLE featured_projects ADD COLUMN IF NOT EXISTS result TEXT DEFAULT ''").catch(() => {})
+    await client.query("ALTER TABLE featured_projects ADD COLUMN IF NOT EXISTS logo TEXT DEFAULT ''").catch(() => {})
+    await client.query("ALTER TABLE featured_projects ADD COLUMN IF NOT EXISTS images TEXT[] DEFAULT '{}'").catch(() => {})
+    await client.query("ALTER TABLE services ALTER COLUMN icon TYPE TEXT").catch(() => {})
+    await client.query("ALTER TABLE industries ALTER COLUMN icon TYPE TEXT").catch(() => {})
+    await client.query("ALTER TABLE tech_stack ALTER COLUMN icon TYPE TEXT").catch(() => {})
+    await client.query("ALTER TABLE why_choose ALTER COLUMN icon TYPE TEXT").catch(() => {})
+    await client.query("ALTER TABLE stats ALTER COLUMN icon TYPE TEXT").catch(() => {})
+    await client.query("ALTER TABLE awards ALTER COLUMN icon TYPE TEXT").catch(() => {})
+    await client.query("ALTER TABLE featured_projects ALTER COLUMN title TYPE TEXT").catch(() => {})
+    await client.query("ALTER TABLE featured_projects ALTER COLUMN category TYPE TEXT").catch(() => {})
+    await client.query("ALTER TABLE featured_projects ALTER COLUMN client TYPE TEXT").catch(() => {})
+    await client.query("ALTER TABLE featured_projects ALTER COLUMN year TYPE TEXT").catch(() => {})
+    await client.query("ALTER TABLE featured_projects ALTER COLUMN duration TYPE TEXT").catch(() => {})
+    await client.query("ALTER TABLE featured_projects ALTER COLUMN team TYPE TEXT").catch(() => {})
+    await client.query("ALTER TABLE testimonials ALTER COLUMN client_name TYPE TEXT").catch(() => {})
+    await client.query("ALTER TABLE testimonials ALTER COLUMN company TYPE TEXT").catch(() => {})
+    await client.query("ALTER TABLE team_members ALTER COLUMN name TYPE TEXT").catch(() => {})
+    await client.query("ALTER TABLE team_members ALTER COLUMN role TYPE TEXT").catch(() => {})
+    await client.query("ALTER TABLE work_items ALTER COLUMN title TYPE TEXT").catch(() => {})
+    await client.query("ALTER TABLE work_items ALTER COLUMN category TYPE TEXT").catch(() => {})
+    await client.query("ALTER TABLE work_items ALTER COLUMN client TYPE TEXT").catch(() => {})
+    await client.query("ALTER TABLE blogs ALTER COLUMN title TYPE TEXT").catch(() => {})
+    await client.query("ALTER TABLE blogs ALTER COLUMN slug TYPE TEXT").catch(() => {})
+    await client.query("ALTER TABLE blogs ALTER COLUMN category TYPE TEXT").catch(() => {})
+    await client.query("ALTER TABLE blogs ALTER COLUMN cover_image TYPE TEXT").catch(() => {})
 
     // Seed admin user
     const exists = await client.query('SELECT id FROM users WHERE email = $1', ['admin@technoziant.com'])
@@ -282,7 +318,28 @@ async function seedContent(client) {
       ['contact_whatsapp', '+91 9771291336'],
       ['office_address', 'Deoghar, Jharkhand'],
       ['office_hours', '10 AM - 6 PM'],
-      ['copyright', '© 2026 Technoziant. All rights reserved.']
+      ['copyright', '© 2026 Technoziant. All rights reserved.'],
+      ['hero_title', 'We craft\ndigital\nproducts'],
+      ['hero_description', 'Creative studio blending storytelling, art, and cutting-edge technology to deliver award-winning digital experiences.'],
+      ['hero_client_1_name', 'Bloom Corp'],
+      ['hero_client_1_type', 'E-Commerce'],
+      ['hero_client_1_icon', '🛒'],
+      ['hero_client_2_name', 'PulseMed'],
+      ['hero_client_2_type', 'Healthcare'],
+      ['hero_client_2_icon', '🏥'],
+      ['hero_client_3_name', 'FinSecure'],
+      ['hero_client_3_type', 'Fintech'],
+      ['hero_client_3_icon', '💰'],
+      ['hero_client_4_name', 'DataCorp'],
+      ['hero_client_4_type', 'Analytics'],
+      ['hero_client_4_icon', '📊'],
+      ['hero_client_5_name', 'Echo Inc'],
+      ['hero_client_5_type', 'Social'],
+      ['hero_client_5_icon', '💬'],
+      ['cta_title', "Let's create amazing"],
+      ['cta_description', "Let's discuss your project and create something amazing together."],
+      ['cta_label_1', 'get in touch'],
+      ['cta_label_2', 'view work'],
     ]
     for (const [key, value] of settings) {
       await client.query('INSERT INTO site_settings (key, value) VALUES ($1, $2)', [key, value])
@@ -293,17 +350,17 @@ async function seedContent(client) {
   const projCheck = await client.query('SELECT COUNT(*) FROM featured_projects')
   if (parseInt(projCheck.rows[0].count) === 0) {
     const projects = [
-      { title: 'Nebula Analytics', description: 'AI-powered analytics platform with real-time data visualization and predictive insights for enterprise clients.', image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80', tech: ['React', 'D3.js', 'ML'], category: 'web', display_order: 1 },
-      { title: 'Quantum Finance', description: 'Next-gen banking experience with biometric auth and instant transfers across 180+ countries.', image: 'https://images.unsplash.com/photo-1563986768609-322da13575f2?w=800&q=80', tech: ['React Native', 'Node.js', 'Blockchain'], category: 'mobile', display_order: 2 },
-      { title: 'Echo Social', description: 'Community-driven platform with real-time collaboration and AR experiences for 2M+ users.', image: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=800&q=80', tech: ['Next.js', 'WebRTC', 'Three.js'], category: 'web', display_order: 3 },
-      { title: 'Prism Studio', description: 'Browser-based 3D modeling tool with collaborative editing capabilities and GPU rendering.', image: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=800&q=80', tech: ['WebGL', 'Web Workers', 'WASM'], category: 'web', display_order: 4 },
-      { title: 'Pulse Health', description: 'HIPAA-compliant telemedicine platform connecting patients with 10K+ doctors worldwide.', image: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=800&q=80', tech: ['React', 'WebRTC', 'HIPAA'], category: 'web', display_order: 5 },
-      { title: 'Bloom E-Commerce', description: 'Multi-vendor marketplace with AI recommendations processing high-volume annual transactions.', image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&q=80', tech: ['Next.js', 'Stripe', 'PostgreSQL'], category: 'web', display_order: 6 }
+      { title: 'Nebula Analytics', subtitle: 'AI-Powered Analytics', description: 'AI-powered analytics platform with real-time data visualization and predictive insights for enterprise clients.', image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80', tech: ['React', 'D3.js', 'ML'], category: 'web', display_order: 1, client: 'DataCorp Inc.', year: '2024', duration: '4 months', team: '6 members', result: '3x user engagement', logo: '', images: ['https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=80', 'https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?w=800&q=80', 'https://images.unsplash.com/photo-1551434678-e076c223a692?w=800&q=80'] },
+      { title: 'Quantum Finance', subtitle: 'Next-Gen Banking', description: 'Next-gen banking experience with biometric auth and instant transfers across 180+ countries.', image: 'https://images.unsplash.com/photo-1563986768609-322da13575f2?w=800&q=80', tech: ['React Native', 'Node.js', 'Blockchain'], category: 'mobile', display_order: 2, client: 'FinSecure', year: '2024', duration: '6 months', team: '8 members', result: 'High-volume transactions', logo: '', images: ['https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=800&q=80', 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&q=80', 'https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=800&q=80'] },
+      { title: 'Echo Social', subtitle: 'Community Platform', description: 'Community-driven platform with real-time collaboration and AR experiences for 2M+ users.', image: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=800&q=80', tech: ['Next.js', 'WebRTC', 'Three.js'], category: 'web', display_order: 3, client: 'Echo Inc.', year: '2024', duration: '5 months', team: '7 members', result: '2M+ active users', logo: '', images: ['https://images.unsplash.com/photo-1611162616305-c69b3fa7fbe0?w=800&q=80', 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&q=80', 'https://images.unsplash.com/photo-1553877522-43269d4ea984?w=800&q=80'] },
+      { title: 'Prism Studio', subtitle: '3D Modeling Tool', description: 'Browser-based 3D modeling tool with collaborative editing capabilities and GPU rendering.', image: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=800&q=80', tech: ['WebGL', 'Web Workers', 'WASM'], category: 'web', display_order: 4, client: 'Prism Labs', year: '2023', duration: '8 months', team: '5 members', result: '50K+ creators', logo: '', images: ['https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&q=80', 'https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=800&q=80', 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&q=80'] },
+      { title: 'Pulse Health', subtitle: 'Telemedicine Platform', description: 'HIPAA-compliant telemedicine platform connecting patients with 10K+ doctors worldwide.', image: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=800&q=80', tech: ['React', 'WebRTC', 'HIPAA'], category: 'web', display_order: 5, client: 'PulseMed', year: '2024', duration: '7 months', team: '8 members', result: '10K+ doctors', logo: '', images: ['https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=800&q=80', 'https://images.unsplash.com/photo-1581093458791-9d42e3c7e117?w=800&q=80', 'https://images.unsplash.com/photo-1530026405186-ed1f139313f8?w=800&q=80'] },
+      { title: 'Bloom E-Commerce', subtitle: 'Multi-Vendor Marketplace', description: 'Multi-vendor marketplace with AI recommendations processing high-volume annual transactions.', image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&q=80', tech: ['Next.js', 'Stripe', 'PostgreSQL'], category: 'web', display_order: 6, client: 'Bloom Corp', year: '2024', duration: '5 months', team: '7 members', result: 'High GMV growth', logo: '', images: ['https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=800&q=80', 'https://images.unsplash.com/photo-1556742111-a301076d9d18?w=800&q=80', 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=80'] }
     ]
     for (const p of projects) {
       await client.query(
-        'INSERT INTO featured_projects (title, description, image, tech, category, display_order, visible) VALUES ($1,$2,$3,$4,$5,$6,$7)',
-        [p.title, p.description, p.image, p.tech, p.category, p.display_order, true]
+        'INSERT INTO featured_projects (title, subtitle, description, image, tech, category, display_order, visible, client, year, duration, team, result, logo, images) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)',
+        [p.title, p.subtitle, p.description, p.image, p.tech, p.category, p.display_order, true, p.client, p.year, p.duration, p.team, p.result, p.logo, p.images]
       )
     }
   }

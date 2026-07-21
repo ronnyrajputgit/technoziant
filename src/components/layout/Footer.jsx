@@ -13,31 +13,56 @@ const defaultSocialLinks = [
   { name: 'WhatsApp', url: 'https://wa.me/919771291336', icon: <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> }
 ]
 
-const defaultServices = ['Web Development', 'Mobile Apps', 'UI/UX Design', 'Cloud & DevOps', 'AI & ML']
-const defaultCompany = [{ label: 'About', href: '/about' }, { label: 'Work', href: '/work' }, { label: 'Careers', href: '/careers' }, { label: 'Contact', href: '/contact' }, { label: 'FAQ', href: '/faq' }]
-
 export function Footer() {
   const { setCursorType } = useApp()
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, margin: '-50px' })
-  const [footerData, setFooterData] = useState([])
   const [settings, setSettings] = useState({})
+  const [services, setServices] = useState([])
 
   useEffect(() => {
     let cancelled = false
-    api.getContent('footer_content', { visible: 'true' }).then(data => { if (!cancelled) setFooterData(data || []) }).catch(() => {})
     api.getSettings().then(data => {
       if (cancelled) return
       const map = {}
       if (Array.isArray(data)) data.forEach(s => { map[s.key] = s.value })
       setSettings(map)
     }).catch(() => {})
+    api.getContent('services', { visible: 'true' }).then(data => {
+      if (!cancelled) setServices(Array.isArray(data) ? data : [])
+    }).catch(() => {})
     return () => { cancelled = true }
   }, [])
 
-  const servicesList = footerData.filter(f => f.section === 'services')
-  const companyList = footerData.filter(f => f.section === 'company')
-  const contactList = footerData.filter(f => f.section === 'contact')
+  const brandName = settings.footer_brand_name || 'Technoziant'
+  const brandDesc = settings.footer_description || 'We craft digital products. Creative studio blending storytelling, art, and technology.'
+
+  let selectedServices = []
+  try { selectedServices = JSON.parse(settings.footer_services || '[]') } catch {}
+  let selectedCompany = []
+  try { selectedCompany = JSON.parse(settings.footer_company || '[]') } catch {}
+
+  const servicesToShow = selectedServices.length > 0
+    ? selectedServices.map(name => {
+        const svc = services.find(s => s.title === name)
+        return { title: name, href: `/services/${name?.toLowerCase().replace(/\s+/g, '-')}` }
+      })
+    : services.slice(0, 5).map(s => ({ title: s.title, href: `/services/${s.title?.toLowerCase().replace(/\s+/g, '-')}` }))
+
+  const defaultCompanyPages = [
+    { label: 'Home', href: '/' }, { label: 'About', href: '/about' },
+    { label: 'Services', href: '/services' }, { label: 'Work', href: '/work' },
+    { label: 'Contact', href: '/contact' }, { label: 'Blog', href: '/blog' },
+    { label: 'Careers', href: '/careers' }, { label: 'FAQ', href: '/faq' },
+    { label: 'Solutions', href: '/solutions' }, { label: 'Leaders', href: '/leaders' },
+    { label: 'Process', href: '/process' }
+  ]
+  const companyToShow = selectedCompany.length > 0
+    ? selectedCompany.map(name => {
+        const pg = defaultCompanyPages.find(p => p.label === name)
+        return { label: name, href: pg?.href || '#' }
+      })
+    : defaultCompanyPages
 
   return (
     <footer ref={ref} style={{ position: 'relative', overflow: 'hidden', background: 'var(--bg)' }}>
@@ -51,14 +76,21 @@ export function Footer() {
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '10px' }}>
                   <div style={{ width: '22px', height: '22px', borderRadius: '5px', background: 'linear-gradient(135deg, #22c55e, #16a34a)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '9px', fontWeight: '800', color: '#fff', fontFamily: "var(--font-code)" }}>{'>'}</div>
                   <span style={{ fontSize: '12px', fontWeight: '600', fontFamily: "var(--font-code)", color: 'var(--text)' }}>
-                    <span style={{ color: '#22c55e' }}>techno</span><span style={{ color: 'var(--text-muted)' }}>ziant</span>
+                    <span style={{ color: '#22c55e' }}>{brandName?.slice(0, 6) || 'techno'}</span>
+                    <span style={{ color: 'var(--text-muted)' }}>{brandName?.slice(6) || 'ziant'}</span>
                   </span>
                 </div>
                 <p style={{ fontSize: '11px', color: 'var(--text-muted)', lineHeight: 1.6, marginBottom: '12px' }}>
-                  {settings.footer_description || 'We craft digital products. Creative studio blending storytelling, art, and technology.'}
+                  {brandDesc}
                 </p>
                 <div style={{ display: 'flex', gap: '5px', flexWrap: 'wrap' }}>
-                  {defaultSocialLinks.map(social => (
+                  {[
+                    { name: 'LinkedIn', url: settings.social_linkedin || 'https://www.linkedin.com/in/technoziant', icon: defaultSocialLinks[0].icon },
+                    { name: 'Twitter', url: settings.social_twitter || 'https://x.com/technoziant', icon: defaultSocialLinks[1].icon },
+                    { name: 'YouTube', url: settings.social_youtube || 'https://youtube.com/@technoziant', icon: defaultSocialLinks[2].icon },
+                    { name: 'Instagram', url: settings.social_instagram || 'https://instagram.com/technoziant', icon: defaultSocialLinks[3].icon },
+                    { name: 'WhatsApp', url: settings.contact_whatsapp ? `https://wa.me/${settings.contact_whatsapp.replace(/[^0-9]/g, '')}` : 'https://wa.me/919771291336', icon: defaultSocialLinks[4].icon },
+                  ].map(social => (
                     <a key={social.name} href={social.url} target="_blank" rel="noopener noreferrer"
                       onMouseEnter={() => setCursorType('hover')} onMouseLeave={() => setCursorType('default')}
                       style={{ width: '28px', height: '28px', borderRadius: '5px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--surface)', border: '1px solid var(--glass-border)', color: 'var(--text-muted)', textDecoration: 'none', transition: 'all 0.2s' }}>
@@ -71,8 +103,8 @@ export function Footer() {
               {/* Services */}
               <div>
                 <div style={{ fontSize: '10px', fontWeight: '600', color: 'var(--text)', marginBottom: '10px', fontFamily: "var(--font-code)" }}>services</div>
-                {(servicesList.length ? servicesList : defaultServices.map(s => ({ title: s, url: '/services' }))).map((s, i) => (
-                  <a key={s.id || i} href={s.url || '/services'} style={{ display: 'block', fontSize: '11px', color: 'var(--text-muted)', marginBottom: '6px', textDecoration: 'none', transition: 'color 0.2s' }}
+                {servicesToShow.map((s, i) => (
+                  <a key={i} href={s.href} style={{ display: 'block', fontSize: '11px', color: 'var(--text-muted)', marginBottom: '6px', textDecoration: 'none', transition: 'color 0.2s' }}
                     onMouseEnter={e => e.target.style.color = '#22c55e'} onMouseLeave={e => e.target.style.color = 'var(--text-muted)'}>{s.title}</a>
                 ))}
               </div>
@@ -80,26 +112,20 @@ export function Footer() {
               {/* Company */}
               <div>
                 <div style={{ fontSize: '10px', fontWeight: '600', color: 'var(--text)', marginBottom: '10px', fontFamily: "var(--font-code)" }}>company</div>
-                {(companyList.length ? companyList : defaultCompany).map((link, i) => (
-                  <a key={link.id || link.label || i} href={link.url || link.href} style={{ display: 'block', fontSize: '11px', color: 'var(--text-muted)', marginBottom: '6px', textDecoration: 'none', transition: 'color 0.2s' }}
-                    onMouseEnter={e => e.target.style.color = '#22c55e'} onMouseLeave={e => e.target.style.color = 'var(--text-muted)'}>{link.title || link.label}</a>
+                {companyToShow.map((link, i) => (
+                  <a key={i} href={link.href} style={{ display: 'block', fontSize: '11px', color: 'var(--text-muted)', marginBottom: '6px', textDecoration: 'none', transition: 'color 0.2s' }}
+                    onMouseEnter={e => e.target.style.color = '#22c55e'} onMouseLeave={e => e.target.style.color = 'var(--text-muted)'}>{link.label}</a>
                 ))}
               </div>
 
               {/* Contact */}
               <div>
                 <div style={{ fontSize: '10px', fontWeight: '600', color: 'var(--text)', marginBottom: '10px', fontFamily: "var(--font-code)" }}>contact</div>
-                {contactList.length ? contactList.map((c, i) => (
-                  <div key={c.id || i} style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '6px' }}>{c.title}</div>
-                )) : (
-                  <>
-                    <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '6px' }}>📧 business@technoziant.com</div>
-                    <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '6px' }}>📱 +91 8882716189</div>
-                    <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '6px' }}>💬 WhatsApp: +91 9771291336</div>
-                    <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '6px' }}>📍 Deoghar, Jharkhand</div>
-                    <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>🕐 10 AM - 6 PM</div>
-                  </>
-                )}
+                <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '6px' }}>📧 {settings.contact_email || 'business@technoziant.com'}</div>
+                <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '6px' }}>📱 {settings.contact_phone || '+91 8882716189'}</div>
+                <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '6px' }}>💬 WhatsApp: {settings.contact_whatsapp || '+91 9771291336'}</div>
+                <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '6px' }}>📍 {settings.contact_address || 'Deoghar, Jharkhand'}</div>
+                <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>🕐 {settings.contact_hours || '10 AM - 6 PM'}</div>
               </div>
 
               {/* Scan for Feedback */}
@@ -116,7 +142,7 @@ export function Footer() {
           </motion.div>
 
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px', paddingTop: '16px', borderTop: '1px solid var(--glass-border)' }}>
-            <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>© 2026 Technoziant. All rights reserved.</div>
+            <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>© 2026 {brandName}. All rights reserved.</div>
             <div style={{ display: 'flex', gap: '6px' }}>
               {[{ label: 'Privacy', href: '#' }, { label: 'Terms', href: '#' }].map(link => (
                 <a key={link.label} href={link.href} style={{ fontSize: '10px', color: 'var(--text-muted)', textDecoration: 'none' }}>{link.label}</a>

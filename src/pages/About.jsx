@@ -34,7 +34,9 @@ export function About() {
         ...m,
         color: teamColors[i % teamColors.length],
         gradient: teamGradients[i % teamGradients.length],
-        achievements: m.social_links ? [m.social_links.title, m.social_links.subtitle, m.social_links.badge].filter(Boolean) : []
+        achievements: Array.isArray(m.achievements) ? m.achievements : [],
+        stats: Array.isArray(m.stats) ? m.stats : [],
+        social_links: m.social_links || {}
       })))
       setStats(statsData || [])
       setAwards(awardsData || [])

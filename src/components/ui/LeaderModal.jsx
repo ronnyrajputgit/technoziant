@@ -229,15 +229,15 @@ export function LeaderModal({ leader, isOpen, onClose }) {
                 transition={{ delay: 0.5, duration: 0.5 }}
                 style={{
                   display: 'grid',
-                  gridTemplateColumns: 'repeat(3, 1fr)',
+                  gridTemplateColumns: `repeat(${(leader.stats || []).length || 3}, 1fr)`,
                   gap: '10px',
                   marginBottom: '20px'
                 }}>
-                {[
+                {(leader.stats && leader.stats.length > 0 ? leader.stats : [
                   { icon: '📊', label: 'Projects', value: '50+' },
                   { icon: '🏆', label: 'Awards', value: '12+' },
                   { icon: '👥', label: 'Team', value: '30+' }
-                ].map((stat, i) => (
+                ]).map((stat, i) => (
                   <div key={i} className="liquid-glass" style={{
                     padding: '12px',
                     borderRadius: '10px',
@@ -259,24 +259,26 @@ export function LeaderModal({ leader, isOpen, onClose }) {
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.6, duration: 0.5 }}
-                style={{ display: 'flex', gap: '8px' }}>
-                {[
-                  { name: 'LinkedIn', url: 'https://www.linkedin.com/in/technoziant' },
-                  { name: 'Twitter', url: 'https://x.com/technoziant' },
-                  { name: 'Email', url: 'mailto:business@technoziant.com' }
-                ].map((social, i) => (
-                  <a key={i} href={social.url} target="_blank" rel="noopener noreferrer" className="liquid-glass" style={{
-                    padding: '8px 16px',
-                    borderRadius: '100px',
-                    fontSize: '11px',
-                    color: 'var(--text-muted)',
-                    fontWeight: '500',
-                    textDecoration: 'none',
-                    transition: 'all 0.3s'
-                  }}>
-                    {social.name}
-                  </a>
-                ))}
+                style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                {(leader.social_links?.linkedin || leader.social_links?.twitter || leader.social_links?.email) ? (
+                  <>
+                    {leader.social_links.linkedin && (
+                      <a href={leader.social_links.linkedin} target="_blank" rel="noopener noreferrer" className="liquid-glass" style={{ padding: '8px 16px', borderRadius: '100px', fontSize: '11px', color: 'var(--text-muted)', fontWeight: '500', textDecoration: 'none', transition: 'all 0.3s' }}>LinkedIn</a>
+                    )}
+                    {leader.social_links.twitter && (
+                      <a href={leader.social_links.twitter} target="_blank" rel="noopener noreferrer" className="liquid-glass" style={{ padding: '8px 16px', borderRadius: '100px', fontSize: '11px', color: 'var(--text-muted)', fontWeight: '500', textDecoration: 'none', transition: 'all 0.3s' }}>Twitter</a>
+                    )}
+                    {leader.social_links.email && (
+                      <a href={`mailto:${leader.social_links.email}`} className="liquid-glass" style={{ padding: '8px 16px', borderRadius: '100px', fontSize: '11px', color: 'var(--text-muted)', fontWeight: '500', textDecoration: 'none', transition: 'all 0.3s' }}>Email</a>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    <a href="https://www.linkedin.com/in/technoziant" target="_blank" rel="noopener noreferrer" className="liquid-glass" style={{ padding: '8px 16px', borderRadius: '100px', fontSize: '11px', color: 'var(--text-muted)', fontWeight: '500', textDecoration: 'none', transition: 'all 0.3s' }}>LinkedIn</a>
+                    <a href="https://x.com/technoziant" target="_blank" rel="noopener noreferrer" className="liquid-glass" style={{ padding: '8px 16px', borderRadius: '100px', fontSize: '11px', color: 'var(--text-muted)', fontWeight: '500', textDecoration: 'none', transition: 'all 0.3s' }}>Twitter</a>
+                    <a href="mailto:business@technoziant.com" className="liquid-glass" style={{ padding: '8px 16px', borderRadius: '100px', fontSize: '11px', color: 'var(--text-muted)', fontWeight: '500', textDecoration: 'none', transition: 'all 0.3s' }}>Email</a>
+                  </>
+                )}
               </motion.div>
             </div>
           </motion.div>

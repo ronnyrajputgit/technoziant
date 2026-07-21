@@ -34,6 +34,11 @@ function ProjectCard({ p, hovered, setHovered, setCursorType, openProject }) {
           style={{ position: 'relative', aspectRatio: '16/10', overflow: 'hidden', borderRadius: '12px 12px 0 0' }}>
           <motion.img src={p.image} alt={p.title} animate={{ scale: hovered === p.id ? 1.05 : 1 }} transition={{ duration: 0.6, ease: [0.76, 0, 0.24, 1] }}
             style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          {p.logo && (
+            <div style={{ position: 'absolute', top: '10px', left: '10px', width: '28px', height: '28px', borderRadius: '6px', background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+              <img src={p.logo} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+            </div>
+          )}
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: hovered === p.id ? 1 : 0 }}
             style={{ position: 'absolute', inset: 0, background: `${color}20`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <span className="liquid-glass-strong" style={{ padding: '6px 16px', borderRadius: '6px', fontSize: '10px', fontWeight: '600', color: 'var(--text)', fontFamily: "var(--font-code)" }}>{'>'} view</span>
@@ -63,18 +68,30 @@ export function FeaturedProjects() {
 
   useEffect(() => {
     api.getContent('featured_projects', { visible: 'true' }).then(data => {
-      const formatted = (data || []).map(p => ({
-        id: p.id,
-        title: p.title,
-        subtitle: p.subtitle || p.description?.substring(0, 40),
-        description: p.description,
-        year: p.year || '',
-        color: projectColors[(p.id || 0) % projectColors.length],
-        image: p.image,
-        tags: p.tech || [],
-        category: p.category,
-        client: p.client || ''
-      }))
+      const seen = new Set()
+      const formatted = (data || []).reduce((acc, p) => {
+        const key = p.title?.toLowerCase().trim()
+        if (seen.has(key)) return acc
+        seen.add(key)
+        acc.push({
+          id: p.id,
+          title: p.title,
+          subtitle: p.subtitle || p.description?.substring(0, 40),
+          description: p.description,
+          year: p.year || '',
+          color: projectColors[(p.id || 0) % projectColors.length],
+          image: p.image,
+          images: Array.isArray(p.images) ? p.images : [],
+          tags: p.tech || [],
+          category: p.category,
+          client: p.client || '',
+          duration: p.duration || '',
+          team: p.team || '',
+          result: p.result || '',
+          logo: p.logo || '',
+        })
+        return acc
+      }, [])
       setProjects(formatted)
     }).catch(() => {})
   }, [])
