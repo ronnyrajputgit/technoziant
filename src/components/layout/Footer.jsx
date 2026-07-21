@@ -42,12 +42,23 @@ export function Footer() {
   let selectedCompany = []
   try { selectedCompany = JSON.parse(settings.footer_company || '[]') } catch {}
 
+  const defaultServices = [
+    { title: 'Web Development', href: '/services/web-development' },
+    { title: 'Mobile Apps', href: '/services/mobile-apps' },
+    { title: 'UI/UX Design', href: '/services/ui-ux-design' },
+    { title: 'Cloud & DevOps', href: '/services/cloud-devops' },
+    { title: 'AI & Machine Learning', href: '/services/ai-machine-learning' },
+    { title: 'Brand & Identity', href: '/services/brand-identity' }
+  ]
+
   const servicesToShow = selectedServices.length > 0
     ? selectedServices.map(name => {
         const svc = services.find(s => s.title === name)
         return { title: name, href: `/services/${name?.toLowerCase().replace(/\s+/g, '-')}` }
       })
-    : services.slice(0, 5).map(s => ({ title: s.title, href: `/services/${s.title?.toLowerCase().replace(/\s+/g, '-')}` }))
+    : services.length > 0
+      ? services.slice(0, 5).map(s => ({ title: s.title, href: `/services/${s.title?.toLowerCase().replace(/\s+/g, '-')}` }))
+      : defaultServices
 
   const defaultCompanyPages = [
     { label: 'Home', href: '/' }, { label: 'About', href: '/about' },

@@ -142,11 +142,25 @@ export function Contact() {
   }
 
   const inp = (n) => ({
-    width: '100%', background: 'transparent', border: 'none',
-    borderBottom: `1px solid ${focus === n ? 'var(--accent)' : 'var(--glass-border)'}`,
-    padding: '12px 0', fontSize: '13px', color: 'var(--text)', outline: 'none',
-    transition: 'border-color 0.3s', fontFamily: "var(--font-code)"
+    width: '100%',
+    background: focus === n ? 'rgba(255,255,255,0.04)' : 'rgba(255,255,255,0.02)',
+    border: `1px solid ${focus === n ? 'var(--accent)' : 'var(--glass-border)'}`,
+    borderRadius: '10px',
+    padding: '14px 16px',
+    fontSize: '13px',
+    color: 'var(--text)',
+    outline: 'none',
+    transition: 'all 0.3s',
+    fontFamily: "var(--font-code)",
+    boxSizing: 'border-box'
   })
+
+  const fieldWrap = {
+    border: '1px solid var(--glass-border)',
+    borderRadius: '12px',
+    padding: '14px 18px',
+    background: 'rgba(255,255,255,0.01)'
+  }
 
   const email = settings.contact_email || 'business@technoziant.com'
   const phone = settings.contact_phone || '+91 8882716189'
@@ -207,7 +221,7 @@ export function Contact() {
                     </text>
                   </svg>
                 </div>
-                <form onSubmit={handleSubmit} className="liquid-glass" style={{ padding: '28px', borderRadius: '16px', position: 'relative', zIndex: 2, boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.08), 0 8px 32px rgba(0,0,0,0.3)' }}>
+                <form onSubmit={handleSubmit} className="liquid-glass" style={{ padding: '32px 36px', borderRadius: '16px', position: 'relative', zIndex: 2, boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.08), 0 8px 32px rgba(0,0,0,0.3)' }}>
                   {error && (
                   <div style={{ padding: '10px 14px', borderRadius: '8px', background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', color: '#ef4444', fontSize: '12px', fontFamily: 'var(--font-code)', marginBottom: '14px' }}>
                     {error}
@@ -218,29 +232,29 @@ export function Contact() {
                     <span style={{ fontSize: '18px' }}>✓</span> Message sent successfully!
                   </div>
                 )}
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '14px' }}>
-                  <div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '18px', marginBottom: '18px' }}>
+                  <div style={fieldWrap}>
                     <label style={{ fontSize: '9px', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px', display: 'block', fontFamily: "var(--font-code)" }}>Name *</label>
-                    <input type="text" value={f.name} onChange={e => setF({ ...f, name: e.target.value })} onFocus={() => setFocus('name')} onBlur={() => setFocus(null)} placeholder="John Doe" required style={{ ...inp('name'), borderColor: focus === 'name' ? '#22c55e' : undefined }} />
+                    <input type="text" value={f.name} onChange={e => setF({ ...f, name: e.target.value })} onFocus={() => setFocus('name')} onBlur={() => setFocus(null)} placeholder="John Doe" required style={inp('name')} />
                   </div>
-                  <div>
+                  <div style={fieldWrap}>
                     <label style={{ fontSize: '9px', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px', display: 'block', fontFamily: "var(--font-code)" }}>Email *</label>
-                    <input type="email" value={f.email} onChange={e => setF({ ...f, email: e.target.value })} onFocus={() => setFocus('email')} onBlur={() => setFocus(null)} placeholder="john@example.com" required style={{ ...inp('email'), borderColor: focus === 'email' ? '#22c55e' : undefined }} />
+                    <input type="email" value={f.email} onChange={e => setF({ ...f, email: e.target.value })} onFocus={() => setFocus('email')} onBlur={() => setFocus(null)} placeholder="john@example.com" required style={inp('email')} />
                   </div>
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '14px' }}>
-                  <div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '18px', marginBottom: '18px' }}>
+                  <div style={fieldWrap}>
                     <label style={{ fontSize: '9px', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px', display: 'block', fontFamily: "var(--font-code)" }}>Company</label>
-                    <input type="text" value={f.company} onChange={e => setF({ ...f, company: e.target.value })} onFocus={() => setFocus('company')} onBlur={() => setFocus(null)} placeholder="Company Inc" style={{ ...inp('company'), borderColor: focus === 'company' ? '#4f8eff' : undefined }} />
+                    <input type="text" value={f.company} onChange={e => setF({ ...f, company: e.target.value })} onFocus={() => setFocus('company')} onBlur={() => setFocus(null)} placeholder="Company Inc" style={inp('company')} />
                   </div>
-                  <div>
+                  <div style={fieldWrap}>
                     <label style={{ fontSize: '9px', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px', display: 'block', fontFamily: "var(--font-code)" }}>Service</label>
-                    <input type="text" value={f.service} onChange={e => setF({ ...f, service: e.target.value })} onFocus={() => setFocus('service')} onBlur={() => setFocus(null)} placeholder="Web, Mobile, Design..." style={{ ...inp('service'), borderColor: focus === 'service' ? '#a855f7' : undefined }} />
+                    <input type="text" value={f.service} onChange={e => setF({ ...f, service: e.target.value })} onFocus={() => setFocus('service')} onBlur={() => setFocus(null)} placeholder="Web, Mobile, Design..." style={inp('service')} />
                   </div>
                 </div>
-                <div style={{ marginBottom: '18px' }}>
+                <div style={{ ...fieldWrap, marginBottom: '22px' }}>
                   <label style={{ fontSize: '9px', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px', display: 'block', fontFamily: "var(--font-code)" }}>Message *</label>
-                  <textarea value={f.message} onChange={e => setF({ ...f, message: e.target.value })} onFocus={() => setFocus('message')} onBlur={() => setFocus(null)} placeholder="Tell us about your project..." rows={4} required style={{ ...inp('message'), resize: 'vertical', borderColor: focus === 'message' ? '#f59e0b' : undefined }} />
+                  <textarea value={f.message} onChange={e => setF({ ...f, message: e.target.value })} onFocus={() => setFocus('message')} onBlur={() => setFocus(null)} placeholder="Tell us about your project..." rows={4} required style={{ ...inp('message'), resize: 'vertical' }} />
                 </div>
                 <motion.button type="submit" whileHover={{ scale: loading ? 1 : 1.02 }} whileTap={{ scale: loading ? 1 : 0.98 }}
                   disabled={loading || submitted}
