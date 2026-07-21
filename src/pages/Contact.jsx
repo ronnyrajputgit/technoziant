@@ -192,7 +192,7 @@ export function Contact() {
             <div>
               <TextReveal><h2 style={{ fontSize: 'clamp(22px, 3vw, 28px)', fontWeight: '700', marginBottom: '8px' }}>Send a Message</h2></TextReveal>
               <TextReveal delay={0.1}><p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '20px', lineHeight: 1.6 }}>Fill out the form and we'll get back to you within 24 hours.</p></TextReveal>
-              <div style={{ position: 'relative', height: '100%' }}>
+              <div style={{ position: 'relative' }}>
                 {/* Border text animation */}
                 <div style={{ position: 'absolute', inset: '-1px', borderRadius: '17px', overflow: 'hidden', pointerEvents: 'none', zIndex: 3 }}>
                   <svg className="border-text-svg" viewBox="0 0 100 100" preserveAspectRatio="none" fill="none">
@@ -216,7 +216,7 @@ export function Contact() {
                     </text>
                   </svg>
                 </div>
-                <form onSubmit={handleSubmit} className="liquid-glass" style={{ padding: '32px 36px', borderRadius: '16px', position: 'relative', zIndex: 2, boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.08), 0 8px 32px rgba(0,0,0,0.3)', height: '100%', display: 'flex', flexDirection: 'column' }}>
+                <form onSubmit={handleSubmit} className="liquid-glass" style={{ padding: '24px 28px', borderRadius: '16px', position: 'relative', zIndex: 2, boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.08), 0 8px 32px rgba(0,0,0,0.3)' }}>
                   {error && (
                   <div style={{ padding: '10px 14px', borderRadius: '8px', background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', color: '#ef4444', fontSize: '12px', fontFamily: 'var(--font-code)', marginBottom: '14px' }}>
                     {error}
@@ -247,9 +247,9 @@ export function Contact() {
                     <input type="text" value={f.service} onChange={e => setF({ ...f, service: e.target.value })} onFocus={() => setFocus('service')} onBlur={() => setFocus(null)} placeholder="Web, Mobile, Design..." style={inp('service')} />
                   </div>
                 </div>
-                <div style={{ ...fieldWrap, marginBottom: '22px', flex: 1, display: 'flex', flexDirection: 'column' }}>
+                <div style={{ ...fieldWrap, marginBottom: '18px' }}>
                   <label style={{ fontSize: '9px', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px', display: 'block', fontFamily: "var(--font-code)" }}>Message *</label>
-                  <textarea value={f.message} onChange={e => setF({ ...f, message: e.target.value })} onFocus={() => setFocus('message')} onBlur={() => setFocus(null)} placeholder="Tell us about your project..." rows={4} required style={{ ...inp('message'), resize: 'vertical', flex: 1 }} />
+                  <textarea value={f.message} onChange={e => setF({ ...f, message: e.target.value })} onFocus={() => setFocus('message')} onBlur={() => setFocus(null)} placeholder="Tell us about your project..." rows={3} required style={{ ...inp('message'), resize: 'vertical' }} />
                 </div>
                 <motion.button type="submit" whileHover={{ scale: loading ? 1 : 1.02 }} whileTap={{ scale: loading ? 1 : 0.98 }}
                   disabled={loading || submitted}
@@ -263,9 +263,9 @@ export function Contact() {
             <div>
               <TextReveal><h2 style={{ fontSize: 'clamp(22px, 3vw, 28px)', fontWeight: '700', marginBottom: '8px' }}>Office Info</h2></TextReveal>
               <TextReveal delay={0.1}><p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '20px', lineHeight: 1.6 }}>Visit us or reach out through any channel.</p></TextReveal>
-              <div className="liquid-glass" style={{ padding: '32px 36px', borderRadius: '16px', boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.08), 0 8px 32px rgba(0,0,0,0.3)', height: '100%', display: 'flex', flexDirection: 'column' }}>
+              <div className="liquid-glass" style={{ padding: '18px 22px', borderRadius: '16px', boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.08), 0 8px 32px rgba(0,0,0,0.3)' }}>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', flex: 1 }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                 {[
                   { icon: 'map', label: 'address', val: address, color: '#fbbf24' },
                   { icon: 'phone', label: 'hours', val: hours, color: '#06d6a0' },
@@ -273,9 +273,9 @@ export function Contact() {
                   { icon: 'phone', label: 'contact', val: phone, color: '#a855f7' },
                   { icon: 'whatsapp', label: 'whatsapp', val: whatsapp, color: '#25D366' }
                 ].map((item, i) => (
-                  <GlowCard key={i} style={{ padding: '16px 18px', borderLeft: `3px solid ${item.color}` }}>
+                  <GlowCard key={i} style={{ padding: '12px 16px', borderLeft: `3px solid ${item.color}` }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                      <div style={{ width: '36px', height: '36px', borderRadius: '8px', background: `${item.color}10`, border: `1px solid ${item.color}20`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <div style={{ width: '30px', height: '30px', borderRadius: '8px', background: `${item.color}10`, border: `1px solid ${item.color}20`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                         <Icon d={icons[item.icon]} color={item.color} size={16} />
                       </div>
                       <div>
@@ -288,6 +288,7 @@ export function Contact() {
               </div>
             </div>
           </div>
+        </div>
         </div>
       </section>
       <Footer />
