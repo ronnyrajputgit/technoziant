@@ -16,10 +16,10 @@ export function Home() {
       <FeaturedProjects />
       <TechieSection />
       <ServicesGrid />
+      <WhyChooseUs />
       <IndustriesSection />
       <TechStack />
       <Testimonials />
-      <WhyChooseUs />
       <CTA />
       <Footer />
     </main>
