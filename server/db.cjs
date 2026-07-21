@@ -39,6 +39,7 @@ async function initDB() {
     await client.query(`CREATE TABLE IF NOT EXISTS work_items (id SERIAL PRIMARY KEY, title VARCHAR(255) NOT NULL, description TEXT DEFAULT '', image VARCHAR(500) DEFAULT '', link VARCHAR(500) DEFAULT '', category VARCHAR(100) DEFAULT '', tech TEXT[] DEFAULT '{}', display_order INTEGER DEFAULT 0, visible BOOLEAN DEFAULT true, created_at TIMESTAMP DEFAULT NOW(), updated_at TIMESTAMP DEFAULT NOW())`)
     await client.query(`CREATE TABLE IF NOT EXISTS feedback_submissions (id SERIAL PRIMARY KEY, name VARCHAR(255) NOT NULL, email VARCHAR(255) DEFAULT '', company VARCHAR(255) DEFAULT '', rating INTEGER DEFAULT 5, feedback TEXT DEFAULT '', project VARCHAR(255) DEFAULT '', created_at TIMESTAMP DEFAULT NOW())`)
     await client.query("ALTER TABLE site_settings ALTER COLUMN value TYPE TEXT").catch(() => {})
+    await client.query("ALTER TABLE feedback_submissions ADD COLUMN IF NOT EXISTS status VARCHAR(50) DEFAULT 'pending'").catch(() => {})
     console.log('Database tables initialized')
   } finally {
     client.release()
