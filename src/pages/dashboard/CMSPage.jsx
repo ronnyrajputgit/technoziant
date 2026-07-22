@@ -429,7 +429,7 @@ export function CMSPage({ table }) {
           No items found. {items.length === 0 ? 'Click "Add" to create one.' : 'Try adjusting your search.'}
         </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '8px' }}>
+        <div className="fade-in" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '8px' }}>
           {filteredItems.map((item, idx) => (
             <div key={item.id} className="liquid-glass" style={{ padding: '10px 12px', borderRadius: '8px', transition: 'all 0.15s', position: 'relative' }}
               onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.04)'}

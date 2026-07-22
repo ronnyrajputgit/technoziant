@@ -108,7 +108,7 @@ export function HeaderSettingsPage() {
   }
 
   return (
-    <div>
+    <div className="fade-in">
       <div style={{ marginBottom: '20px' }}>
         <div style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '4px', fontFamily: 'var(--font-code)' }}>system</div>
         <h1 style={{ fontSize: 'clamp(22px, 4vw, 28px)', fontWeight: '700' }}>Header & Logo</h1>

@@ -120,7 +120,7 @@ export function FeedbackPage() {
       ) : filtered.length === 0 ? (
         <div style={{ textAlign: 'center', padding: '60px', color: 'var(--text-muted)', fontFamily: 'var(--font-code)' }}>No feedback submissions found.</div>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
           {filtered.map(item => (
             <div key={item.id} className="liquid-glass" style={{ padding: '16px', borderRadius: '10px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '10px' }}>

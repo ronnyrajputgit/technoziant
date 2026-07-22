@@ -258,7 +258,7 @@ export function DatabaseConnectionsPage() {
   if (loading) return <CMSSkeleton />
 
   return (
-    <div>
+    <div className="fade-in">
       <FormModal open={formOpen} onClose={() => { setFormOpen(false); setEditingItem(null); setTestResult(null) }} onSave={handleSave} item={editingItem} saving={saving} testing={testing} onTest={handleTest} testResult={testResult} />
       <ConfirmDialog open={!!deleteConfirm} title="Delete Connection?" message="This database connection will be permanently removed." onConfirm={handleDelete} onCancel={() => setDeleteConfirm(null)} />
 

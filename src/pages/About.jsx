@@ -47,7 +47,7 @@ export function About() {
   if (loading) return <SiteSkeleton />
 
   return (
-    <main style={{ paddingTop: '100px', minHeight: '100vh' }}>
+    <main className="fade-in" style={{ paddingTop: '100px', minHeight: '100vh' }}>
       {/* Hero Section */}
       <section className="section">
         <div className="container">

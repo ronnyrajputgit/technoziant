@@ -153,7 +153,7 @@ export function InquiriesPage() {
       {filtered.length === 0 ? (
         <div className="liquid-glass" style={{ padding: '32px', borderRadius: '10px', textAlign: 'center' }}><MailIcon sx={{ fontSize: 32, color: 'var(--text-muted)', opacity: 0.3, mb: 1 }} /><div style={{ fontSize: '13px', fontWeight: '600', color: 'var(--text)', marginBottom: '4px' }}>No inquiries</div><div style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'var(--font-code)' }}>{inquiries.length === 0 ? 'No one has submitted a contact form yet.' : 'Try adjusting your search.'}</div></div>
       ) : (
-        <>
+        <div className="fade-in">
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             {paginated.map(inq => {
               const ss = getStatusStyle(inq.status)
@@ -233,7 +233,7 @@ export function InquiriesPage() {
               <span style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'var(--font-code)', marginLeft: '6px' }}>{filtered.length} inquiries</span>
             </div>
           )}
-        </>
+        </div>
       )}
     </div>
   )

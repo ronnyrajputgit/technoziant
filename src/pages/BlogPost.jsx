@@ -18,7 +18,7 @@ export function BlogPost() {
   if (!blog) return <main style={{ paddingTop: '110px', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><div style={{ textAlign: 'center' }}><h2>Blog not found</h2><Link to="/blog" style={{ color: 'var(--accent)', marginTop: '12px', display: 'inline-block' }}>← Back to Blog</Link></div></main>
 
   return (
-    <main style={{ paddingTop: '100px', minHeight: '100vh' }}>
+    <main className="fade-in" style={{ paddingTop: '100px', minHeight: '100vh' }}>
       {/* Cover Image - Full Width */}
       {blog.cover_image && (
         <div style={{ marginBottom: '40px', overflow: 'hidden' }}>

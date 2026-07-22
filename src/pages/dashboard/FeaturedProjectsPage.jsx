@@ -378,7 +378,7 @@ export function FeaturedProjectsPage() {
           No projects found. {items.length === 0 ? 'Click "Add Project" to create one.' : 'Try adjusting your search.'}
         </div>
       ) : (
-        <>
+        <div className="fade-in">
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '8px' }}>
             {paginatedItems.map((item, idx) => {
               const color = projectColors[(item.id || idx) % projectColors.length]
@@ -461,7 +461,7 @@ export function FeaturedProjectsPage() {
               <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'var(--font-code)', marginLeft: '8px' }}>{filteredItems.length} project{filteredItems.length !== 1 ? 's' : ''}</span>
             </div>
           )}
-        </>
+        </div>
       )}
     </div>
   )

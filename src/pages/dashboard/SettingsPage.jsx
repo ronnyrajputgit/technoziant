@@ -120,7 +120,7 @@ export function SettingsPage() {
       ) : Object.keys(settings).length === 0 ? (
         <div style={{ textAlign: 'center', padding: '60px', color: 'var(--text-muted)', fontFamily: 'var(--font-code)' }}>No settings found. Click "Add Setting" to create one.</div>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+        <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
           {Object.entries(settings).map(([key, value]) => (
             <div key={key} className="liquid-glass" style={{ padding: '12px 16px', borderRadius: '10px', display: 'flex', alignItems: 'center', gap: '12px' }}>
               <div style={{ width: '200px', flexShrink: 0 }}>

@@ -307,7 +307,7 @@ export function Dashboard() {
   const countryChartData = (stats.inquiries.byCountry || []).map(c => ({ name: c.country, count: parseInt(c.count) }))
 
   return (
-    <div>
+    <div className="fade-in">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '12px' }}>
         <div>
           <div style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '4px', fontFamily: 'var(--font-code)' }}>overview</div>

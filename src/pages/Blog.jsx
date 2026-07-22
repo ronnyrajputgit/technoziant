@@ -116,7 +116,7 @@ export function Blog() {
             <p style={{ color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>No articles found.</p>
           </div>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '10px' }}>
+          <div className="fade-in" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '10px' }}>
             {filtered.map(post => (
               <div key={post.id} className="liquid-glass" style={{ borderRadius: '10px', overflow: 'hidden', transition: 'all 0.2s', cursor: 'pointer' }}
                 onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'}
