@@ -1,27 +1,67 @@
 import { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { TextReveal } from '../components/ui/TextReveal'
 import { WaterDropCard } from '../components/ui/Cards'
 import { useApp } from '../context/AppContext'
 import { Footer } from '../components/layout/Footer'
 import { api } from '../utils/api'
+import { Skeleton } from '@mui/material'
 
 const colors = ['#4f8eff', '#a855f7', '#06d6a0', '#f472b6', '#fbbf24', '#ef4444', '#22d3ee', '#10b981']
+
+function WorkSkeleton() {
+  return (
+    <main style={{ paddingTop: '100px', minHeight: '100vh' }}>
+      <section className="container" style={{ marginBottom: '32px' }}>
+        <Skeleton variant="text" width={80} height={12} sx={{ bgcolor: 'rgba(255,255,255,0.06)', mb: 1 }} animation="wave" />
+        <Skeleton variant="text" width="40%" height={48} sx={{ bgcolor: 'rgba(255,255,255,0.06)', mb: 1.5 }} animation="wave" />
+        <Skeleton variant="text" width="30%" height={14} sx={{ bgcolor: 'rgba(255,255,255,0.06)', mb: 2 }} animation="wave" />
+        <div style={{ display: 'flex', gap: 6 }}>
+          <Skeleton variant="rounded" width={60} height={32} sx={{ borderRadius: 1, bgcolor: 'rgba(255,255,255,0.06)' }} animation="wave" />
+          <Skeleton variant="rounded" width={50} height={32} sx={{ borderRadius: 1, bgcolor: 'rgba(255,255,255,0.06)' }} animation="wave" />
+          <Skeleton variant="rounded" width={55} height={32} sx={{ borderRadius: 1, bgcolor: 'rgba(255,255,255,0.06)' }} animation="wave" />
+        </div>
+      </section>
+      <section className="section" style={{ paddingTop: 0 }}>
+        <div className="container">
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '12px' }}>
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="liquid-glass" style={{ borderRadius: 12, overflow: 'hidden' }}>
+                <Skeleton variant="rectangular" height={180} sx={{ bgcolor: 'rgba(255,255,255,0.06)' }} animation="wave" />
+                <div style={{ padding: 16 }}>
+                  <Skeleton variant="text" width="60%" height={18} sx={{ bgcolor: 'rgba(255,255,255,0.06)', mb: 0.5 }} animation="wave" />
+                  <Skeleton variant="text" width="100%" height={12} sx={{ bgcolor: 'rgba(255,255,255,0.06)', mb: 0.5 }} animation="wave" />
+                  <Skeleton variant="text" width="80%" height={12} sx={{ bgcolor: 'rgba(255,255,255,0.06)', mb: 1.5 }} animation="wave" />
+                  <div style={{ display: 'flex', gap: 4 }}>
+                    <Skeleton variant="rounded" width={50} height={18} sx={{ borderRadius: 0.5, bgcolor: 'rgba(255,255,255,0.06)' }} animation="wave" />
+                    <Skeleton variant="rounded" width={60} height={18} sx={{ borderRadius: 0.5, bgcolor: 'rgba(255,255,255,0.06)' }} animation="wave" />
+                    <Skeleton variant="rounded" width={45} height={18} sx={{ borderRadius: 0.5, bgcolor: 'rgba(255,255,255,0.06)' }} animation="wave" />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    </main>
+  )
+}
 
 export function Work() {
   const { setCursorType } = useApp()
   const [h, setH] = useState(null)
   const [f, setF] = useState('all')
   const [projects, setProjects] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [expandedId, setExpandedId] = useState(null)
 
   useEffect(() => {
-    api.getContent('work_items', { visible: 'true' }).then(setProjects).catch(() => {})
+    api.getContent('work_items', { visible: 'true' }).then(setProjects).catch(() => {}).finally(() => setLoading(false))
   }, [])
 
-  const filtered = f === 'all' ? projects : projects.filter(p => p.category === f)
+  if (loading) return <WorkSkeleton />
 
-  const openProject = (_project) => {
-  }
+  const filtered = f === 'all' ? projects : projects.filter(p => p.category === f)
 
   return (
     <main style={{ paddingTop: '100px', minHeight: '100vh' }}>
@@ -41,12 +81,13 @@ export function Work() {
 
       <section className="section" style={{ paddingTop: 0 }}>
         <div className="container">
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '12px' }}>
+          <div className="fade-in" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '12px' }}>
             {filtered.map((p, i) => {
               const color = colors[i % colors.length]
+              const expanded = expandedId === p.id
               return (
                 <WaterDropCard key={p.id} color={color} style={{ padding: 0 }}>
-                  <div onClick={() => openProject(p)}
+                  <div
                     onMouseEnter={() => { setH(p.id); setCursorType('project') }}
                     onMouseLeave={() => { setH(null); setCursorType('default') }}
                     style={{ cursor: 'pointer' }}>
@@ -74,7 +115,34 @@ export function Work() {
                           {p.tech.map(t => <span key={t} className="liquid-glass" style={{ padding: '2px 7px', borderRadius: '4px', fontSize: '9px', fontWeight: '500', color, fontFamily: "var(--font-code)" }}>{t}</span>)}
                         </div>
                       )}
+                      <div style={{ marginTop: '10px' }}>
+                        <button onClick={(e) => { e.stopPropagation(); setExpandedId(expanded ? null : p.id) }}
+                          style={{ padding: '5px 12px', borderRadius: '6px', border: `1px solid ${color}40`, background: `${color}10`, color, fontSize: '10px', fontWeight: '600', cursor: 'pointer', fontFamily: "var(--font-code)", display: 'flex', alignItems: 'center', gap: '4px', transition: 'all 0.2s' }}>
+                          {expanded ? '− Close' : '> View Project'}
+                        </button>
+                      </div>
                     </div>
+
+                    <AnimatePresence>
+                      {expanded && (
+                        <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.3, ease: [0.76, 0, 0.24, 1] }}
+                          style={{ overflow: 'hidden', borderTop: '1px solid var(--glass-border)' }}>
+                          <div style={{ padding: '16px' }}>
+                            {p.client && <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'var(--font-code)', marginBottom: '6px' }}><span style={{ color }}>Client:</span> {p.client}</div>}
+                            {p.category && <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'var(--font-code)', marginBottom: '6px' }}><span style={{ color }}>Category:</span> {p.category}</div>}
+                            {p.tech && p.tech.length > 0 && (
+                              <div style={{ marginTop: '8px' }}>
+                                <div style={{ fontSize: '9px', color: 'var(--text-muted)', fontFamily: 'var(--font-code)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px' }}>Tech Stack</div>
+                                <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
+                                  {p.tech.map(t => <span key={t} style={{ padding: '3px 8px', borderRadius: '4px', fontSize: '10px', background: `${color}15`, color, fontFamily: 'var(--font-code)' }}>{t}</span>)}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
                 </WaterDropCard>
               )
