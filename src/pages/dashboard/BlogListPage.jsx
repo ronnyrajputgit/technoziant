@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { api } from '../../utils/api'
+import { CMSSkeleton } from '../../components/ui/Skeleton'
 import VisibilityIcon from '@mui/icons-material/Visibility'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
@@ -122,7 +123,7 @@ export function BlogListPage() {
       </div>
 
       {loading ? (
-        <div style={{ textAlign: 'center', padding: '60px', color: 'var(--text-muted)', fontFamily: 'var(--font-code)' }}>Loading...</div>
+        <div style={{ textAlign: 'center', padding: '60px' }}><CMSSkeleton /></div>
       ) : filteredBlogs.length === 0 ? (
         <div style={{ textAlign: 'center', padding: '60px' }}>
           <p style={{ color: 'var(--text-muted)', marginBottom: '16px', fontFamily: 'var(--font-code)' }}>No blogs {filter !== 'all' ? `(${filter})` : ''} {search ? `matching "${search}"` : ''} found.</p>

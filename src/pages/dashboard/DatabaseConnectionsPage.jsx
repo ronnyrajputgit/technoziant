@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { api } from '../../utils/api'
+import { CMSSkeleton } from '../../components/ui/Skeleton'
 import SaveIcon from '@mui/icons-material/Save'
 import CloseIcon from '@mui/icons-material/Close'
 import AddIcon from '@mui/icons-material/Add'
@@ -254,7 +255,7 @@ export function DatabaseConnectionsPage() {
   const getTypeColor = (type) => ({ PostgreSQL: '#336791', MySQL: '#4479A1', MongoDB: '#47A248', SQLite: '#003B57' }[type] || '#94a3b8')
   const getTypeIcon = (type) => ({ PostgreSQL: '🐘', MySQL: '🐬', MongoDB: '🍃', SQLite: '📦' }[type] || '🗄️')
 
-  if (loading) return <div style={{ textAlign: 'center', padding: '60px', color: 'var(--text-muted)', fontFamily: 'var(--font-code)' }}>Loading...</div>
+  if (loading) return <CMSSkeleton />
 
   return (
     <div>

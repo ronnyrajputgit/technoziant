@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import { api } from '../../utils/api'
+import { CMSSkeleton } from '../../components/ui/Skeleton'
 import SearchIcon from '@mui/icons-material/Search'
 import CloseIcon from '@mui/icons-material/Close'
 import DeleteIcon from '@mui/icons-material/Delete'
@@ -118,7 +119,7 @@ export function InquiriesPage() {
 
   const getStatusStyle = (s) => ({ new: { bg: 'rgba(245,158,11,0.12)', color: '#f59e0b', label: 'New' }, replied: { bg: 'rgba(34,197,94,0.12)', color: '#22c55e', label: 'Replied' }, archived: { bg: 'rgba(148,163,184,0.12)', color: '#94a3b8', label: 'Archived' } }[s] || { bg: 'rgba(245,158,11,0.12)', color: '#f59e0b', label: 'New' })
 
-  if (loading) return <div style={{ textAlign: 'center', padding: '60px', color: 'var(--text-muted)', fontFamily: 'var(--font-code)' }}>Loading...</div>
+  if (loading) return <CMSSkeleton />
 
   return (
     <div>

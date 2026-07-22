@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { api } from '../../utils/api'
+import { CMSSkeleton } from '../../components/ui/Skeleton'
 import SaveIcon from '@mui/icons-material/Save'
 import CloseIcon from '@mui/icons-material/Close'
 import CropFreeIcon from '@mui/icons-material/CropFree'
@@ -103,7 +104,7 @@ export function HeaderSettingsPage() {
   }
 
   if (loading) {
-    return <div style={{ textAlign: 'center', padding: '60px', color: 'var(--text-muted)', fontFamily: 'var(--font-code)' }}>Loading...</div>
+    return <CMSSkeleton />
   }
 
   return (

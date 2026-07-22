@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { api } from '../../utils/api'
+import { CMSSkeleton } from '../../components/ui/Skeleton'
 import SaveIcon from '@mui/icons-material/Save'
 import AddIcon from '@mui/icons-material/Add'
 import DeleteIcon from '@mui/icons-material/Delete'
@@ -115,7 +116,7 @@ export function SettingsPage() {
 
       {/* Settings list */}
       {loading ? (
-        <div style={{ textAlign: 'center', padding: '60px', color: 'var(--text-muted)', fontFamily: 'var(--font-code)' }}>Loading...</div>
+        <div style={{ textAlign: 'center', padding: '60px' }}><CMSSkeleton /></div>
       ) : Object.keys(settings).length === 0 ? (
         <div style={{ textAlign: 'center', padding: '60px', color: 'var(--text-muted)', fontFamily: 'var(--font-code)' }}>No settings found. Click "Add Setting" to create one.</div>
       ) : (

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { api } from '../../utils/api'
+import { CMSSkeleton } from '../../components/ui/Skeleton'
 import SaveIcon from '@mui/icons-material/Save'
 import CloseIcon from '@mui/icons-material/Close'
 import MailIcon from '@mui/icons-material/Mail'
@@ -93,7 +94,7 @@ export function ContactSettingsPage() {
     finally { setSaving(false) }
   }
 
-  if (loading) return <div style={{ textAlign: 'center', padding: '60px', color: 'var(--text-muted)', fontFamily: 'var(--font-code)' }}>Loading...</div>
+  if (loading) return <CMSSkeleton />
 
   const Section = ({ title, color, fields }) => (
     <div className="liquid-glass" style={{ padding: '14px 16px', borderRadius: '10px', marginBottom: '10px' }}>

@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import { api } from '../../utils/api'
+import { CMSSkeleton } from '../../components/ui/Skeleton'
 import SearchIcon from '@mui/icons-material/Search'
 import AddIcon from '@mui/icons-material/Add'
 import EditIcon from '@mui/icons-material/Edit'
@@ -371,7 +372,7 @@ export function FeaturedProjectsPage() {
       </div>
 
       {loading ? (
-        <div style={{ textAlign: 'center', padding: '60px', color: 'var(--text-muted)', fontFamily: 'var(--font-code)' }}>Loading...</div>
+        <div style={{ textAlign: 'center', padding: '60px' }}><CMSSkeleton /></div>
       ) : paginatedItems.length === 0 ? (
         <div style={{ textAlign: 'center', padding: '60px', color: 'var(--text-muted)', fontFamily: 'var(--font-code)' }}>
           No projects found. {items.length === 0 ? 'Click "Add Project" to create one.' : 'Try adjusting your search.'}

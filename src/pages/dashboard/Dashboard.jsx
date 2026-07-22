@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react'
 import { Link, useNavigate, useLocation, Outlet } from 'react-router-dom'
 import { useApp } from '../../context/AppContext'
 import { api } from '../../utils/api'
+import { DashboardSkeleton } from '../../components/ui/Skeleton'
 import VisibilityIcon from '@mui/icons-material/Visibility'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
@@ -241,7 +242,7 @@ export function Dashboard() {
   }, [user, nav])
 
   if (!user) return null
-  if (loading) return <div style={{ textAlign: 'center', padding: '80px', color: 'var(--text-muted)', fontFamily: 'var(--font-code)' }}>Loading dashboard...</div>
+  if (loading) return <DashboardSkeleton />
   if (!stats) return <div style={{ textAlign: 'center', padding: '80px', color: 'var(--text-muted)', fontFamily: 'var(--font-code)' }}>Failed to load stats.</div>
 
   const COLORS = ['#4f8eff', '#22c55e', '#f59e0b', '#ef4444', '#a855f7', '#06d6a0', '#f472b6', '#3b82f6']

@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom'
 import { api } from '../utils/api'
 import { Footer } from '../components/layout/Footer'
 import { renderContent } from '../utils/renderContent'
+import { SiteSkeleton } from '../components/ui/Skeleton'
 
 export function BlogPost() {
   const { slug } = useParams()
@@ -13,7 +14,7 @@ export function BlogPost() {
     api.getBlog(slug).then(setBlog).catch(console.error).finally(() => setLoading(false))
   }, [slug])
 
-  if (loading) return <main style={{ paddingTop: '110px', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><p style={{ fontFamily: "var(--font-code)", color: 'var(--text-muted)' }}>Loading...</p></main>
+  if (loading) return <SiteSkeleton />
   if (!blog) return <main style={{ paddingTop: '110px', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><div style={{ textAlign: 'center' }}><h2>Blog not found</h2><Link to="/blog" style={{ color: 'var(--accent)', marginTop: '12px', display: 'inline-block' }}>← Back to Blog</Link></div></main>
 
   return (

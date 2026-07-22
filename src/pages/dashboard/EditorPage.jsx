@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useApp } from '../../context/AppContext'
 import { api } from '../../utils/api'
 import { BlogEditor } from '../../components/editor/BlogEditor'
+import { CMSSkeleton } from '../../components/ui/Skeleton'
 
 function ErrorDialog({ error, onClose }) {
   if (!error) return null
@@ -138,7 +139,7 @@ export function EditorPage() {
         </div>
       </aside>
       <main style={{ flex: 1, overflow: 'auto' }}>
-        {loading ? <p style={{ textAlign: 'center', fontFamily: "var(--font-code)", color: 'var(--text-muted)', paddingTop: '40px' }}>Loading...</p> : (
+        {loading ? <div style={{ padding: '40px' }}><CMSSkeleton /></div> : (
           <BlogEditor initialContent={blogData} onSave={handleSave} saving={saving} saved={saved} />
         )}
       </main>

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { api } from '../../utils/api'
+import { CMSSkeleton } from '../../components/ui/Skeleton'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import CancelIcon from '@mui/icons-material/Cancel'
 import DeleteIcon from '@mui/icons-material/Delete'
@@ -115,7 +116,7 @@ export function FeedbackPage() {
 
       {/* Feedback List */}
       {loading ? (
-        <div style={{ textAlign: 'center', padding: '60px', color: 'var(--text-muted)', fontFamily: 'var(--font-code)' }}>Loading...</div>
+        <div style={{ textAlign: 'center', padding: '60px' }}><CMSSkeleton /></div>
       ) : filtered.length === 0 ? (
         <div style={{ textAlign: 'center', padding: '60px', color: 'var(--text-muted)', fontFamily: 'var(--font-code)' }}>No feedback submissions found.</div>
       ) : (

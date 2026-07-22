@@ -6,6 +6,7 @@ import { useApp } from '../context/AppContext'
 import { Footer } from '../components/layout/Footer'
 import { LeaderModal } from '../components/ui/LeaderModal'
 import { api } from '../utils/api'
+import { SiteSkeleton } from '../components/ui/Skeleton'
 
 const teamGradients = [
   'linear-gradient(135deg, #4f8eff, #06d6a0)',
@@ -43,7 +44,7 @@ export function About() {
     }).finally(() => setLoading(false))
   }, [])
 
-  if (loading) return <main style={{ paddingTop: '110px', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><p style={{ fontFamily: "var(--font-code)", color: 'var(--text-muted)' }}>Loading...</p></main>
+  if (loading) return <SiteSkeleton />
 
   return (
     <main style={{ paddingTop: '100px', minHeight: '100vh' }}>
