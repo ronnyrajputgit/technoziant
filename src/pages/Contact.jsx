@@ -88,7 +88,7 @@ function ConnectCard({ method, index }) {
 }
 
 export function Contact() {
-  const [f, setF] = useState({ name: '', email: '', company: '', service: '', message: '' })
+  const [f, setF] = useState({ name: '', email: '', company: '', service: '', message: '', gender: '' })
   const [focus, setFocus] = useState(null)
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -132,7 +132,7 @@ export function Contact() {
       } catch {}
       await api.submitInquiry({ ...f, ...locationData })
       setSubmitted(true)
-      setF({ name: '', email: '', company: '', service: '', message: '' })
+      setF({ name: '', email: '', company: '', service: '', message: '', gender: '' })
       setTimeout(() => setSubmitted(false), 5000)
     } catch (err) {
       setError(err.message || 'Failed to submit. Please try again.')
@@ -237,7 +237,16 @@ export function Contact() {
                     <input type="email" value={f.email} onChange={e => setF({ ...f, email: e.target.value })} onFocus={() => setFocus('email')} onBlur={() => setFocus(null)} placeholder="john@example.com" required style={inp('email')} />
                   </div>
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '18px', marginBottom: '18px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '18px', marginBottom: '18px' }}>
+                  <div style={fieldWrap}>
+                    <label style={{ fontSize: '9px', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px', display: 'block', fontFamily: "var(--font-code)" }}>Gender *</label>
+                    <select value={f.gender} onChange={e => setF({ ...f, gender: e.target.value })} onFocus={() => setFocus('gender')} onBlur={() => setFocus(null)} required style={{ ...inp('gender'), cursor: 'pointer', appearance: 'none' }}>
+                      <option value="">Select</option>
+                      <option value="male">Male</option>
+                      <option value="female">Female</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </div>
                   <div style={fieldWrap}>
                     <label style={{ fontSize: '9px', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '6px', display: 'block', fontFamily: "var(--font-code)" }}>Company</label>
                     <input type="text" value={f.company} onChange={e => setF({ ...f, company: e.target.value })} onFocus={() => setFocus('company')} onBlur={() => setFocus(null)} placeholder="Company Inc" style={inp('company')} />

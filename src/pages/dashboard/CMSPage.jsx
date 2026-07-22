@@ -58,6 +58,7 @@ const CMS_TABLES = {
   team_members: { label: 'Team Members', fields: [
     { key: 'name', label: 'Name', type: 'text', required: true },
     { key: 'role', label: 'Role', type: 'text' },
+    { key: 'gender', label: 'Gender', type: 'select', options: ['', 'male', 'female', 'other'] },
     { key: 'image', label: 'Image', type: 'image_upload' },
     { key: 'bio', label: 'Bio', type: 'textarea' },
     { key: 'achievements', label: 'Achievements (comma separated)', type: 'text' },
@@ -220,6 +221,13 @@ function FormModal({ open, onClose, onSave, table, config, item, saving }) {
                       + Add Stat
                     </button>
                   </div>
+                ) : f.type === 'select' ? (
+                  <select value={form[f.key] ?? ''} onChange={e => setForm({ ...form, [f.key]: e.target.value })} required={f.required}
+                    style={{ ...inputStyle, appearance: 'none', cursor: 'pointer', backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 10px center' }}>
+                    {(f.options || []).map(opt => (
+                      <option key={opt} value={opt} style={{ background: '#1a1a2e', color: 'var(--text)' }}>{opt || '-- Select --'}</option>
+                    ))}
+                  </select>
                 ) : f.type === 'number' ? (
                   <input type="number" value={form[f.key] ?? 0} onChange={e => setForm({ ...form, [f.key]: parseInt(e.target.value) || 0 })} required={f.required} style={inputStyle} />
                 ) : (

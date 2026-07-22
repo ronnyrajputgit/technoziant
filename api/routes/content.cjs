@@ -18,6 +18,10 @@ const TABLES_WITH_VISIBLE = [
 
 const TABLES = [...TABLES_WITH_UPDATED_AT, 'feedback_submissions', 'testimonials', 'database_connections', 'contact_inquiries']
 
+const JSONB_COLUMNS = {
+  team_members: ['stats', 'social_links'],
+}
+
 function authMiddleware(req, res, next) {
   const token = req.headers.authorization?.split(' ')[1]
   if (!token) return res.status(401).json({ error: 'No token provided' })
@@ -43,7 +47,7 @@ module.exports = function(pool) {
     if (now - lastSubmit < 30000) {
       return res.status(429).json({ error: 'Too many requests. Please wait 30 seconds before submitting again.' })
     }
-    const { name, email, phone, company, service, message } = req.body
+    const { name, email, phone, company, service, message, gender } = req.body
     if (!name?.trim() || !email?.trim() || !message?.trim()) {
       return res.status(400).json({ error: 'Name, email, and message are required.' })
     }
@@ -83,8 +87,8 @@ module.exports = function(pool) {
     const clientLon = req.body.longitude || null
     if (!location && clientLocation) location = clientLocation
     pool.query(
-      `INSERT INTO contact_inquiries (name, email, phone, company, service, message, ip_address, location, country, region, city, latitude, longitude) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING *`,
-      [name.trim(), email.trim(), phone || '', company || '', service || '', message.trim(), ip, location, country, region, city, clientLat, clientLon],
+      `INSERT INTO contact_inquiries (name, email, phone, company, service, message, ip_address, location, country, region, city, latitude, longitude, gender) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) RETURNING *`,
+      [name.trim(), email.trim(), phone || '', company || '', service || '', message.trim(), ip, location, country, region, city, clientLat, clientLon, gender || ''],
       (err, result) => {
         if (err) return res.status(500).json({ error: 'Failed to submit inquiry.' })
         res.json({ success: true })
@@ -165,7 +169,7 @@ module.exports = function(pool) {
       tech_stack: ['name', 'category', 'icon', 'level', 'display_order', 'visible'],
       testimonials: ['client_name', 'company', 'feedback', 'rating', 'avatar', 'approved'],
       why_choose: ['title', 'description', 'icon', 'display_order', 'visible'],
-      team_members: ['name', 'role', 'image', 'bio', 'achievements', 'stats', 'social_links', 'display_order', 'visible'],
+      team_members: ['name', 'role', 'gender', 'image', 'bio', 'achievements', 'stats', 'social_links', 'display_order', 'visible'],
       stats: ['label', 'value', 'icon', 'display_order', 'visible'],
       awards: ['title', 'year', 'icon', 'display_order', 'visible'],
       about_content: ['section', 'title', 'description', 'image'],
@@ -173,7 +177,7 @@ module.exports = function(pool) {
       work_items: ['title', 'description', 'image', 'link', 'category', 'tech', 'display_order', 'visible'],
       feedback_submissions: ['name', 'email', 'company', 'rating', 'feedback', 'project', 'status'],
       database_connections: ['name', 'type', 'host', 'port', 'database_name', 'username', 'password', 'ssl', 'is_active', 'status', 'last_tested'],
-      contact_inquiries: ['name', 'email', 'phone', 'company', 'service', 'message', 'ip_address', 'location', 'country', 'region', 'city', 'latitude', 'longitude', 'status', 'reply', 'replied_at']
+      contact_inquiries: ['name', 'email', 'phone', 'company', 'service', 'message', 'ip_address', 'location', 'country', 'region', 'city', 'latitude', 'longitude', 'status', 'reply', 'replied_at', 'gender']
     }
 
     const cols = columns[table]
@@ -187,8 +191,10 @@ module.exports = function(pool) {
     for (const col of cols) {
       if (data[col] !== undefined) {
         let val = data[col]
-        if (Array.isArray(val)) val = JSON.stringify(val)
-        if (typeof val === 'object' && val !== null && col !== 'tech' && col !== 'features' && col !== 'social_links') {
+        const isJsonb = JSONB_COLUMNS[table]?.includes(col)
+        if (Array.isArray(val)) {
+          val = isJsonb ? JSON.stringify(val) : val
+        } else if (typeof val === 'object' && val !== null) {
           val = JSON.stringify(val)
         }
         fields.push(col)
@@ -223,8 +229,12 @@ module.exports = function(pool) {
     for (const [key, val] of Object.entries(data)) {
       if (key === 'id') continue
       let value = val
-      if (Array.isArray(value)) value = JSON.stringify(value)
-      if (typeof value === 'object' && value !== null) value = JSON.stringify(value)
+      const isJsonb = JSONB_COLUMNS[table]?.includes(key)
+      if (Array.isArray(value)) {
+        value = isJsonb ? JSON.stringify(value) : value
+      } else if (typeof value === 'object' && value !== null) {
+        value = JSON.stringify(value)
+      }
       setClauses.push(`${key} = $${idx}`)
       values.push(value)
       idx++

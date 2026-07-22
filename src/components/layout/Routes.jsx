@@ -16,6 +16,7 @@ import { SolutionDetail } from '../../pages/SolutionDetail'
 import { ProcessDetail } from '../../pages/ProcessDetail'
 import { Login } from '../../pages/Login'
 import { Dashboard, DashboardLayout } from '../../pages/dashboard/Dashboard'
+import { BlogListPage } from '../../pages/dashboard/BlogListPage'
 import { EditorPage } from '../../pages/dashboard/EditorPage'
 import { CMSPage } from '../../pages/dashboard/CMSPage'
 import { FeaturedProjectsPage } from '../../pages/dashboard/FeaturedProjectsPage'
@@ -59,6 +60,7 @@ export function Routes() {
       <Route path="/dashboard/editor/:id" element={<EditorPage />} />
       <Route path="/dashboard" element={<DashboardLayout />}>
         <Route index element={<Dashboard />} />
+        <Route path="blogs" element={<BlogListPage />} />
         <Route path="cms/:table" element={<CMSRoute />} />
         <Route path="featured-projects" element={<FeaturedProjectsPage />} />
         <Route path="testimonials" element={<TestimonialsPage />} />

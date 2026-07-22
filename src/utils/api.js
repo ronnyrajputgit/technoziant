@@ -41,6 +41,7 @@ export const api = {
   deleteFeedback: (id) => apiFetch(`/content/feedback_submissions/${id}`, { method: 'DELETE' }),
 
   getSettings: () => apiFetch('/content/site_settings'),
+  getDashboardStats: () => apiFetch('/stats/dashboard'),
   updateSettings: async (data) => {
     const results = await Promise.all(
       Object.entries(data).map(([key, value]) =>

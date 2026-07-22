@@ -43,6 +43,7 @@ async function initDB() {
     await client.query("ALTER TABLE testimonials ALTER COLUMN avatar TYPE TEXT").catch(() => {})
     await client.query("ALTER TABLE team_members ALTER COLUMN image TYPE TEXT").catch(() => {})
     await client.query("ALTER TABLE team_members ADD COLUMN IF NOT EXISTS achievements TEXT[] DEFAULT '{}'").catch(() => {})
+    await client.query("ALTER TABLE team_members ADD COLUMN IF NOT EXISTS gender TEXT DEFAULT ''").catch(() => {})
     await client.query("ALTER TABLE team_members ADD COLUMN IF NOT EXISTS stats JSONB DEFAULT '[]'").catch(() => {})
     await client.query("ALTER TABLE about_content ALTER COLUMN image TYPE TEXT").catch(() => {})
     await client.query("ALTER TABLE about_content ALTER COLUMN title TYPE TEXT").catch(() => {})
@@ -90,6 +91,7 @@ async function initDB() {
     await client.query("ALTER TABLE contact_inquiries ADD COLUMN IF NOT EXISTS city TEXT DEFAULT ''").catch(() => {})
     await client.query("ALTER TABLE contact_inquiries ADD COLUMN IF NOT EXISTS latitude NUMERIC DEFAULT NULL").catch(() => {})
     await client.query("ALTER TABLE contact_inquiries ADD COLUMN IF NOT EXISTS longitude NUMERIC DEFAULT NULL").catch(() => {})
+    await client.query("ALTER TABLE contact_inquiries ADD COLUMN IF NOT EXISTS gender TEXT DEFAULT ''").catch(() => {})
     const dbCount = await client.query('SELECT COUNT(*) FROM database_connections').catch(() => ({ rows: [{ count: '0' }] }))
     if (parseInt(dbCount.rows[0].count) === 0) {
       const dbUser = process.env.DB_USER || ''

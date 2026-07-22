@@ -31,9 +31,10 @@ import FeedbackIcon from '@mui/icons-material/Feedback'
 import ContactPageIcon from '@mui/icons-material/ContactPage'
 import BrandingWatermarkIcon from '@mui/icons-material/BrandingWatermark'
 import MailIcon from '@mui/icons-material/Mail'
+import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, AreaChart, Area, Legend } from 'recharts'
 
 const sidebarLinks = [
-  { path: '/dashboard', label: 'Overview', icon: <ArticleIcon sx={{ fontSize: 18 }} /> },
+  { path: '/dashboard', label: 'Overview', icon: <BarChartIcon sx={{ fontSize: 18 }} /> },
   { group: 'Home Page Sections', icon: <WorkIcon sx={{ fontSize: 18 }} />, children: [
     { path: '/dashboard/featured-projects', label: 'Featured Projects', icon: <WorkIcon sx={{ fontSize: 16 }} /> },
     { path: '/dashboard/cms/tech_stack', label: 'Tech Stack', icon: <MemoryIcon sx={{ fontSize: 16 }} /> },
@@ -54,7 +55,7 @@ const sidebarLinks = [
     { path: '/dashboard/cms/awards', label: 'Achievements', icon: <EmojiEventsIcon sx={{ fontSize: 16 }} /> },
   ]},
   { group: 'Blog Management', icon: <FolderIcon sx={{ fontSize: 18 }} />, children: [
-    { path: '/dashboard', label: 'All Blogs', icon: <ArticleIcon sx={{ fontSize: 16 }} /> },
+    { path: '/dashboard/blogs', label: 'All Blogs', icon: <ArticleIcon sx={{ fontSize: 16 }} /> },
     { path: '/dashboard/editor', label: 'Create New Blog', icon: <AddIcon sx={{ fontSize: 16 }} /> },
   ]},
   { group: 'Site Management', icon: <BrandingWatermarkIcon sx={{ fontSize: 18 }} />, children: [
@@ -230,161 +231,359 @@ export function DashboardLayout() {
 
 export function Dashboard() {
   const { user } = useApp()
-  const [blogs, setBlogs] = useState([])
+  const [stats, setStats] = useState(null)
   const [loading, setLoading] = useState(true)
-  const [filter, setFilter] = useState('all')
-  const [search, setSearch] = useState('')
-  const [sortBy, setSortBy] = useState('newest')
-  const [deleteConfirm, setDeleteConfirm] = useState(null)
   const nav = useNavigate()
 
   useEffect(() => {
     if (!user) { nav('/login'); return }
-    api.getBlogs().then(setBlogs).catch(console.error).finally(() => setLoading(false))
+    api.getDashboardStats().then(setStats).catch(console.error).finally(() => setLoading(false))
   }, [user, nav])
 
-  const handleDelete = async (id) => {
-    await api.deleteBlog(id)
-    setBlogs(blogs.filter(b => b.id !== id))
-    setDeleteConfirm(null)
-  }
-
-  const togglePublish = async (blog) => {
-    const updated = await api.updateBlog(blog.id, { published: !blog.published })
-    setBlogs(blogs.map(b => b.id === blog.id ? { ...b, published: updated.published } : b))
-  }
-
-  const filteredBlogs = useMemo(() => {
-    let result = blogs
-    if (filter === 'published') result = result.filter(b => b.published)
-    else if (filter === 'drafts') result = result.filter(b => !b.published)
-    if (search.trim()) {
-      const q = search.toLowerCase()
-      result = result.filter(b => b.title?.toLowerCase().includes(q) || b.category?.toLowerCase().includes(q) || b.tags?.some(t => t.toLowerCase().includes(q)))
-    }
-    if (sortBy === 'newest') result = [...result].sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-    else if (sortBy === 'oldest') result = [...result].sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
-    else if (sortBy === 'title') result = [...result].sort((a, b) => a.title.localeCompare(b.title))
-    return result
-  }, [blogs, filter, search, sortBy])
-
   if (!user) return null
+  if (loading) return <div style={{ textAlign: 'center', padding: '80px', color: 'var(--text-muted)', fontFamily: 'var(--font-code)' }}>Loading dashboard...</div>
+  if (!stats) return <div style={{ textAlign: 'center', padding: '80px', color: 'var(--text-muted)', fontFamily: 'var(--font-code)' }}>Failed to load stats.</div>
 
-  const published = blogs.filter(b => b.published).length
-  const drafts = blogs.filter(b => !b.published).length
+  const COLORS = ['#4f8eff', '#22c55e', '#f59e0b', '#ef4444', '#a855f7', '#06d6a0', '#f472b6', '#3b82f6']
+  const genderColors = { male: '#3b82f6', female: '#f472b6', other: '#a855f7' }
+  const statusColors = { new: '#f59e0b', replied: '#22c55e', archived: '#94a3b8', published: '#22c55e', drafts: '#f59e0b' }
+
+  const SectionTitle = ({ children }) => (
+    <div style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '8px', fontFamily: 'var(--font-code)', borderBottom: '1px solid var(--glass-border)', paddingBottom: '6px' }}>{children}</div>
+  )
+
+  const StatCard = ({ label, value, color, sub }) => (
+    <div className="liquid-glass" style={{ padding: '14px 16px', borderRadius: '10px', borderLeft: `3px solid ${color}` }}>
+      <div style={{ fontSize: '22px', fontWeight: '700', color, fontFamily: 'var(--font-h)' }}>{value}</div>
+      <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'var(--font-code)' }}>{label}</div>
+      {sub && <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'var(--font-code)', opacity: 0.6, marginTop: '2px' }}>{sub}</div>}
+    </div>
+  )
+
+  const ChartCard = ({ title, children, w }) => (
+    <div className="liquid-glass" style={{ padding: '16px', borderRadius: '12px', width: w || '100%' }}>
+      <div style={{ fontSize: '12px', fontWeight: '600', marginBottom: '12px', fontFamily: 'var(--font-code)' }}>{title}</div>
+      {children}
+    </div>
+  )
+
+  const CustomTooltip = ({ active, payload, label }) => {
+    if (!active || !payload?.length) return null
+    return (
+      <div style={{ background: 'rgba(15,23,42,0.95)', border: '1px solid var(--glass-border)', borderRadius: '8px', padding: '8px 12px', fontSize: '11px', fontFamily: 'var(--font-code)' }}>
+        <div style={{ color: 'var(--text-muted)', marginBottom: '4px' }}>{label}</div>
+        {payload.map((p, i) => <div key={i} style={{ color: p.color }}>{p.name}: {p.value}</div>)}
+      </div>
+    )
+  }
+
+  const teamGenderData = [
+    { name: 'Male', value: stats.team.male, color: genderColors.male },
+    { name: 'Female', value: stats.team.female, color: genderColors.female },
+    { name: 'Other', value: stats.team.other, color: genderColors.other },
+  ].filter(d => d.value > 0)
+
+  const inquiryStatusData = [
+    { name: 'New', value: stats.inquiries.new, color: '#f59e0b' },
+    { name: 'Replied', value: stats.inquiries.replied, color: '#22c55e' },
+    { name: 'Archived', value: stats.inquiries.archived, color: '#94a3b8' },
+  ].filter(d => d.value > 0)
+
+  const inquiryGenderData = [
+    { name: 'Male', value: stats.inquiries.male, color: genderColors.male },
+    { name: 'Female', value: stats.inquiries.female, color: genderColors.female },
+    { name: 'Other', value: stats.inquiries.other, color: genderColors.other },
+  ].filter(d => d.value > 0)
+
+  const blogStatusData = [
+    { name: 'Published', value: stats.blogs.published, color: '#22c55e' },
+    { name: 'Drafts', value: stats.blogs.drafts, color: '#f59e0b' },
+  ].filter(d => d.value > 0)
+
+  const monthlyInquiriesChart = (stats.inquiries.monthly || []).map(m => ({ month: m.month, inquiries: parseInt(m.count) }))
+  const monthlyBlogsChart = (stats.blogs.monthly || []).map(m => ({ month: m.month, blogs: parseInt(m.count) }))
+  const serviceChartData = (stats.inquiries.byService || []).map(s => ({ name: s.service, count: parseInt(s.count) }))
+  const countryChartData = (stats.inquiries.byCountry || []).map(c => ({ name: c.country, count: parseInt(c.count) }))
 
   return (
-    <>
-      <ConfirmDialog open={!!deleteConfirm} title="Delete Blog?" message={`"${deleteConfirm?.title}" will be permanently deleted.`} onConfirm={() => handleDelete(deleteConfirm.id)} onCancel={() => setDeleteConfirm(null)} danger />
-          {/* Header */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '12px' }}>
-            <div>
-              <div style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '4px', fontFamily: "var(--font-code)" }}>overview</div>
-              <h1 style={{ fontSize: 'clamp(22px, 4vw, 32px)', fontWeight: '700' }}>Welcome, {user.name}</h1>
-            </div>
-            <Link to="/dashboard/editor" style={{ padding: '10px 20px', borderRadius: '8px', border: 'none', fontSize: '12px', fontWeight: '600', color: '#fff', cursor: 'pointer', background: 'linear-gradient(135deg, #22c55e, #16a34a)', textDecoration: 'none', fontFamily: "var(--font-code)", display: 'flex', alignItems: 'center', gap: '6px' }}><AddIcon sx={{ fontSize: 16 }} /> New Blog</Link>
-          </div>
+    <div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '12px' }}>
+        <div>
+          <div style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '4px', fontFamily: 'var(--font-code)' }}>overview</div>
+          <h1 style={{ fontSize: 'clamp(22px, 4vw, 32px)', fontWeight: '700' }}>Welcome, {user.name}</h1>
+        </div>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <Link to="/dashboard/editor" style={{ padding: '8px 16px', borderRadius: '8px', border: 'none', fontSize: '11px', fontWeight: '600', color: '#fff', cursor: 'pointer', background: 'linear-gradient(135deg, #22c55e, #16a34a)', textDecoration: 'none', fontFamily: 'var(--font-code)', display: 'flex', alignItems: 'center', gap: '4px' }}><AddIcon sx={{ fontSize: 14 }} /> New Blog</Link>
+          <Link to="/dashboard/inquiries" style={{ padding: '8px 16px', borderRadius: '8px', border: '1px solid var(--glass-border)', fontSize: '11px', fontWeight: '600', color: 'var(--text)', cursor: 'pointer', background: 'transparent', textDecoration: 'none', fontFamily: 'var(--font-code)', display: 'flex', alignItems: 'center', gap: '4px' }}><MailIcon sx={{ fontSize: 14 }} /> Inquiries</Link>
+        </div>
+      </div>
 
-          {/* Stats */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '10px', marginBottom: '24px' }}>
-            {[
-              { label: 'Total', value: blogs.length, color: '#4f8eff', bg: 'rgba(79,142,255,0.1)' },
-              { label: 'Published', value: published, color: '#22c55e', bg: 'rgba(34,197,94,0.1)' },
-              { label: 'Drafts', value: drafts, color: '#f59e0b', bg: 'rgba(245,158,11,0.1)' }
-            ].map((s, i) => (
-              <div key={i} className="liquid-glass" style={{ padding: '16px', borderRadius: '10px' }}>
-                <div style={{ fontSize: '24px', fontWeight: '700', color: s.color, fontFamily: 'var(--font-h)' }}>{s.value}</div>
-                <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>{s.label}</div>
+      {/* Top-Level Metrics */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '8px', marginBottom: '24px' }}>
+        <StatCard label="Team Members" value={stats.team.total} color="#a855f7" sub={`${stats.team.male}M / ${stats.team.female}F`} />
+        <StatCard label="Total Inquiries" value={stats.inquiries.total} color="#4f8eff" sub={`${stats.inquiries.new} new`} />
+        <StatCard label="Total Blogs" value={stats.blogs.total} color="#22c55e" sub={`${stats.blogs.published} live`} />
+        <StatCard label="Testimonials" value={stats.testimonials.total} color="#f59e0b" sub={`${stats.testimonials.approved} approved`} />
+        <StatCard label="Feedback" value={stats.feedback.total} color="#06d6a0" sub={`${stats.feedback.pending} pending`} />
+        <StatCard label="Services" value={stats.content.services} color="#3b82f6" />
+        <StatCard label="Projects" value={stats.content.projects} color="#ef4444" />
+        <StatCard label="Work Items" value={stats.content.workItems} color="#f472b6" />
+      </div>
+
+      {/* Section 1: Team Members */}
+      <div style={{ marginBottom: '28px' }}>
+        <SectionTitle>Team Members</SectionTitle>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '10px' }}>
+          <ChartCard title="Team Overview">
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+              <div style={{ textAlign: 'center', padding: '12px', borderRadius: '8px', background: 'rgba(168,85,247,0.08)' }}>
+                <div style={{ fontSize: '20px', fontWeight: '700', color: '#a855f7' }}>{stats.team.total}</div>
+                <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'var(--font-code)' }}>Total Members</div>
               </div>
-            ))}
-          </div>
-
-          {/* Search & Filter Bar */}
-          <div style={{ display: 'flex', gap: '8px', marginBottom: '16px', flexWrap: 'wrap', alignItems: 'center' }}>
-            <div style={{ position: 'relative', flex: '1 1 200px' }}>
-              <SearchIcon sx={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', fontSize: 16, color: 'var(--text-muted)' }} />
-              <input type="text" value={search} onChange={e => setSearch(e.target.value)} placeholder="Search blogs..."
-                style={{ width: '100%', padding: '8px 12px 8px 34px', borderRadius: '8px', border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.03)', color: 'var(--text)', fontSize: '12px', outline: 'none', fontFamily: "var(--font-code)", boxSizing: 'border-box' }} />
+              <div style={{ textAlign: 'center', padding: '12px', borderRadius: '8px', background: 'rgba(59,130,246,0.08)' }}>
+                <div style={{ fontSize: '20px', fontWeight: '700', color: '#3b82f6' }}>{stats.team.male}</div>
+                <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'var(--font-code)' }}>Male</div>
+              </div>
+              <div style={{ textAlign: 'center', padding: '12px', borderRadius: '8px', background: 'rgba(244,114,182,0.08)' }}>
+                <div style={{ fontSize: '20px', fontWeight: '700', color: '#f472b6' }}>{stats.team.female}</div>
+                <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'var(--font-code)' }}>Female</div>
+              </div>
+              <div style={{ textAlign: 'center', padding: '12px', borderRadius: '8px', background: 'rgba(168,85,247,0.08)' }}>
+                <div style={{ fontSize: '20px', fontWeight: '700', color: '#a855f7' }}>{stats.team.other}</div>
+                <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'var(--font-code)' }}>Other</div>
+              </div>
             </div>
-            <div style={{ display: 'flex', gap: '4px' }}>
-              {['all', 'published', 'drafts'].map(f => (
-                <button key={f} onClick={() => setFilter(f)} style={{ padding: '6px 12px', borderRadius: '6px', fontSize: '11px', fontWeight: '500', cursor: 'pointer', fontFamily: "var(--font-code)", textTransform: 'capitalize', border: '1px solid var(--glass-border)', background: filter === f ? 'rgba(34,197,94,0.15)' : 'transparent', color: filter === f ? '#22c55e' : 'var(--text-muted)' }}>
-                  {f}
-                </button>
-              ))}
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <SortIcon sx={{ fontSize: 14, color: 'var(--text-muted)' }} />
-              <select value={sortBy} onChange={e => setSortBy(e.target.value)} style={{ padding: '6px 8px', borderRadius: '6px', border: '1px solid var(--glass-border)', background: 'transparent', color: 'var(--text)', fontSize: '11px', fontFamily: "var(--font-code)", cursor: 'pointer', outline: 'none' }}>
-                <option value="newest">Newest</option>
-                <option value="oldest">Oldest</option>
-                <option value="title">Title A-Z</option>
-              </select>
-            </div>
-          </div>
-
-          {/* Blog Grid */}
-          {loading ? (
-            <div style={{ textAlign: 'center', padding: '60px', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>Loading...</div>
-          ) : filteredBlogs.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '60px' }}>
-              <p style={{ color: 'var(--text-muted)', marginBottom: '16px', fontFamily: "var(--font-code)" }}>No blogs {filter !== 'all' ? `(${filter})` : ''} {search ? `matching "${search}"` : ''} found.</p>
-              <Link to="/dashboard/editor" style={{ padding: '10px 20px', borderRadius: '8px', border: 'none', fontSize: '13px', fontWeight: '600', color: '#fff', cursor: 'pointer', background: 'linear-gradient(135deg, #22c55e, #16a34a)', textDecoration: 'none', fontFamily: "var(--font-code)" }}>+ Create Blog</Link>
-            </div>
-          ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '12px' }}>
-              {filteredBlogs.map(blog => (
-                <div key={blog.id} className="liquid-glass" style={{ borderRadius: '12px', overflow: 'hidden', display: 'flex', flexDirection: 'column', transition: 'transform 0.2s, box-shadow 0.2s' }}
-                  onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 8px 25px rgba(0,0,0,0.3)' }}
-                  onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none' }}>
-                  {/* Cover Image */}
-                  {blog.cover_image ? (
-                    <div style={{ height: '140px', overflow: 'hidden', position: 'relative' }}>
-                      <img src={blog.cover_image} alt={blog.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                      <div style={{ position: 'absolute', top: '8px', right: '8px' }}>
-                        <span style={{ fontSize: '9px', padding: '3px 10px', borderRadius: '100px', fontWeight: '600', fontFamily: "var(--font-code)", background: blog.published ? 'rgba(34,197,94,0.9)' : 'rgba(245,158,11,0.9)', color: '#fff', backdropFilter: 'blur(4px)' }}>
-                          {blog.published ? 'Live' : 'Draft'}
-                        </span>
-                      </div>
-                    </div>
-                  ) : (
-                    <div style={{ height: '100px', background: 'linear-gradient(135deg, rgba(34,197,94,0.1), rgba(59,130,246,0.1))', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
-                      <ArticleIcon sx={{ fontSize: 40, color: 'var(--text-muted)', opacity: 0.3 }} />
-                      <div style={{ position: 'absolute', top: '8px', right: '8px' }}>
-                        <span style={{ fontSize: '9px', padding: '3px 10px', borderRadius: '100px', fontWeight: '600', fontFamily: "var(--font-code)", background: blog.published ? 'rgba(34,197,94,0.9)' : 'rgba(245,158,11,0.9)', color: '#fff' }}>
-                          {blog.published ? 'Live' : 'Draft'}
-                        </span>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Content */}
-                  <div style={{ padding: '14px', flex: 1, display: 'flex', flexDirection: 'column' }}>
-                    {blog.category && <span style={{ fontSize: '9px', fontWeight: '600', color: '#22c55e', fontFamily: "var(--font-code)", textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px' }}>{blog.category}</span>}
-                    <h3 style={{ fontSize: '14px', fontWeight: '600', lineHeight: 1.3, marginBottom: '6px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{blog.title}</h3>
-                    {blog.excerpt && <p style={{ fontSize: '11px', lineHeight: 1.5, color: 'var(--text-muted)', marginBottom: '10px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{blog.excerpt}</p>}
-                    <div style={{ marginTop: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '10px', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>
-                      <span>{new Date(blog.created_at).toLocaleDateString()}</span>
-                      <div style={{ display: 'flex', gap: '4px' }}>
-                        <a href={`/blog/${blog.slug}`} target="_blank" rel="noopener" title="View blog" style={{ padding: '4px 8px', borderRadius: '6px', background: 'rgba(34,197,94,0.1)', color: '#22c55e', cursor: 'pointer', display: 'flex', alignItems: 'center', textDecoration: 'none', border: 'none' }}>
-                          <VisibilityIcon sx={{ fontSize: 14 }} />
-                        </a>
-                        <Link to={`/dashboard/editor/${blog.id}`} title="Edit" style={{ padding: '4px 8px', borderRadius: '6px', background: 'rgba(79,142,255,0.1)', color: '#4f8eff', cursor: 'pointer', display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
-                          <EditIcon sx={{ fontSize: 14 }} />
-                        </Link>
-                        <button onClick={() => togglePublish(blog)} title={blog.published ? 'Unpublish' : 'Publish'} style={{ padding: '4px 8px', borderRadius: '6px', background: blog.published ? 'rgba(245,158,11,0.1)' : 'rgba(34,197,94,0.1)', color: blog.published ? '#f59e0b' : '#22c55e', cursor: 'pointer', border: 'none', display: 'flex', alignItems: 'center' }}>
-                          {blog.published ? <VisibilityOffIcon sx={{ fontSize: 14 }} /> : <PublishIcon sx={{ fontSize: 14 }} />}
-                        </button>
-                        <button onClick={() => setDeleteConfirm(blog)} title="Delete" style={{ padding: '4px 8px', borderRadius: '6px', background: 'rgba(239,68,68,0.1)', color: '#ef4444', cursor: 'pointer', border: 'none', display: 'flex', alignItems: 'center' }}>
-                          <DeleteIcon sx={{ fontSize: 14 }} />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
+          </ChartCard>
+          <ChartCard title="Gender Distribution">
+            {teamGenderData.length > 0 ? (
+              <ResponsiveContainer width="100%" height={180}>
+                <PieChart>
+                  <Pie data={teamGenderData} cx="50%" cy="50%" innerRadius={45} outerRadius={70} paddingAngle={4} dataKey="value">
+                    {teamGenderData.map((entry, i) => <Cell key={i} fill={entry.color} />)}
+                  </Pie>
+                  <Tooltip content={<CustomTooltip />} />
+                  <Legend iconType="circle" wrapperStyle={{ fontSize: '11px', fontFamily: 'var(--font-code)' }} />
+                </PieChart>
+              </ResponsiveContainer>
+            ) : <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)', fontSize: '11px', fontFamily: 'var(--font-code)' }}>No data yet</div>}
+          </ChartCard>
+          <div className="liquid-glass" style={{ padding: '16px', borderRadius: '12px' }}>
+            <div style={{ fontSize: '12px', fontWeight: '600', marginBottom: '8px', fontFamily: 'var(--font-code)' }}>Other Content</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              {[
+                { label: 'Tech Stack', value: stats.content.techStack, color: '#4f8eff' },
+                { label: 'Awards', value: stats.content.awards, color: '#f59e0b' },
+                { label: 'Industries', value: stats.content.industries, color: '#06d6a0' },
+              ].map((item, i) => (
+                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 10px', borderRadius: '6px', background: `${item.color}08` }}>
+                  <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'var(--font-code)' }}>{item.label}</span>
+                  <span style={{ fontSize: '14px', fontWeight: '700', color: item.color }}>{item.value}</span>
                 </div>
               ))}
             </div>
-          )}
-    </>
+          </div>
+        </div>
+      </div>
+
+      {/* Section 2: Contact Inquiries */}
+      <div style={{ marginBottom: '28px' }}>
+        <SectionTitle>Contact Inquiries</SectionTitle>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '8px', marginBottom: '12px' }}>
+          <StatCard label="Total Messages" value={stats.inquiries.total} color="#4f8eff" />
+          <StatCard label="New (Unread)" value={stats.inquiries.new} color="#f59e0b" />
+          <StatCard label="Replied" value={stats.inquiries.replied} color="#22c55e" />
+          <StatCard label="Archived" value={stats.inquiries.archived} color="#94a3b8" />
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '10px' }}>
+          <ChartCard title="Inquiry Status">
+            {inquiryStatusData.length > 0 ? (
+              <ResponsiveContainer width="100%" height={180}>
+                <PieChart>
+                  <Pie data={inquiryStatusData} cx="50%" cy="50%" innerRadius={45} outerRadius={70} paddingAngle={4} dataKey="value">
+                    {inquiryStatusData.map((entry, i) => <Cell key={i} fill={entry.color} />)}
+                  </Pie>
+                  <Tooltip content={<CustomTooltip />} />
+                  <Legend iconType="circle" wrapperStyle={{ fontSize: '11px', fontFamily: 'var(--font-code)' }} />
+                </PieChart>
+              </ResponsiveContainer>
+            ) : <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)', fontSize: '11px', fontFamily: 'var(--font-code)' }}>No inquiries yet</div>}
+          </ChartCard>
+          <ChartCard title="Gender Breakdown (Inquiries)">
+            {inquiryGenderData.length > 0 ? (
+              <ResponsiveContainer width="100%" height={180}>
+                <PieChart>
+                  <Pie data={inquiryGenderData} cx="50%" cy="50%" innerRadius={45} outerRadius={70} paddingAngle={4} dataKey="value">
+                    {inquiryGenderData.map((entry, i) => <Cell key={i} fill={entry.color} />)}
+                  </Pie>
+                  <Tooltip content={<CustomTooltip />} />
+                  <Legend iconType="circle" wrapperStyle={{ fontSize: '11px', fontFamily: 'var(--font-code)' }} />
+                </PieChart>
+              </ResponsiveContainer>
+            ) : <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)', fontSize: '11px', fontFamily: 'var(--font-code)' }}>No data yet</div>}
+          </ChartCard>
+          <ChartCard title="Monthly Inquiries">
+            {monthlyInquiriesChart.length > 0 ? (
+              <ResponsiveContainer width="100%" height={180}>
+                <BarChart data={monthlyInquiriesChart}>
+                  <XAxis dataKey="month" tick={{ fontSize: 10, fill: 'var(--text-muted)' }} />
+                  <YAxis tick={{ fontSize: 10, fill: 'var(--text-muted)' }} allowDecimals={false} />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Bar dataKey="inquiries" fill="#4f8eff" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            ) : <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)', fontSize: '11px', fontFamily: 'var(--font-code)' }}>No data yet</div>}
+          </ChartCard>
+        </div>
+        {(serviceChartData.length > 0 || countryChartData.length > 0) && (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '10px', marginTop: '10px' }}>
+            {serviceChartData.length > 0 && (
+              <ChartCard title="By Service">
+                <ResponsiveContainer width="100%" height={Math.max(120, serviceChartData.length * 32)}>
+                  <BarChart data={serviceChartData} layout="vertical">
+                    <XAxis type="number" tick={{ fontSize: 10, fill: 'var(--text-muted)' }} allowDecimals={false} />
+                    <YAxis type="category" dataKey="name" tick={{ fontSize: 10, fill: 'var(--text-muted)' }} width={90} />
+                    <Tooltip content={<CustomTooltip />} />
+                    <Bar dataKey="count" fill="#06d6a0" radius={[0, 4, 4, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </ChartCard>
+            )}
+            {countryChartData.length > 0 && (
+              <ChartCard title="Top Countries">
+                <ResponsiveContainer width="100%" height={Math.max(120, countryChartData.length * 32)}>
+                  <BarChart data={countryChartData} layout="vertical">
+                    <XAxis type="number" tick={{ fontSize: 10, fill: 'var(--text-muted)' }} allowDecimals={false} />
+                    <YAxis type="category" dataKey="name" tick={{ fontSize: 10, fill: 'var(--text-muted)' }} width={90} />
+                    <Tooltip content={<CustomTooltip />} />
+                    <Bar dataKey="count" fill="#a855f7" radius={[0, 4, 4, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </ChartCard>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Section 3: Blog Management */}
+      <div style={{ marginBottom: '28px' }}>
+        <SectionTitle>Blog Management</SectionTitle>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '10px' }}>
+          <ChartCard title="Blog Overview">
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px', marginBottom: '12px' }}>
+              <div style={{ textAlign: 'center', padding: '10px', borderRadius: '8px', background: 'rgba(79,142,255,0.08)' }}>
+                <div style={{ fontSize: '18px', fontWeight: '700', color: '#4f8eff' }}>{stats.blogs.total}</div>
+                <div style={{ fontSize: '9px', color: 'var(--text-muted)', fontFamily: 'var(--font-code)' }}>Total</div>
+              </div>
+              <div style={{ textAlign: 'center', padding: '10px', borderRadius: '8px', background: 'rgba(34,197,94,0.08)' }}>
+                <div style={{ fontSize: '18px', fontWeight: '700', color: '#22c55e' }}>{stats.blogs.published}</div>
+                <div style={{ fontSize: '9px', color: 'var(--text-muted)', fontFamily: 'var(--font-code)' }}>Live</div>
+              </div>
+              <div style={{ textAlign: 'center', padding: '10px', borderRadius: '8px', background: 'rgba(245,158,11,0.08)' }}>
+                <div style={{ fontSize: '18px', fontWeight: '700', color: '#f59e0b' }}>{stats.blogs.drafts}</div>
+                <div style={{ fontSize: '9px', color: 'var(--text-muted)', fontFamily: 'var(--font-code)' }}>Drafts</div>
+              </div>
+            </div>
+            {blogStatusData.length > 0 && (
+              <ResponsiveContainer width="100%" height={160}>
+                <PieChart>
+                  <Pie data={blogStatusData} cx="50%" cy="50%" innerRadius={40} outerRadius={60} paddingAngle={4} dataKey="value">
+                    {blogStatusData.map((entry, i) => <Cell key={i} fill={entry.color} />)}
+                  </Pie>
+                  <Tooltip content={<CustomTooltip />} />
+                  <Legend iconType="circle" wrapperStyle={{ fontSize: '11px', fontFamily: 'var(--font-code)' }} />
+                </PieChart>
+              </ResponsiveContainer>
+            )}
+          </ChartCard>
+          <ChartCard title="Monthly Blog Posts">
+            {monthlyBlogsChart.length > 0 ? (
+              <ResponsiveContainer width="100%" height={220}>
+                <AreaChart data={monthlyBlogsChart}>
+                  <defs>
+                    <linearGradient id="blogGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#22c55e" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="#22c55e" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <XAxis dataKey="month" tick={{ fontSize: 10, fill: 'var(--text-muted)' }} />
+                  <YAxis tick={{ fontSize: 10, fill: 'var(--text-muted)' }} allowDecimals={false} />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Area type="monotone" dataKey="blogs" stroke="#22c55e" fill="url(#blogGrad)" strokeWidth={2} />
+                </AreaChart>
+              </ResponsiveContainer>
+            ) : <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)', fontSize: '11px', fontFamily: 'var(--font-code)' }}>No blogs yet</div>}
+          </ChartCard>
+        </div>
+      </div>
+
+      {/* Section 4: Testimonials & Feedback */}
+      <div style={{ marginBottom: '28px' }}>
+        <SectionTitle>Testimonials & Feedback</SectionTitle>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '10px' }}>
+          <ChartCard title="Testimonials">
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+              <div style={{ textAlign: 'center', padding: '12px', borderRadius: '8px', background: 'rgba(245,158,11,0.08)' }}>
+                <div style={{ fontSize: '18px', fontWeight: '700', color: '#f59e0b' }}>{stats.testimonials.total}</div>
+                <div style={{ fontSize: '9px', color: 'var(--text-muted)', fontFamily: 'var(--font-code)' }}>Total</div>
+              </div>
+              <div style={{ textAlign: 'center', padding: '12px', borderRadius: '8px', background: 'rgba(34,197,94,0.08)' }}>
+                <div style={{ fontSize: '18px', fontWeight: '700', color: '#22c55e' }}>{stats.testimonials.approved}</div>
+                <div style={{ fontSize: '9px', color: 'var(--text-muted)', fontFamily: 'var(--font-code)' }}>Approved</div>
+              </div>
+              <div style={{ textAlign: 'center', padding: '12px', borderRadius: '8px', background: 'rgba(245,158,11,0.08)' }}>
+                <div style={{ fontSize: '18px', fontWeight: '700', color: '#f59e0b' }}>{stats.testimonials.pending}</div>
+                <div style={{ fontSize: '9px', color: 'var(--text-muted)', fontFamily: 'var(--font-code)' }}>Pending</div>
+              </div>
+              <div style={{ textAlign: 'center', padding: '12px', borderRadius: '8px', background: 'rgba(79,142,255,0.08)' }}>
+                <div style={{ fontSize: '18px', fontWeight: '700', color: '#4f8eff' }}>{stats.testimonials.total > 0 ? Math.round((stats.testimonials.approved / stats.testimonials.total) * 100) : 0}%</div>
+                <div style={{ fontSize: '9px', color: 'var(--text-muted)', fontFamily: 'var(--font-code)' }}>Approval Rate</div>
+              </div>
+            </div>
+          </ChartCard>
+          <ChartCard title="Feedback Submissions">
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+              <div style={{ textAlign: 'center', padding: '12px', borderRadius: '8px', background: 'rgba(6,214,160,0.08)' }}>
+                <div style={{ fontSize: '18px', fontWeight: '700', color: '#06d6a0' }}>{stats.feedback.total}</div>
+                <div style={{ fontSize: '9px', color: 'var(--text-muted)', fontFamily: 'var(--font-code)' }}>Total</div>
+              </div>
+              <div style={{ textAlign: 'center', padding: '12px', borderRadius: '8px', background: 'rgba(34,197,94,0.08)' }}>
+                <div style={{ fontSize: '18px', fontWeight: '700', color: '#22c55e' }}>{stats.feedback.approved}</div>
+                <div style={{ fontSize: '9px', color: 'var(--text-muted)', fontFamily: 'var(--font-code)' }}>Approved</div>
+              </div>
+              <div style={{ textAlign: 'center', padding: '12px', borderRadius: '8px', background: 'rgba(245,158,11,0.08)' }}>
+                <div style={{ fontSize: '18px', fontWeight: '700', color: '#f59e0b' }}>{stats.feedback.pending}</div>
+                <div style={{ fontSize: '9px', color: 'var(--text-muted)', fontFamily: 'var(--font-code)' }}>Pending</div>
+              </div>
+              <div style={{ textAlign: 'center', padding: '12px', borderRadius: '8px', background: 'rgba(168,85,247,0.08)' }}>
+                <div style={{ fontSize: '18px', fontWeight: '700', color: '#a855f7' }}>{stats.feedback.total > 0 ? Math.round((stats.feedback.approved / stats.feedback.total) * 100) : 0}%</div>
+                <div style={{ fontSize: '9px', color: 'var(--text-muted)', fontFamily: 'var(--font-code)' }}>Approval Rate</div>
+              </div>
+            </div>
+          </ChartCard>
+        </div>
+      </div>
+
+      {/* Section 5: Quick Actions */}
+      <div style={{ marginBottom: '28px' }}>
+        <SectionTitle>Quick Actions</SectionTitle>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '8px' }}>
+          {[
+            { label: 'New Blog', path: '/dashboard/editor', color: '#22c55e', icon: <AddIcon sx={{ fontSize: 16 }} /> },
+            { label: 'Team Members', path: '/dashboard/cms/team_members', color: '#a855f7', icon: <GroupsIcon sx={{ fontSize: 16 }} /> },
+            { label: 'Inquiries', path: '/dashboard/inquiries', color: '#4f8eff', icon: <MailIcon sx={{ fontSize: 16 }} /> },
+            { label: 'Services', path: '/dashboard/cms/services', color: '#06d6a0', icon: <ConstructionIcon sx={{ fontSize: 16 }} /> },
+            { label: 'Projects', path: '/dashboard/featured-projects', color: '#f59e0b', icon: <WorkIcon sx={{ fontSize: 16 }} /> },
+            { label: 'Settings', path: '/dashboard/settings', color: '#94a3b8', icon: <SettingsIcon sx={{ fontSize: 16 }} /> },
+          ].map((action, i) => (
+            <Link key={i} to={action.path} className="liquid-glass" style={{ padding: '14px', borderRadius: '10px', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '10px', borderLeft: `3px solid ${action.color}`, transition: 'transform 0.15s' }}
+              onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'}
+              onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}>
+              <span style={{ color: action.color }}>{action.icon}</span>
+              <span style={{ fontSize: '12px', fontWeight: '600', color: 'var(--text)', fontFamily: 'var(--font-code)' }}>{action.label}</span>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </div>
   )
 }
