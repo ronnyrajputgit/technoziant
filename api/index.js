@@ -185,8 +185,6 @@ app.get('/api/stats/dashboard', authMiddleware, async (req, res) => {
 
 // CMS Content Routes
 app.use('/api/content', contentRoutes(pool))
-  } catch (err) { res.status(500).json({ error: err.message }) }
-})
 
 app.get('/api/health', async (req, res) => {
   try {
@@ -320,6 +318,9 @@ async function ensureDB() {
     await client.query("ALTER TABLE team_members ALTER COLUMN name TYPE TEXT").catch(() => {})
     await client.query("ALTER TABLE team_members ALTER COLUMN role TYPE TEXT").catch(() => {})
     await client.query("ALTER TABLE team_members ADD COLUMN IF NOT EXISTS gender TEXT DEFAULT ''").catch(() => {})
+    await client.query("ALTER TABLE team_members ADD COLUMN IF NOT EXISTS achievements TEXT[] DEFAULT '{}'").catch(() => {})
+    await client.query("ALTER TABLE team_members ADD COLUMN IF NOT EXISTS stats JSONB DEFAULT '[]'").catch(() => {})
+    await client.query("ALTER TABLE team_members ALTER COLUMN image TYPE TEXT").catch(() => {})
     await client.query("ALTER TABLE work_items ALTER COLUMN title TYPE TEXT").catch(() => {})
     await client.query("ALTER TABLE work_items ALTER COLUMN category TYPE TEXT").catch(() => {})
     await client.query("ALTER TABLE work_items ALTER COLUMN client TYPE TEXT").catch(() => {})
