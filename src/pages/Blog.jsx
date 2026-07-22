@@ -8,6 +8,7 @@ import SearchIcon from '@mui/icons-material/Search'
 import CloseIcon from '@mui/icons-material/Close'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import ExpandLessIcon from '@mui/icons-material/ExpandLess'
+import { Skeleton } from '@mui/material'
 
 export function Blog() {
   const [posts, setPosts] = useState([])
@@ -93,7 +94,23 @@ export function Blog() {
       {/* Blog Grid */}
       <section style={{ padding: '0 clamp(16px, 4vw, 40px)', maxWidth: '1400px', margin: '0 auto' }}>
         {loading ? (
-          <div style={{ textAlign: 'center', padding: '60px', color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>Loading articles...</div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '10px' }}>
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="liquid-glass" style={{ borderRadius: '10px', overflow: 'hidden', padding: '12px', display: 'flex', gap: '12px' }}>
+                <Skeleton variant="rounded" width={80} height={80} sx={{ borderRadius: 1, flexShrink: 0, bgcolor: 'rgba(255,255,255,0.06)' }} animation="wave" />
+                <div style={{ flex: 1 }}>
+                  <Skeleton variant="text" width="40%" height={10} sx={{ mb: 0.5, bgcolor: 'rgba(255,255,255,0.06)' }} animation="wave" />
+                  <Skeleton variant="text" width="90%" height={14} sx={{ mb: 0.5, bgcolor: 'rgba(255,255,255,0.06)' }} animation="wave" />
+                  <Skeleton variant="text" width="100%" height={10} sx={{ mb: 0.5, bgcolor: 'rgba(255,255,255,0.06)' }} animation="wave" />
+                  <Skeleton variant="text" width="70%" height={10} sx={{ mb: 1, bgcolor: 'rgba(255,255,255,0.06)' }} animation="wave" />
+                  <div style={{ display: 'flex', gap: 4 }}>
+                    <Skeleton variant="rounded" width={40} height={14} sx={{ borderRadius: 0.5, bgcolor: 'rgba(255,255,255,0.06)' }} animation="wave" />
+                    <Skeleton variant="rounded" width={50} height={14} sx={{ borderRadius: 0.5, bgcolor: 'rgba(255,255,255,0.06)' }} animation="wave" />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         ) : filtered.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '60px' }}>
             <p style={{ color: 'var(--text-muted)', fontFamily: "var(--font-code)" }}>No articles found.</p>
