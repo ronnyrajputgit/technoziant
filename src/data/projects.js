@@ -1,6 +1,3 @@
-import sumanImg from '../assets/images/Suman.jpeg'
-import sahilImg from '../assets/images/Shahil.jpeg'
-
 export const projects = [
   { id: 1, title: 'Nebula Analytics', subtitle: 'SaaS Dashboard', description: 'AI-powered analytics platform with real-time data visualization and predictive insights for enterprise clients.', year: '2024', color: '#4f8eff', image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80', tags: ['React', 'D3.js', 'ML'], category: 'web', client: 'DataCorp' },
   { id: 2, title: 'Quantum Finance', subtitle: 'Fintech App', description: 'Next-gen banking experience with biometric auth and instant transfers across 180+ countries.', year: '2024', color: '#a855f7', image: 'https://images.unsplash.com/photo-1563986768609-322da13575f2?w=800&q=80', tags: ['React Native', 'Node.js', 'Blockchain'], category: 'mobile', client: 'FinSecure' },
@@ -30,10 +27,7 @@ export const solutions = [
 ]
 
 export const team = [
-  { id: 1, name: 'Suman Kumar Sah', role: 'Founder', image: sumanImg, bio: 'Visionary founder leading Technoziant with a mission to deliver world-class technology solutions.' },
-  { id: 2, name: 'Shahil Kumar Sharma', role: 'Co-founder & CEO', image: sahilImg, bio: 'Chief Executive Officer driving the company\'s vision and growth strategy.' },
-  { id: 3, name: 'Ronny', role: 'CTO', image: 'https://ui-avatars.com/api/?name=Ronny&background=06d6a0&color=fff&size=400&bold=true', bio: 'Chief Technology Officer overseeing all technical operations and system architecture.' },
-  { id: 4, name: 'Avnish', role: 'CMO', image: 'https://ui-avatars.com/api/?name=Avnish&background=f472b6&color=fff&size=400&bold=true', bio: 'Chief Marketing Officer driving brand strategy and digital marketing initiatives.' },
+  { id: 1, name: 'Avnish', role: 'CMO', image: 'https://ui-avatars.com/api/?name=Avnish&background=f472b6&color=fff&size=400&bold=true', bio: 'Chief Marketing Officer driving brand strategy and digital marketing initiatives.' },
 ]
 
 export const awards = [

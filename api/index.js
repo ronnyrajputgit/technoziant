@@ -508,10 +508,7 @@ async function seedContent(client) {
   const teamCheck = await client.query('SELECT COUNT(*) FROM team_members')
   if (parseInt(teamCheck.rows[0].count) === 0) {
     const members = [
-      { name: 'Suman Kumar Sah', role: 'Founder', image: '/src/assets/images/Suman.jpeg', bio: 'Visionary founder leading Technoziant with a mission to deliver world-class technology solutions.', display_order: 1 },
-      { name: 'Shahil Kumar Sharma', role: 'Co-founder & CEO', image: '/src/assets/images/Shahil.jpeg', bio: 'Chief Executive Officer driving the company\'s vision and growth strategy. Expert in business development and scaling digital enterprises.', display_order: 2 },
-      { name: 'Ronny', role: 'CTO', image: 'https://ui-avatars.com/api/?name=Ronny&background=06d6a0&color=fff&size=400&bold=true', bio: 'Chief Technology Officer overseeing all technical operations. Expert in system architecture, scalable infrastructure, and cutting-edge technology implementations.', display_order: 3 },
-      { name: 'Avnish', role: 'CMO', image: 'https://ui-avatars.com/api/?name=Avnish&background=f472b6&color=fff&size=400&bold=true', bio: 'Chief Marketing Officer driving brand strategy and digital marketing initiatives. Expert in growth marketing, brand building, and community development.', display_order: 4 }
+      { name: 'Avnish', role: 'CMO', image: 'https://ui-avatars.com/api/?name=Avnish&background=f472b6&color=fff&size=400&bold=true', bio: 'Chief Marketing Officer driving brand strategy and digital marketing initiatives. Expert in growth marketing, brand building, and community development.', display_order: 1 }
     ]
     for (const m of members) {
       await client.query(
@@ -525,7 +522,7 @@ async function seedContent(client) {
   const statsCheck = await client.query('SELECT COUNT(*) FROM stats')
   if (parseInt(statsCheck.rows[0].count) === 0) {
     const statsData = [
-      { label: 'Team Members', value: '4', icon: '👥', display_order: 1 },
+      { label: 'Team Members', value: '1', icon: '👥', display_order: 1 },
       { label: 'Years Combined', value: '20+', icon: '📅', display_order: 2 },
       { label: 'Projects Led', value: '100+', icon: '🚀', display_order: 3 },
       { label: 'Awards Won', value: '10+', icon: '🏆', display_order: 4 }

@@ -5,8 +5,6 @@ import { TextReveal } from '../components/ui/TextReveal'
 import { useApp } from '../context/AppContext'
 import { LeaderModal } from '../components/ui/LeaderModal'
 import { Footer } from '../components/layout/Footer'
-import sumanImg from '../assets/images/Suman.jpeg'
-import sahilImg from '../assets/images/Shahil.jpeg'
 
 // Random border radius generator - professional values
 const generateRandomRadius = () => {
@@ -27,33 +25,6 @@ const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min
 
 const leadership = [
   {
-    name: 'Suman Kumar Sah',
-    role: 'Founder',
-    image: sumanImg,
-    color: '#4f8eff',
-    gradient: 'linear-gradient(135deg, #4f8eff, #06d6a0)',
-    bio: 'Visionary founder leading Technoziant with a mission to deliver world-class technology solutions.',
-    achievements: ['Visionary Leader', 'Strategic Thinker', 'Innovation Driver']
-  },
-  {
-    name: 'Shahil Kumar Sharma',
-    role: 'Co-founder & CEO',
-    image: sahilImg,
-    color: '#a855f7',
-    gradient: 'linear-gradient(135deg, #a855f7, #f472b6)',
-    bio: 'Chief Executive Officer driving the company\'s vision and growth strategy. Expert in business development and scaling digital enterprises.',
-    achievements: ['Business Strategist', 'Growth Expert', 'Team Builder']
-  },
-  {
-    name: 'Ronny',
-    role: 'CTO',
-    image: 'https://ui-avatars.com/api/?name=Ronny&background=06d6a0&color=fff&size=400&bold=true',
-    color: '#06d6a0',
-    gradient: 'linear-gradient(135deg, #06d6a0, #22d3ee)',
-    bio: 'Chief Technology Officer overseeing all technical operations. Expert in system architecture, scalable infrastructure, and cutting-edge technology implementations.',
-    achievements: ['Tech Architect', 'System Design', 'Innovation Lead']
-  },
-  {
     name: 'Avnish',
     role: 'CMO',
     image: 'https://ui-avatars.com/api/?name=Avnish&background=f472b6&color=fff&size=400&bold=true',
@@ -65,7 +36,7 @@ const leadership = [
 ]
 
 const stats = [
-  { value: '4', label: 'Leaders', icon: '👥' },
+  { value: '1', label: 'Leaders', icon: '👥' },
   { value: '20+', label: 'Years Combined', icon: '📅' },
   { value: '100+', label: 'Projects Led', icon: '🚀' },
   { value: '10+', label: 'Awards Won', icon: '🏆' }

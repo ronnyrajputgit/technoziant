@@ -17,6 +17,9 @@ const teamGradients = [
 
 const teamColors = ['#4f8eff', '#a855f7', '#06d6a0', '#f472b6']
 
+// Founder / co-founder / CTO profiles are hidden from the public site
+const HIDDEN_ROLES = /founder|\bcto\b/i
+
 export function About() {
   const { setCursorType } = useApp()
   const [selectedLeader, setSelectedLeader] = useState(null)
@@ -31,7 +34,7 @@ export function About() {
       api.getContent('stats', { visible: 'true' }).catch(() => []),
       api.getContent('awards', { visible: 'true' }).catch(() => [])
     ]).then(([teamData, statsData, awardsData]) => {
-      setTeam((teamData || []).map((m, i) => ({
+      setTeam((teamData || []).filter(m => !HIDDEN_ROLES.test(m.role || '')).map((m, i) => ({
         ...m,
         color: teamColors[i % teamColors.length],
         gradient: teamGradients[i % teamGradients.length],
